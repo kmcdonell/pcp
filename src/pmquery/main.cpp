@@ -55,7 +55,7 @@ char *catoption(char *prefix, char *option, int total)
     prefix = (char *)realloc(prefix, total);
     if (prefix) {
 	strncat(prefix, " ", 2);
-	strncat(prefix, option, total);
+	strncat(prefix, option, total - strlen(prefix) - 1);
     }
     return prefix;
 }

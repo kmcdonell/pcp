@@ -52,51 +52,6 @@ status=1	# failure is the default!
 trap "_cleanup; exit \$status" 0 1 2 3 15
 rm -f $seq.full
 
-# real QA test starts here
-
-echo "initially ..." >$seq.full
-OLDXCONFIRMCNT=`_countem`
-
-# Expect something on stderr
-unset PCP_STDERR
-src/pmprintf foo bee doo
-
-# Expect something in an xconfirm
-echo "DISPLAY=$DISPLAY" >>$seq.full
-export PCP_STDERR=DISPLAY
-if [ -z "$PCP_XCONFIRM_PROG" ]
-then
-    echo 'Error: $PCP_XCONFIRM_PROG not set'
-    exit $status
-fi
-
-(src/pmprintf some invisible text &)2>$tmp.err
-# wait for dialog to fire up
-sleep 3
-rm -f $tmp.out
-echo "after start up ..." >>$seq.full
-XCONFIRMCNT=`_countem`
-
-if [ $XCONFIRMCNT -gt $OLDXCONFIRMCNT ]
-then
-     echo '=== $PCP_XCONFIRM_PROG started OK ==='
-else
-     echo "=== Urk, no change in number of $PCP_XCONFIRM_PROG - $XCONFIRMCNT ==="
-     cat $tmp.count
-     echo
-     echo "Errors from src/pmprintf?"
-     cat $tmp.err
-fi
-
-# Expect something in file
-[ -f  $tmp.pmprintf ] && rm -f $tmp.pmprintf
-PCP_STDERR=$tmp.pmprintf
-export PCP_STDERR
-src/pmprintf sent all this text to a file
-src/pmprintf and this too
-cat $tmp.pmprintf
-rm -f $tmp.pmprintf
-
 cat <<End-of-File >$tmp.joseph
 This is a long message to exercise the realloc for the internal
 message buffer.
@@ -198,6 +153,51 @@ Chief above, and that all people may be one people.
 [from https://en.wikiquote.org/wiki/Chief_Joseph included here under
 Creative Commons Attribution-ShareAlike License].
 End-of-File
+
+# real QA test starts here
+
+echo "initially ..." >$seq.full
+OLDXCONFIRMCNT=`_countem`
+
+# Expect something on stderr
+unset PCP_STDERR
+src/pmprintf foo bee doo
+
+# Expect something in an xconfirm
+echo "DISPLAY=$DISPLAY" >>$seq.full
+export PCP_STDERR=DISPLAY
+if [ -z "$PCP_XCONFIRM_PROG" ]
+then
+    echo 'Error: $PCP_XCONFIRM_PROG not set'
+    exit $status
+fi
+
+(src/pmprintf "`cat $tmp.joseph`" &)2>$tmp.err
+# wait for dialog to fire up
+sleep 4
+rm -f $tmp.out
+echo "after start up ..." >>$seq.full
+XCONFIRMCNT=`_countem`
+
+if [ $XCONFIRMCNT -gt $OLDXCONFIRMCNT ]
+then
+     echo '=== $PCP_XCONFIRM_PROG started OK ==='
+else
+     echo "=== Urk, no change in number of $PCP_XCONFIRM_PROG - $XCONFIRMCNT ==="
+     cat $tmp.count
+     echo
+     echo "Errors from src/pmprintf?"
+     cat $tmp.err
+fi
+
+# Expect something in file
+[ -f  $tmp.pmprintf ] && rm -f $tmp.pmprintf
+PCP_STDERR=$tmp.pmprintf
+export PCP_STDERR
+src/pmprintf sent all this text to a file
+src/pmprintf and this too
+cat $tmp.pmprintf
+rm -f $tmp.pmprintf
 
 unset PCP_STDERR
 src/pmprintf "`cat $tmp.joseph`"
