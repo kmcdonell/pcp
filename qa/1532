@@ -14,6 +14,12 @@ echo "QA output created by $seq"
 [ $PCP_PLATFORM = linux ] || _notrun "Linux ZFS PMDA is Linux-specific (uses procfs)"
 grep -q zfs /proc/filesystems || _notrun "ZFS filesystem unsupported by the running kernel"
 which zpool > /dev/null || _notrun "zpool not found, please check your OpenZFS installation"
+missing=''
+for stats in abdstats dbufstats dnodestats vdev_mirror_stats
+do
+    [ -f /proc/spl/kstat/zfs/$stats ] || missing="$missing $stats"
+done
+[ -z "$missing" ] || _notrun "kernel ZFS support too old, missing stats files:$missing"
 
 status=1
 $sudo rm -rf $tmp.* $seq.full
