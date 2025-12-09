@@ -1,3 +1,11 @@
+pcp (7.0.6-1) unstable; urgency=high
+
+  * New release (full details in CHANGELOG).
+  * restrict Build-Depends for bpftrace to [amd64 arm64] until
+    #1120134 is resolved for [armhf]
+
+ -- Ken McDonell <kenj@kenj.id.au>  Tue, 09 Dec 2025 06:50:27 +1100
+
 pcp (7.0.5-1) unstable; urgency=high
 
   * New release (full details in CHANGELOG).
