@@ -23,7 +23,7 @@ src/units-parse scan | tee -a $seq_full
 src/units-parse tuple 0 0 0 1 1 1	# scales without dimensions
 
 src/units-parse parse "2e5"
-src/units-parse parse "-/2"		# bad floating point
+src/units-parse parse -- "-/2"		# bad floating point
 src/units-parse parse "2eg"		# bad floating point
 src/units-parse parse "25 sec/kb"
 src/units-parse parse "5 ms / 3 sec"

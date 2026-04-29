@@ -312,6 +312,9 @@ pmda.zimbra
 pmda.zfs
 pmda.zswap
 
+# these ones are exposed to changes in the sample PMDA's PMNS
+sample.pmns
+
 # tools which use PCP_COUNTER_WRAP
 wrap
 
@@ -563,7 +566,7 @@ suse
 026 other help local ostest sanity libpcp
 027 libpcp local ostest sanity
 028 pmns local ostest pminfo
-029 pmns local ostest pmlogdump pmda.sample pminfo
+029 pmns local ostest pmlogdump pmda.sample pminfo sample.pmns
 030 pdu pmcd pmda context_local local ostest pmstore
 031 pmns local sanity
 032 pmlc local ostest pmlogger
@@ -673,7 +676,7 @@ suse
 136 pmlogger local pmlogdump pmloglabel pmlc
 137 dbpmda local pmda.simple sanity
 138 pmns local
-139 pmlc local pmda.sample
+139 pmlc local pmda.sample sample.pmns
 140 pmns local
 141 archive context local
 142 pmlogreduce local pmlogdump
@@ -790,7 +793,7 @@ suse
 253 derive local
 254 libpcp pmns local
 255 compat pmda #508731 #509091 pmda.proc help pmda.install local pmda.simple pminfo
-256 derive pmns local sanity pmda.sample
+256 derive pmns local sanity pmda.sample sample.pmns
 257 libpcp pmns compat remote pmda.sample
 258 trace local pmda.install folio pmda.trace
 259 derive pmval local
@@ -807,7 +810,7 @@ suse
 270 local pmlogdump kernel pmlogextract
 271 archive local pmlogdump
 272 pmcd pmval pmprobe remote pmstore
-273 libpcp local pmval pmstore pmda.sample kernel help indom
+273 libpcp local pmval pmstore pmda.sample kernel help indom sample.pmns
 274 pmda help local pmda.install dbpmda
 275 derive local kernel
 276 pmie pmval indom local
@@ -1043,7 +1046,7 @@ suse
 506 pmlogrewrite local slow
 507 pcp local kernel pmlogdump
 508 archive pmlogreduce local pmval kernel
-509 derive pmns local pmda.sample dbpmda pminfo
+509 derive pmns local pmda.sample dbpmda pminfo sample.pmns
 510 pmlogger pmlc local
 511 pmimport pmlogdump pmlogsummary perl local sar2pcp
 512 threads pminfo pmlogger pmlogextract pmlogdump dbpmda local fault
@@ -1103,7 +1106,7 @@ suse
 566 pmlogcheck local
 567 libpcp labels local sanity python
 568 pmcd pmda.sample pminfo labels libpcp local sanity
-569 pmprobe #679693 local sanity pmstore pmda.sample
+569 pmprobe #679693 local sanity pmstore pmda.sample sample.pmns sample.pmns sample.pmns
 570:retired pmns #690735 local
 571 pmlogger local pmlogdump
 572 pmcd pmda local pmda.install pmda.sample pmda.simple pmda.trivial pmstore pminfo
@@ -1196,7 +1199,7 @@ suse
 659 pmlogreduce local pmlogmv
 660:retired pmwebd local
 661:retired pmwebd local python kernel
-662 pmproxy pmda.sample local python pmda.sample help
+662 pmproxy pmda.sample local python pmda.sample help sample.pmns
 663:retired pmwebd local python
 664 logutil local pmlogrewrite pmlogmv pmlogdump pmlogger_daily
 665 pmda.linux local
@@ -1601,7 +1604,7 @@ suse
 1064 derive local
 1065 libpcp valgrind local
 1066 derive valgrind local
-1067 zbxpcp local pmda.sample
+1067 zbxpcp local pmda.sample sample.pmns
 1068 pcp2zabbix python pcp2xxx local
 1069 pmrep python local timezone kernel pmda.sample
 1070 sheet2pcp pmrep pmimport python perl local

@@ -14,6 +14,8 @@
  */
 
 #include "pmapi.h"
+#include "libpcp.h"
+#include "internal.h"
 #include <inttypes.h>
 #include <assert.h>
 #include <ctype.h>
@@ -155,19 +157,37 @@ pmUnitsStr_r(const pmUnits *pu, char *buf, int buflen)
     char *spacestr = NULL;
     char *timestr = NULL;
     char *countstr = NULL;
+    char *extrastr = NULL;
     char *p;
     char sbuf[20];
     char tbuf[20];
     char cbuf[20];
+    char xbuf[20];
+
+    if (pmDebugOptions.pmapi) {
+	fprintf(stderr, "pmUnitsStr_r([dimSpace=%d,dimTime=%d,dimCount=%d,scaleSpace=%d,scaleTime=%d,scaleCount=%d,extraUnit=%d,extraScale=%d], ..., %d) <",
+	    pu->dimSpace, pu->dimTime, pu->dimCount,
+	    pu->scaleSpace, pu->scaleTime, pu->scaleCount,
+	    pu->extraUnit, pu->extraScale, buflen);
+    }
 
     /*
      * must be at least 60 bytes, then we don't need to pollute the code
      * below with a check every time we call pmsprintf() or increment p
      */
-    if (buflen < 60)
+    if (buflen < 60) {
+	if (pmDebugOptions.pmapi) {
+	    fprintf(stderr, ":> returns NULL\n");
+	}
 	return NULL;
+    }
 
     buf[0] = '\0';
+
+    if (pu->extraUnit) {
+	__pmExtraUnitsStr(pu, xbuf, sizeof(xbuf));
+	extrastr = xbuf;
+    }
 
     if (pu->dimSpace) {
 	switch (pu->scaleSpace) {
@@ -248,6 +268,13 @@ pmUnitsStr_r(const pmUnits *pu, char *buf, int buflen)
 
     p = buf;
 
+    if (pu->extraUnit != 0) {
+	pmsprintf(p, buflen, "%s", extrastr);
+	while (*p)
+	    p++;
+	*p++ = ' ';
+    }
+
     if (pu->dimSpace > 0) {
 	if (pu->dimSpace == 1)
 	    pmsprintf(p, buflen, "%s", spacestr);
@@ -322,6 +349,10 @@ pmUnitsStr_r(const pmUnits *pu, char *buf, int buflen)
     else {
 	p--;
 	*p = '\0';
+    }
+
+    if (pmDebugOptions.pmapi) {
+	fprintf(stderr, ":> returns \"%s\"\n", buf);
     }
 
     return buf;
@@ -1146,20 +1177,6 @@ pmExtractValue(int valfmt, const pmValue * ival, int itype, pmAtomValue * oval, 
 }
 
 /*
- * An internal variant of pmUnits, but without the narrow bitfields.
- * That way, we can tolerate intermediate arithmetic that goes out of
- * range of the 4-bit bitfields.
- */
-typedef struct __pmUnits {
-    int			dimSpace;	/* space dimension */
-    int			dimTime;	/* time dimension */
-    int			dimCount;	/* event dimension */
-    unsigned int	scaleSpace;	/* one of PM_SPACE_* */
-    unsigned int	scaleTime;	/* one of PM_TIME_* */
-    int			scaleCount;	/* one of PM_COUNT_* */
-} __pmUnits;
-
-/*
  * Parse a general "N $units" string into a pmUnits tuple and a multiplier.
  * @units can be a series of SCALE-UNIT^EXPONENT, each unit dimension appearing
  * at most once.
@@ -1288,6 +1305,23 @@ __pmParseUnitsStrPart(const char *str, const char *str_end, __pmUnits *out, doub
 	    continue;
 	}
 
+	/* match & skip over keyword (followed by space, ^, or EOL) */
+#define streqskip(q) (((ptr+strlen(q) <= str_end) &&        \
+                       (strncasecmp(ptr,q,strlen(q))==0) && \
+                       ((isspace((int)(*(ptr+strlen(q))))) ||      \
+                        (*(ptr+strlen(q))=='^') ||          \
+                        (ptr+strlen(q)==str_end)))          \
+                       ? (ptr += strlen(q), 1) : 0)
+
+	dimension = d_none;	/* classify dimension of base unit */
+
+	/*
+	 * extra units come first ...
+	 */
+	ptr = __pmParseExtraUnits(ptr, out);
+	if (ptr == str_end)
+	    break;
+
 	if (*ptr == '-' || *ptr == '.' || isdigit((int)(*ptr))) {
 	    /* possible floating-point number - parse with strtod(3). */
 	    char *newptr;
@@ -1302,16 +1336,6 @@ __pmParseUnitsStrPart(const char *str, const char *str_end, __pmUnits *out, doub
 	    *multiplier *= m;
 	    continue;
 	}
-
-	dimension = d_none;	/* classify dimension of base unit */
-
-	/* match & skip over keyword (followed by space, ^, or EOL) */
-#define streqskip(q) (((ptr+strlen(q) <= str_end) &&        \
-                       (strncasecmp(ptr,q,strlen(q))==0) && \
-                       ((isspace((int)(*(ptr+strlen(q))))) ||      \
-                        (*(ptr+strlen(q))=='^') ||          \
-                        (ptr+strlen(q)==str_end)))          \
-                       ? (ptr += strlen(q), 1) : 0)
 
 	/*
 	 * Parse base unit, only once per input string.  We don't support
@@ -1402,6 +1426,10 @@ pmParseUnitsStr(const char *str, pmUnits *out, double *multiplier, char **errMsg
     double dividend_mult, divisor_mult;
     __pmUnits dividend, divisor;
     int dim, sts;
+
+    if (pmDebugOptions.pmapi) {
+	fprintf(stderr, "pmParseUnitsStr(\"%s\", ..._ <", str);
+    }
 
     memset(out, 0, sizeof(*out));
 
@@ -1512,10 +1540,35 @@ pmParseUnitsStr(const char *str, pmUnits *out, double *multiplier, char **errMsg
 	    out->scaleTime = 0;
     }
 
+    /*
+     * extra units come from dividend only ... cannot appear in
+     * divisor because "dimension" is 0 or 1 (not -1) based on
+     * extraUnit value
+     * TODO how to enforce this?
+     */
+    out->extraUnit = dividend.extraUnit;
+    out->extraScale = dividend.extraScale;
+
 out:
     if (sts < 0) {
 	memset(out, 0, sizeof(*out));	/* clear partially filled in pmUnits */
 	*multiplier = 1.0;
     }
+
+    if (pmDebugOptions.pmapi) {
+	fprintf(stderr, ":> returns ");
+	if (sts >= 0) {
+	    fprintf(stderr, "%d [dimSpace=%d,dimTime=%d,dimCount=%d.scaleSpace=%d.scaleTime=%d.scaleCount=%d,extraUnit=%d,extraScale=%d]\n",
+	    sts,
+	    out->dimSpace, out->dimTime, out->dimCount,
+	    out->scaleSpace, out->scaleTime, out->scaleCount,
+	    out->extraUnit, out->extraScale);
+	}
+	else {
+	    char	errmsg[PM_MAXERRMSGLEN];
+	    fprintf(stderr, "%s\n", pmErrStr_r(sts, errmsg, sizeof(errmsg)));
+	}
+    }
+
     return sts;
 }

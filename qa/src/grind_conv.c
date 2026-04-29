@@ -20,8 +20,8 @@ main(int argc, char **argv)
 "\n"
 "iunit and ounit are in the 6-integer format:\n"
 "dimspace:dimtime:dimcount:scalespace:scaletime:scalecount\n";
-    pmUnits	iu;
-    pmUnits	ou;
+    pmUnits	iu = { 0 };
+    pmUnits	ou = { 0 };
     int		type;
     int		vbase;
     pmAtomValue	iv;

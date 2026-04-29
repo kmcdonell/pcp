@@ -110,9 +110,11 @@ typedef struct pmUnits {
     unsigned int	scaleSpace : 4;	/* one of PM_SPACE_* below */
     unsigned int	scaleTime : 4;	/* one of PM_TIME_* below */
     signed int		scaleCount : 4;	/* one of PM_COUNT_* below */
-    unsigned int	pad : 8;
+    int			extraUnit : 5;	/* code for extra unit from PM_UNITS_* below */
+    unsigned int	extraScale : 3;	/* scale for extra units */
 #else
-    unsigned int	pad : 8;
+    int			extraScale : 5;	/* scale for extra units */
+    unsigned int	extraUnit : 3;	/* code for extra unit from PM_UNITS_* below */
     signed int		scaleCount : 4;	/* one of PM_COUNT_* below */
     unsigned int	scaleTime : 4;	/* one of PM_TIME_* below */
     unsigned int	scaleSpace : 4;	/* one of PM_SPACE_* below */
@@ -145,6 +147,32 @@ typedef struct pmUnits {
  *    e.g. 6 for 10^6, or -3 for 10^-3
  */
 #define PM_COUNT_ONE	0	/* 1 */
+
+/*
+ * the extra unit types are mutually exclusive so at most one one of
+ * the following extraUnit values may be used for each metric
+ */
+#define PM_UNITS_TEMPERATURE	1
+#define PM_UNITS_VOLTAGE	2
+#define PM_UNITS_CURRENT	3
+#define PM_UNITS_POWER		4
+/*
+ * scale factors for extra units ... must be > 0 and <= 7 and
+ * unique for each extra unit type
+ */
+#define PM_TEMPERATURE_C	1	/* centigrade */
+#define PM_TEMPERATURE_F	2	/* farenheit */
+#define PM_TEMPERATURE_K	3	/* kelvin */
+#define PM_VOLTAGE_V		1	/* Volt */
+#define PM_VOLTAGE_mV		2	/* milli Volt */
+#define PM_VOLTAGE_uV		3	/* micro Volt */
+#define PM_CURRENT_A		1	/* Ampere */
+#define PM_CURRENT_mA		2	/* milli Ampere */
+#define PM_CURRENT_uA		3	/* micro Ampere */
+#define PM_POWER_kW		1	/* kilo Watt */
+#define PM_POWER_W		2	/* Watt */
+#define PM_POWER_mW		3	/* milli Watt */
+#define PM_POWER_uW		4	/* micro Watt */
 
 /* Performance Metric Descriptor */
 typedef struct pmDesc {

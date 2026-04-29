@@ -3,23 +3,21 @@
 
 #include <pcp/pmapi.h>
 
-#include <assert.h>
-// #define assert(c) if(!(c)) printf("%s\n", #c)
-
-
 void
-pmunits_roundtrip(int print_p, int d1, int d2, int d3, int s1, int s2, int s3)
+pmunits_roundtrip(int print_p, int ds, int dt, int dc, int ss, int st, int sc, int x1, int x2)
 {
-    pmUnits victim = {.dimSpace = d1,
-	.dimCount = d2,
-	.dimTime = d3,
-	.scaleSpace = s1,
-	.scaleCount = s2,
-	.scaleTime = s3
+    pmUnits victim = {.dimSpace = ds,
+	.dimTime = dt,
+	.dimCount = dc,
+	.scaleSpace = ss,
+	.scaleTime = st,
+	.scaleCount = sc,
+	.extraUnit = x1,
+	.extraScale = x2
     };
 
     char converted[100] = "";
-    char converted2[100] = "";
+    char convertedt[100] = "";
     pmUnits reversed;
     double reversed_multiplier;
     int sts;
@@ -27,25 +25,47 @@ pmunits_roundtrip(int print_p, int d1, int d2, int d3, int s1, int s2, int s3)
 
     (void) pmUnitsStr_r(&victim, converted, sizeof(converted));
     sts = pmParseUnitsStr(converted, &reversed, &reversed_multiplier, &errmsg);
-    (void) pmUnitsStr_r(&reversed, converted2, sizeof(converted2));
+    (void) pmUnitsStr_r(&reversed, convertedt, sizeof(convertedt));
 
     if (print_p)
-	printf("(%d,%d,%d,%d,%d,%d) => \"%s\" => conv rc %d%s%s => (%d,%d,%d,%d,%d,%d)*%g => \"%s\" \n",
-	       victim.dimSpace, victim.dimCount, victim.dimTime, victim.scaleSpace, victim.scaleCount, victim.scaleTime,
-	       converted, sts, (sts < 0 ? " " : ""), (sts < 0 ? errmsg : ""), reversed.dimSpace, reversed.dimCount,
-	       reversed.dimTime, reversed.scaleSpace, reversed.scaleCount, reversed.scaleTime, reversed_multiplier,
-	       converted2);
+	printf("(%d,%d,%d,%d,%d,%d,%d,%d) => \"%s\" => conv rc %d%s%s => (%d,%d,%d,%d,%d,%d,%d,%d)*%g => \"%s\" \n",
+	       victim.dimSpace, victim.dimTime, victim.dimCount,
+	       victim.scaleSpace, victim.scaleTime, victim.scaleCount,
+	       victim.extraUnit, victim.extraScale,
+	       converted, sts, (sts < 0 ? " " : ""), (sts < 0 ? errmsg : ""),
+	       reversed.dimSpace, reversed.dimTime, reversed.dimCount,
+	       reversed.scaleSpace, reversed.scaleTime, reversed.scaleCount,
+	       reversed.extraUnit, reversed.extraScale,
+	       reversed_multiplier,
+	       convertedt);
     else {
-	assert(sts == 0);
-	assert(strcmp(converted, converted2) == 0);
-	assert(reversed_multiplier == 1.0);	// FP equality ok
-	assert(reversed.dimSpace == victim.dimSpace);
-	assert(reversed.dimTime == victim.dimTime);
-	assert(reversed.scaleSpace == victim.scaleSpace);
-	assert(reversed.scaleTime == victim.scaleTime);
-	// The case of 'count' is more relaxed because of the ambiguity:
-	// "count x 10^6" => (dim=6 scale=1) or (scale=1 dim=6)
-	assert(reversed.dimCount * reversed.scaleCount == victim.dimCount * victim.scaleCount);
+	if (sts != 0) {
+	    printf("pmParseUnitsStr() -> %d (%s)\n", sts, pmErrStr(sts));
+	}
+	else {
+	    if (strcmp(converted, convertedt) != 0)
+		printf("string first \"%s\" != second \"%s\"\n", converted, convertedt);
+	    if (reversed_multiplier != 1.0)	// FP equality ok
+		printf("multiplier: %f != 1\n", reversed_multiplier);
+	    if (reversed.dimSpace != victim.dimSpace)
+		printf("dimSpace: in %d != out %d\n", victim.dimSpace, reversed.dimSpace);
+	    if (reversed.dimTime != victim.dimTime)
+		printf("dimTime: in %d != out %d\n", victim.dimTime, reversed.dimTime);
+	    // The case of 'count' is more relaxed because of the ambiguity:
+	    // "count x 10^6" => (dim=6 scale=1) or (scale=1 dim=6)
+	    if (reversed.dimCount * reversed.scaleCount != victim.dimCount * victim.scaleCount)
+		printf("dimCount: in %d * %d != %d * %d\n", victim.dimCount, victim.scaleCount, reversed.dimCount, reversed.scaleCount);
+	    if (reversed.scaleSpace != victim.scaleSpace)
+		printf("scaleSpace: in %d != out %d\n", victim.scaleSpace, reversed.scaleSpace);
+	    if (reversed.scaleTime != victim.scaleTime)
+		printf("scaleTime: in %d != out %d\n", victim.scaleTime, reversed.scaleTime);
+	    if (reversed.scaleCount != victim.scaleCount)
+		printf("scaleCount: in %d != out %d\n", victim.scaleCount, reversed.scaleCount);
+	    if (reversed.extraUnit != victim.extraUnit)
+		printf("extraUnit: in %d != out %d\n", victim.extraUnit, reversed.extraUnit);
+	    if (reversed.extraScale != victim.extraScale)
+		printf("extraScale: in %d != out %d\n", victim.extraScale, reversed.extraScale);
+	}
     }
 
     if (sts < 0)
@@ -54,20 +74,41 @@ pmunits_roundtrip(int print_p, int d1, int d2, int d3, int s1, int s2, int s3)
 
 
 void
-pmunits_roundtrip_all()
+pmunits_roundtrip_all(int print_p)
 {
-    int d1, d2, d3, s1, s2, s3;
+    int ds, dt, dc;
+    unsigned ss, st;
+    int sc;
+    unsigned x1 = 0, x2 = 0;
     unsigned k = 0;
 
-    for (d1 = -8; d1 < 8; d1++)
-	for (d2 = -8; d2 < 8; d2++)
-	    for (d3 = -8; d3 < 8; d3++)
-		for (s1 = 0; s1 < (d1 ? 16 : 0); s1++)	// scale X only if dim X
-		    for (s2 = -8; s2 < (d2 ? 8 : -8); s2++)
-			for (s3 = 0; s3 < (d3 ? 16 : 0); s3++) {
+    for (ds = -8; ds < 8; ds += 4) {
+	for (dt = -8; dt < 8; dt +=4) {
+	    for (dc = -8; dc < 8; dc +=4) {
+		// scale X only if dim X != 0
+		for (ss = 0; ss < (ds ? 16 : 0); ss += 4) {
+		    for (st = 0; st < (dt ? 16 : 0); st +=4) {
+			for (sc = -8; sc < (dc ? 8 : -8); sc +=4) {
 			    k++;
-			    pmunits_roundtrip(0, d1, d2, d3, s1, s2, s3);
+			    pmunits_roundtrip(print_p, ds, dt, dc, ss, st, sc, x1, x2);
+			    if (ds == 0 && dt == 0 && dc == 0) {
+				/* extra units */
+				x1 = PM_UNITS_TEMPERATURE;
+				pmunits_roundtrip(print_p, ds, dt, dc, ss, st, sc, x1, PM_TEMPERATURE_C);
+				k++;
+				pmunits_roundtrip(print_p, ds, dt, dc, ss, st, sc, x1, PM_TEMPERATURE_F);
+				k++;
+				pmunits_roundtrip(print_p, ds, dt, dc, ss, st, sc, x1, PM_TEMPERATURE_K);
+				k++;
+				x1 = 0;
+				x2 = 0;
+			    }
 			}
+		    }
+		}
+	    }
+	}
+    }
 
     printf("%u pmUnits tuples round-tripped.\n", k);
 }
@@ -85,27 +126,60 @@ pmunits_parse(const char *str)
     sts = pmParseUnitsStr(str, &reversed, &reversed_multiplier, &errmsg);
     (void) pmUnitsStr_r(&reversed, converted, sizeof(converted));
 
-    printf("\"%s\" => conv rc %d%s%s => (%d,%d,%d,%d,%d,%d)*%g => \"%s\"\n", str, sts, (sts < 0 ? " " : ""),
-	   (sts < 0 ? errmsg : ""), reversed.dimSpace, reversed.dimCount, reversed.dimTime, reversed.scaleSpace,
-	   reversed.scaleCount, reversed.scaleTime, reversed_multiplier, converted);
+    printf("\"%s\" => conv rc %d%s%s => (%d,%d,%d,%d,%d,%d,%d,%d)*%g => \"%s\"\n", str, sts, (sts < 0 ? " " : ""),
+	   (sts < 0 ? errmsg : ""),
+	   reversed.dimSpace, reversed.dimTime, reversed.dimCount,
+	   reversed.scaleSpace, reversed.scaleTime, reversed.scaleCount,
+	   reversed.extraUnit, reversed.extraScale,
+	   reversed_multiplier, converted);
 
     if (sts < 0)
 	free(errmsg);
 }
 
+static pmLongOptions longopts[] = {
+    PMOPT_DEBUG,	/* -D */
+    PMAPI_OPTIONS_END
+};
 
+static pmOptions opts = {
+    .short_options = "D:?",
+    .long_options = longopts,
+    .short_usage = "[options] ...",
+};
 
 int
 main(int argc, char *argv[])
 {
+    int		c;
+
+    pmSetProgname(argv[0]);
+
+    while ((c = pmGetOptions(argc, argv, &opts)) != EOF) {
+	;
+    }
+    argc -= opts.optind-1;
+    argv += opts.optind-1;
+
     if (argc == 8 && !strcmp(argv[1], "tuple"))
-	pmunits_roundtrip(1, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
-    else if (argc == 2 && !strcmp(argv[1], "scan"))
-	pmunits_roundtrip_all();
-    else if (argc == 3 && !strcmp(argv[1], "parse"))
+	pmunits_roundtrip(1, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), 0, 0);
+    else if (argc == 10 && !strcmp(argv[1], "tuple"))
+	pmunits_roundtrip(1, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), atoi(argv[8]), atoi(argv[9]));
+    else if (argc == 2 && strcmp(argv[1], "scan") == 0)
+	pmunits_roundtrip_all(0);
+    else if (argc == 2 && strcmp(argv[1], "debug-scan") == 0)
+	pmunits_roundtrip_all(1);
+    else if (argc == 3 && strcmp(argv[1], "parse") == 0)
 	pmunits_parse(argv[2]);
-    else
+    else {
+	fprintf(stderr, "Usage:\n");
+	fprintf(stderr, "    tuple dspace dtime dcount sspace stime scount\n");
+	fprintf(stderr, "or  tuple dspace dtime dcount sspace stime scount xunit xscale\n");
+	fprintf(stderr, "or  parse string\n");
+	fprintf(stderr, "or  scan\n");
+	fprintf(stderr, "or  debug-scan\n");
 	return -1;
+    }
 
     return 0;
 }
