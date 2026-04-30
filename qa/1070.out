@@ -2,7 +2,7 @@ QA output created by 1070
 == pmrep csv / sheet2pcp / pmrep csv roundtrip compatibility
 Test data to be used:
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -24,7 +24,7 @@ Diff of CSV files start (no output expected)
 Diff of CSV files end
 Test data from temp archive:
 
-  archive: 1070-archive
+   source: 1070-archive (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013

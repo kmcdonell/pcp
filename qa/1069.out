@@ -57,7 +57,7 @@ Incompatible metric tape.dev.io_ns (PM_ERR_INDOM_LOG Instance domain identifier 
 20:36:53                 1.000              1000.016
 ---
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -71,7 +71,7 @@ Incompatible metric tape.dev.io_ns (PM_ERR_INDOM_LOG Instance domain identifier 
         s/s            ms/s
 ---
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -252,7 +252,7 @@ Incompatible metric tape.dev.io_ns (PM_ERR_INDOM_LOG Instance domain identifier 
       1.000
 == exercise extended header
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -263,7 +263,7 @@ Incompatible metric tape.dev.io_ns (PM_ERR_INDOM_LOG Instance domain identifier 
  duration: 00:00:04
 
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:17:01 2013
@@ -274,7 +274,7 @@ Incompatible metric tape.dev.io_ns (PM_ERR_INDOM_LOG Instance domain identifier 
  duration: 23:58:41
 
 
-  archive: QAPATH/archives/bug-1044.meta
+   source: QAPATH/archives/bug-1044.meta (archive)
      host: super.elastic.org
  timezone: UTC-5
     start: Fri Jan 10 17:58:09 2014
@@ -423,7 +423,7 @@ No value set for error in [test1].
 Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 == exercise non-integer options
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -451,7 +451,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
      380440   380439679.413
 == exercise samples/interval/endtime settings and combinations
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -467,7 +467,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:46        N/A             N/A
 20:36:47      1.000        1000.216
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -501,7 +501,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:37:42      1.000        1000.004
 20:37:45      1.000         999.997
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -518,7 +518,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:47      1.000        1000.216
 20:36:48      1.000        1000.090
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -534,7 +534,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:48        N/A             N/A
 20:36:51      1.000         999.992
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -550,7 +550,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:46        N/A             N/A
 20:36:48      1.333        1000.132
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -567,7 +567,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:51      1.000         999.992
 20:36:54      1.000        1000.011
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -583,7 +583,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:45        N/A             N/A
 20:36:46      2.000        1000.216
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -599,7 +599,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:46        N/A             N/A
 20:36:47      1.000        1000.216
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -615,7 +615,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:46        N/A             N/A
 20:36:48      1.333        1000.132
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -631,7 +631,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:48        N/A             N/A
 20:36:51      1.000         999.992
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+10
     start: Mon May  1 20:36:45 2000
@@ -647,7 +647,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 20:36:49        N/A             N/A
 == exercise timezone setting
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+0
     start: Mon May  1 10:36:45 2000
@@ -665,7 +665,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 10:36:51      1.000        1000.001
 10:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+0
     start: Mon May  1 10:36:45 2000
@@ -683,7 +683,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 10:36:51      1.000        1000.001
 10:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+0
     start: Mon May  1 10:36:45 2000
@@ -701,7 +701,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 10:36:51      1.000        1000.001
 10:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+0
     start: Mon May  1 10:36:45 2000
@@ -719,7 +719,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 10:36:51      1.000        1000.001
 10:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+5
     start: Mon May  1 15:36:45 2000
@@ -737,7 +737,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 15:36:51      1.000        1000.001
 15:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC-5
     start: Mon May  1 05:36:45 2000
@@ -755,7 +755,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 05:36:51      1.000        1000.001
 05:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC-4
     start: Mon May  1 06:36:45 2000
@@ -773,7 +773,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 06:36:51      1.000        1000.001
 06:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+3
     start: Mon May  1 13:36:45 2000
@@ -791,7 +791,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 13:36:51      1.000        1000.001
 13:36:53      1.000        1000.016
 
-  archive: QAPATH/archives/sample-secs
+   source: QAPATH/archives/sample-secs (archive)
      host: rattle
  timezone: UTC+5:30
     start: Mon May  1 16:06:45 2000
@@ -809,7 +809,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 16:06:51      1.000        1000.001
 16:06:53      1.000        1000.016
 
-  archive: QAPATH/archives/numa
+   source: QAPATH/archives/numa (archive)
      host: localhost.localdomain
  timezone: UTC-4
     start: Tue Mar 10 08:35:53 2026
@@ -820,7 +820,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
  duration: 00:00:08
 
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -832,7 +832,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 
 == exercise timezone change
 
-  archive: QAPATH/archives/coverage
+   source: QAPATH/archives/coverage (archive)
      host: localhost.localdomain
  timezone: UTC+3
     start: Sun Oct 29 03:30:00 2017
@@ -861,7 +861,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 04:40:00   1854288
 04:45:00   1854228
 
-  archive: QAPATH/archives/coverage
+   source: QAPATH/archives/coverage (archive)
      host: localhost.localdomain
  timezone: UTC+0
     start: Sun Oct 29 00:30:00 2017
@@ -891,7 +891,7 @@ Incompatible metric sample.sysinfo (PM_ERR_TYPE Unknown or illegal metric type).
 01:45:00   1854228
 == exercise starttime handling / confirm no negative duration/samples
 
-  archive: QAPATH/archives/19970807.09.54
+   source: QAPATH/archives/19970807.09.54 (archive)
      host: gonzo
  timezone: UTC+0
     start: Thu Aug  7 22:59:00 1997
@@ -936,7 +936,7 @@ rattle;2;2000-05-01 20:36:49 UTC+10;380436;380435679.381
 rattle;2;2000-05-01 20:36:51 UTC+10;380438;380437679.382
 rattle;2;2000-05-01 20:36:53 UTC+10;380440;380439679.413
 == exercise CSV and instance handling
-Time,"hinv.map.scsi-scsi0:0:0:0 Direct-Access","hinv.map.scsi-scsi0:0:1:0 Direct-Access","hinv.map.scsi-scsi0:0:2:0 Direct-Access","hinv.map.scsi-scsi0:0:3:0 Direct-Access","hinv.map.scsi-scsi0:0:4:0 Direct-Access","kernel.all.load-1 minute","kernel.all.load-5 minute","kernel.all.load-15 minute"
+Time,"hinv.map.scsi[scsi0:0:0:0 Direct-Access]","hinv.map.scsi[scsi0:0:1:0 Direct-Access]","hinv.map.scsi[scsi0:0:2:0 Direct-Access]","hinv.map.scsi[scsi0:0:3:0 Direct-Access]","hinv.map.scsi[scsi0:0:4:0 Direct-Access]","kernel.all.load[1 minute]","kernel.all.load[5 minute]","kernel.all.load[15 minute]"
 2013-07-06 00:47:01,"sda","sdb","sdc","sdd","sde",0.820,0.700,0.590
 2013-07-06 00:47:03,"sda","sdb","sdc","sdd","sde",0.820,0.700,0.590
 2013-07-06 00:47:05,"sda","sdb","sdc","sdd","sde",0.820,0.700,0.590
@@ -1233,7 +1233,7 @@ Failed to read configuration file CONF_FILE:
 Unknown option mem.util.free in [options].
 No metrics specified.
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1244,7 +1244,7 @@ No metrics specified.
  duration: 00:00:00
 
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1255,7 +1255,7 @@ No metrics specified.
  duration: 00:00:00
 
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1273,7 +1273,7 @@ Unknown option mem.util.free in [options].
   yes  freemem
          Kbyte
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1289,7 +1289,7 @@ Failed to read configuration file CONF_FILE:
 Section [global] contains options.
 No metrics specified.
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1302,7 +1302,7 @@ No metrics specified.
   freemem
     Kbyte
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1315,7 +1315,7 @@ No metrics specified.
   freemem  usedmem
     Kbyte    Kbyte
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013
@@ -1328,7 +1328,7 @@ No metrics specified.
   usedmem
     Kbyte
 
-  archive: QAPATH/archives/20130706-a
+   source: QAPATH/archives/20130706-a (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:47:01 2013

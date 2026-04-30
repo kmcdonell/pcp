@@ -9,15 +9,15 @@ Writing output from the created archives to files
 Diff of outputs start (only path / minor timestamp diff expected):
 @@ -1,5 +1,5 @@
  
--  archive: QAPATH/archives/rep
-+  archive: temp-archive
+-   source: QAPATH/archives/rep (archive)
++   source: TMP.new_archive1 (archive)
       host: slack
   timezone: UTC+11
      start: Wed Feb 10 14:39:13 2016
 @@ -1,13 +1,13 @@
  
--  archive: QAPATH/archives/20130706-a
-+  archive: temp-archive
+-   source: QAPATH/archives/20130706-a (archive)
++   source: TMP.new_archive2 (archive)
       host: billing02
   timezone: UTC+10
 -    start: Sat Jul  6 00:27:01 2013
@@ -37,7 +37,7 @@ Diff of outputs end
 Recording 1 metrics to TMP.new_archive3:
 5 samples(s) with 1.0 sec interval ~ 4 sec duration.
 
-  archive: temp-archive
+   source: TMP.new_archive3 (archive)
      host: billing02
  timezone: UTC+10
     start: Sat Jul  6 00:28:01 2013
