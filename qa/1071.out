@@ -1,7 +1,7 @@
 QA output created by 1071
 == testing default metrics reporting
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -19,7 +19,7 @@ QA output created by 1071
 14:39:16         Linux         linux         15708      13573256             0        507692             8      16053852             3
 14:39:17           N/A         linux           N/A           N/A           N/A           N/A             8      16053852             3
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -39,7 +39,7 @@ QA output created by 1071
 14:39:17            20    3168713760           100           N/A           N/A           N/A           N/A     5587.4199     2800.1089   781261.9375
 == testing raw metrics reporting
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -57,7 +57,7 @@ QA output created by 1071
 14:39:16         Linux         linux         15708      13573256             0        507692             8      16053852             3
 14:39:17           N/A         linux           N/A           N/A           N/A           N/A             8      16053852             3
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -77,7 +77,7 @@ QA output created by 1071
 14:39:17            20    3168713760           100           N/A           N/A           N/A           N/A     5587.4199     2800.1089   781261.9375
 == testing uninterpolated metrics reporting
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -95,7 +95,7 @@ QA output created by 1071
 14:39:16         Linux         linux         15708      13573256             0        507692             8      16053852             3
 14:39:17         Linux         linux         15710      13573800             0        507693             8      16053852             3
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -115,7 +115,7 @@ QA output created by 1071
 14:39:17            20    3168713760           100        0.0000        2.0002        0.0000        0.0800     5587.4199     2800.1089   781261.9375
 == testing uninterpolated raw metrics reporting
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016
@@ -133,7 +133,7 @@ QA output created by 1071
 14:39:16         Linux         linux         15708      13573256             0        507692             8      16053852             3
 14:39:17         Linux         linux         15710      13573800             0        507693             8      16053852             3
 
-  archive: QAPATH/archives/rep
+   source: QAPATH/archives/rep (archive)
      host: slack
  timezone: UTC+11
     start: Wed Feb 10 14:39:13 2016

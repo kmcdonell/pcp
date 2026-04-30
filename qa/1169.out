@@ -64,7 +64,7 @@ QA output created by 1169
 00:00:19     1.000      1.000
 == stdout/std test with extended header
 
-  archive: QAPATH/archives/dyninsts
+   source: QAPATH/archives/dyninsts (archive)
      host: localhost
  timezone: UTC+0
     start: Thu Jan  1 00:00:00 1970
@@ -252,7 +252,7 @@ QA output created by 1169
 00:00:19     1.000     1.000
 == stdout/std test with extended/repeating/separate header
 
-  archive: QAPATH/archives/dyninsts
+   source: QAPATH/archives/dyninsts (archive)
      host: localhost
  timezone: UTC+0
     start: Thu Jan  1 00:00:00 1970
@@ -479,7 +479,7 @@ QA output created by 1169
 00:00:19   sdb     1.000      1.000
 == stdout/colxrow test with extended header
 
-  archive: QAPATH/archives/dyninsts
+   source: QAPATH/archives/dyninsts (archive)
      host: localhost
  timezone: UTC+0
     start: Thu Jan  1 00:00:00 1970
@@ -737,7 +737,7 @@ QA output created by 1169
 00:00:19   sdb     1.000     1.000
 == stdout/colxrow test with extended/repeating/separate header
 
-  archive: QAPATH/archives/dyninsts
+   source: QAPATH/archives/dyninsts (archive)
      host: localhost
  timezone: UTC+0
     start: Thu Jan  1 00:00:00 1970
@@ -937,67 +937,67 @@ QA output created by 1169
 00:00:03     =         ~          ~    ~         3
 == csv test
 1970-01-01 00:00:00
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.write-sda","disk.dev.write-sdb"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]"
 1970-01-01 00:00:01,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.write-sda","disk.dev.write-sdb","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]","mem.util.used"
 1970-01-01 00:00:02,1.000,1.000,1.000,1.000,2
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:03,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,3
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.write-sdb","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:04,1.000,1.000,1.000,1.000,4
 1970-01-01 00:00:05,1.000,1.000,1.000,1.000,5
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.write-sdb","disk.dev.write-sdd"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:06,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sdb","disk.dev.write-sdd"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:07,1.000,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sdb","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:08,1.000,1.000,1.000,1.000,1.000,8
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","disk.dev.write-sde","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:09,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,9
 1970-01-01 00:00:10,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,10
 1970-01-01 00:00:11,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,11
 1970-01-01 00:00:12,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,12
-Time,"disk.dev.read-sda","disk.dev.read-sdc","disk.dev.write-sda","disk.dev.write-sdc","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdc]","disk.dev.write[sda]","disk.dev.write[sdc]","mem.util.used"
 1970-01-01 00:00:13,1.000,1.000,1.000,1.000,13
 1970-01-01 00:00:14,1.000,1.000,1.000,1.000,14
 1970-01-01 00:00:17
-Time,"disk.dev.read-sdb"
+Time,"disk.dev.read[sdb]"
 1970-01-01 00:00:18,1.000
-Time,"disk.dev.read-sdb","disk.dev.write-sdb"
+Time,"disk.dev.read[sdb]","disk.dev.write[sdb]"
 1970-01-01 00:00:19,1.000,1.000
 == csv test with units in header (-U)
 1970-01-01 00:00:00
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]"
 1970-01-01 00:00:01,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]","mem.util.used"
 1970-01-01 00:00:02,1.000,1.000,1.000,1.000,2
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:03,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,3
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:04,1.000,1.000,1.000,1.000,4
 1970-01-01 00:00:05,1.000,1.000,1.000,1.000,5
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:06,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:07,1.000,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:08,1.000,1.000,1.000,1.000,1.000,8
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","disk.dev.write-sde(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:09,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,9
 1970-01-01 00:00:10,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,10
 1970-01-01 00:00:11,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,11
 1970-01-01 00:00:12,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,12
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdc(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdc(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdc]","disk.dev.write[sda]","disk.dev.write[sdc]","mem.util.used"
 1970-01-01 00:00:13,1.000,1.000,1.000,1.000,13
 1970-01-01 00:00:14,1.000,1.000,1.000,1.000,14
 1970-01-01 00:00:17
-Time,"disk.dev.read-sdb(count/s)"
+Time,"disk.dev.read[sdb]"
 1970-01-01 00:00:18,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.write[sdb]"
 1970-01-01 00:00:19,1.000,1.000
 == csv test with extended header
 #
-#  archive: QAPATH/archives/dyninsts
+#   source: QAPATH/archives/dyninsts (archive)
 #     host: localhost
 # timezone: UTC+0
 #    start: Thu Jan  1 00:00:00 1970
@@ -1009,69 +1009,69 @@ Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
 #
 == csv test with repeating header
 1970-01-01 00:00:00
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.write-sda","disk.dev.write-sdb"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]"
 1970-01-01 00:00:01,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.write-sda","disk.dev.write-sdb","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]","mem.util.used"
 1970-01-01 00:00:02,1.000,1.000,1.000,1.000,2
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:03,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,3
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.write-sdb","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:04,1.000,1.000,1.000,1.000,4
 1970-01-01 00:00:05,1.000,1.000,1.000,1.000,5
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.write-sdb","disk.dev.write-sdd"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:06,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sdb","disk.dev.write-sdd"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:07,1.000,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sdb","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:08,1.000,1.000,1.000,1.000,1.000,8
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","disk.dev.write-sde","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:09,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,9
 1970-01-01 00:00:10,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,10
 1970-01-01 00:00:11,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,11
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","disk.dev.write-sde","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:12,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,12
-Time,"disk.dev.read-sda","disk.dev.read-sdc","disk.dev.write-sda","disk.dev.write-sdc","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdc]","disk.dev.write[sda]","disk.dev.write[sdc]","mem.util.used"
 1970-01-01 00:00:13,1.000,1.000,1.000,1.000,13
 1970-01-01 00:00:14,1.000,1.000,1.000,1.000,14
 1970-01-01 00:00:17
-Time,"disk.dev.read-sdb"
+Time,"disk.dev.read[sdb]"
 1970-01-01 00:00:18,1.000
-Time,"disk.dev.read-sdb","disk.dev.write-sdb"
+Time,"disk.dev.read[sdb]","disk.dev.write[sdb]"
 1970-01-01 00:00:19,1.000,1.000
 == csv test with repeating header with units (-U)
 1970-01-01 00:00:00
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]"
 1970-01-01 00:00:01,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]","mem.util.used"
 1970-01-01 00:00:02,1.000,1.000,1.000,1.000,2
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:03,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,3
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:04,1.000,1.000,1.000,1.000,4
 1970-01-01 00:00:05,1.000,1.000,1.000,1.000,5
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:06,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:07,1.000,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:08,1.000,1.000,1.000,1.000,1.000,8
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","disk.dev.write-sde(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:09,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,9
 1970-01-01 00:00:10,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,10
 1970-01-01 00:00:11,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,11
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","disk.dev.write-sde(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:12,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,12
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdc(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdc(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdc]","disk.dev.write[sda]","disk.dev.write[sdc]","mem.util.used"
 1970-01-01 00:00:13,1.000,1.000,1.000,1.000,13
 1970-01-01 00:00:14,1.000,1.000,1.000,1.000,14
 1970-01-01 00:00:17
-Time,"disk.dev.read-sdb(count/s)"
+Time,"disk.dev.read[sdb]"
 1970-01-01 00:00:18,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.write[sdb]"
 1970-01-01 00:00:19,1.000,1.000
 == csv test with extended/repeating header
 #
-#  archive: QAPATH/archives/dyninsts
+#   source: QAPATH/archives/dyninsts (archive)
 #     host: localhost
 # timezone: UTC+0
 #    start: Thu Jan  1 00:00:00 1970
@@ -1082,38 +1082,38 @@ Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
 # duration: 00:00:19
 #
 1970-01-01 00:00:00
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.write-sda","disk.dev.write-sdb"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]"
 1970-01-01 00:00:01,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.write-sda","disk.dev.write-sdb","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]","mem.util.used"
 1970-01-01 00:00:02,1.000,1.000,1.000,1.000,2
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:03,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,3
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.write-sdb","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:04,1.000,1.000,1.000,1.000,4
 1970-01-01 00:00:05,1.000,1.000,1.000,1.000,5
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.write-sdb","disk.dev.write-sdd"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:06,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sdb","disk.dev.write-sdd"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:07,1.000,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sdb","disk.dev.write-sdd","mem.util.used"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:08,1.000,1.000,1.000,1.000,1.000,8
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","disk.dev.write-sde","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:09,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,9
 1970-01-01 00:00:10,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,10
 1970-01-01 00:00:11,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,11
-Time,"disk.dev.read-sda","disk.dev.read-sdb","disk.dev.read-sdc","disk.dev.read-sdd","disk.dev.read-sde","disk.dev.write-sda","disk.dev.write-sdb","disk.dev.write-sdc","disk.dev.write-sdd","disk.dev.write-sde","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:12,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,12
-Time,"disk.dev.read-sda","disk.dev.read-sdc","disk.dev.write-sda","disk.dev.write-sdc","mem.util.used"
+Time,"disk.dev.read[sda]","disk.dev.read[sdc]","disk.dev.write[sda]","disk.dev.write[sdc]","mem.util.used"
 1970-01-01 00:00:13,1.000,1.000,1.000,1.000,13
 1970-01-01 00:00:14,1.000,1.000,1.000,1.000,14
 1970-01-01 00:00:17
-Time,"disk.dev.read-sdb"
+Time,"disk.dev.read[sdb]"
 1970-01-01 00:00:18,1.000
-Time,"disk.dev.read-sdb","disk.dev.write-sdb"
+Time,"disk.dev.read[sdb]","disk.dev.write[sdb]"
 1970-01-01 00:00:19,1.000,1.000
 == csv test with extended/repeating header with units (-U)
 #
-#  archive: QAPATH/archives/dyninsts
+#   source: QAPATH/archives/dyninsts (archive)
 #     host: localhost
 # timezone: UTC+0
 #    start: Thu Jan  1 00:00:00 1970
@@ -1124,34 +1124,34 @@ Time,"disk.dev.read-sdb","disk.dev.write-sdb"
 # duration: 00:00:19
 #
 1970-01-01 00:00:00
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]"
 1970-01-01 00:00:01,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.write[sda]","disk.dev.write[sdb]","mem.util.used"
 1970-01-01 00:00:02,1.000,1.000,1.000,1.000,2
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:03,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,3
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:04,1.000,1.000,1.000,1.000,4
 1970-01-01 00:00:05,1.000,1.000,1.000,1.000,5
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:06,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]"
 1970-01-01 00:00:07,1.000,1.000,1.000,1.000,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdd(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sdb]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sdb]","disk.dev.write[sdd]","mem.util.used"
 1970-01-01 00:00:08,1.000,1.000,1.000,1.000,1.000,8
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","disk.dev.write-sde(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:09,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,9
 1970-01-01 00:00:10,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,10
 1970-01-01 00:00:11,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,11
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdb(count/s)","disk.dev.read-sdc(count/s)","disk.dev.read-sdd(count/s)","disk.dev.read-sde(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdb(count/s)","disk.dev.write-sdc(count/s)","disk.dev.write-sdd(count/s)","disk.dev.write-sde(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdb]","disk.dev.read[sdc]","disk.dev.read[sdd]","disk.dev.read[sde]","disk.dev.write[sda]","disk.dev.write[sdb]","disk.dev.write[sdc]","disk.dev.write[sdd]","disk.dev.write[sde]","mem.util.used"
 1970-01-01 00:00:12,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,1.000,12
-Time,"disk.dev.read-sda(count/s)","disk.dev.read-sdc(count/s)","disk.dev.write-sda(count/s)","disk.dev.write-sdc(count/s)","mem.util.used(Kbyte)"
+Time,"disk.dev.read[sda]","disk.dev.read[sdc]","disk.dev.write[sda]","disk.dev.write[sdc]","mem.util.used"
 1970-01-01 00:00:13,1.000,1.000,1.000,1.000,13
 1970-01-01 00:00:14,1.000,1.000,1.000,1.000,14
 1970-01-01 00:00:17
-Time,"disk.dev.read-sdb(count/s)"
+Time,"disk.dev.read[sdb]"
 1970-01-01 00:00:18,1.000
-Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
+Time,"disk.dev.read[sdb]","disk.dev.write[sdb]"
 1970-01-01 00:00:19,1.000,1.000
 == fixed header test
           test  d.d.read  d.d.write  m.u.used
@@ -1217,7 +1217,7 @@ Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
 00:00:19   sdb     1.000      1.000         ~
 == fixed header test with extended header
 
-  archive: QAPATH/archives/dyninsts
+   source: QAPATH/archives/dyninsts (archive)
      host: localhost
  timezone: UTC+0
     start: Thu Jan  1 00:00:00 1970
@@ -1373,7 +1373,7 @@ Time,"disk.dev.read-sdb(count/s)","disk.dev.write-sdb(count/s)"
 00:00:19   sdb     1.000     1.000         ~
 == fixed header test with extended/repeating/separate header
 
-  archive: QAPATH/archives/dyninsts
+   source: QAPATH/archives/dyninsts (archive)
      host: localhost
  timezone: UTC+0
     start: Thu Jan  1 00:00:00 1970
