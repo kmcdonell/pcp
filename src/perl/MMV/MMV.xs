@@ -255,7 +255,7 @@ mmv_units(dim_space,dim_time,dim_count,scale_space,scale_time,scale_count)
     PREINIT:
 	pmUnits			units;
     CODE:
-	units.pad = 0;
+	units.extraUnit = units.extraScale = 0;
 	units.dimSpace = dim_space;	units.scaleSpace = scale_space;
 	units.dimTime = dim_time;	units.scaleTime = scale_time;
 	units.dimCount = dim_count;	units.scaleCount = scale_count;
