@@ -117,16 +117,10 @@ create_pcp_metric(char* key, struct metric* item, pmdaExt* pmda) {
     } else {
         new_metric->m_desc.sem = PM_SEM_INSTANT;
     }
+    memset(&new_metric->m_desc.units, 0, sizeof(pmUnits));
     if (item->type == METRIC_TYPE_DURATION) {
-        new_metric->m_desc.units.dimSpace = 0;
-        new_metric->m_desc.units.dimCount = 0;
-        new_metric->m_desc.units.pad = 0;
-        new_metric->m_desc.units.scaleSpace = 0;
         new_metric->m_desc.units.dimTime = 1;
         new_metric->m_desc.units.scaleTime = PM_TIME_MSEC;
-        new_metric->m_desc.units.scaleCount = 1;
-    } else {
-        memset(&new_metric->m_desc.units, 0, sizeof(pmUnits));
     }
     item->meta->pmid = newpmid;
     VERBOSE_LOG(
@@ -939,7 +933,6 @@ statsd_resolve_dynamic_metric_fetch(pmdaMetric* mdesc, unsigned int instance, pm
     int is_default_domain = (serial == STATSD_METRIC_DEFAULT_INDOM) ||
                             (serial == STATSD_METRIC_DEFAULT_DURATION_INDOM);
     int status = PM_ERR_INST;
-    enum DURATION_INSTANCE duration_stat;
     // metrics without any labels
     if (is_default_domain) {
         pthread_mutex_lock(&data->metrics_storage->mutex);
