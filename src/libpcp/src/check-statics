@@ -356,6 +356,8 @@ extraunits.o
     ?power_scale		# const
     ?extra			# const
     ?nextra			# const
+    ?onetrip			# one-trip initialization then read-only
+    ?known_domain		# one-trip initialization then read-only
 fault.o
 fetchlocal.o
     splitlist			# single-threaded PM_SCOPE_DSO_PMDA

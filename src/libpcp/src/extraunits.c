@@ -17,17 +17,16 @@
 #include "pmapi.h"
 #include "libpcp.h"
 #include "internal.h"
+#include <ctype.h>
 
 typedef struct {
     int		ident;		/* one of the PM_<unit>_* values */
     char	*text;		/* per-scale text to be inserted in unit description */
-    int		TODO;
 } scale_map_t;
 
 typedef struct {
     int			type;		/* one of the PM_UNIT_* values */
-    char		*pre;		/* string up to scale text for unit description */
-    char		*post;		/* string after scale text for unit description */
+    char		*name;		/* unit name */
     int			nscale;		/* number of scales */
     const scale_map_t	*scale;		/* scales map */
 } unit_t;
@@ -58,10 +57,10 @@ const scale_map_t	power_scale[] = {
 };
 
 static const unit_t extra[] = {
-    { PM_UNITS_TEMPERATURE, "temperature (", ")", sizeof(temperature_scale)/sizeof(temperature_scale[0]), temperature_scale },
-    { PM_UNITS_VOLTAGE, "voltage (", ")", sizeof(voltage_scale)/sizeof(voltage_scale[0]), voltage_scale },
-    { PM_UNITS_CURRENT, "current (", ")", sizeof(current_scale)/sizeof(current_scale[0]), current_scale },
-    { PM_UNITS_POWER, "power (", ")", sizeof(power_scale)/sizeof(power_scale[0]), power_scale },
+    { PM_UNITS_TEMPERATURE, "temperature", sizeof(temperature_scale)/sizeof(temperature_scale[0]), temperature_scale },
+    { PM_UNITS_VOLTAGE, "voltage", sizeof(voltage_scale)/sizeof(voltage_scale[0]), voltage_scale },
+    { PM_UNITS_CURRENT, "current", sizeof(current_scale)/sizeof(current_scale[0]), current_scale },
+    { PM_UNITS_POWER, "power", sizeof(power_scale)/sizeof(power_scale[0]), power_scale },
 };
 
 static const int nextra = sizeof(extra)/sizeof(extra[0]);
@@ -88,12 +87,12 @@ __pmExtraUnitsStr(const pmUnits *pu, char *buf, size_t buflen)
     }
     for (s = 0; s < extra[u].nscale; s++) {
 	if (pu->extraScale == extra[u].scale[s].ident) {
-	    pmsprintf(buf, buflen, "%s%s%s", extra[u].pre, extra[u].scale[s].text, extra[u].post);
+	    pmsprintf(buf, buflen, "%s (%s)", extra[u].name, extra[u].scale[s].text);
 	    return;
 	}
     }
     /* unknown extraScale */
-    pmsprintf(buf, buflen, "%sscale-%d%s", extra[u].pre, pu->extraScale, extra[u].post);
+    pmsprintf(buf, buflen, "%s (scale-%d)", extra[u].name, pu->extraScale);
     return;
 }
 
@@ -111,11 +110,17 @@ __pmParseExtraUnits(const char *buf, __pmUnits *pu)
     int		s;	/* scale selector */
 
     for (u = 0; u < nextra; u++) {
-	if (extra[u].pre == NULL || strncasecmp(ptr, extra[u].pre, strlen(extra[u].pre)) == 0) {
-	    /* matched prefix */
-	    if (ptr[strlen(extra[u].pre)] == '\0')
+	if (strncasecmp(ptr, extra[u].name, strlen(extra[u].name)) == 0) {
+	    /* matched name */
+	    if (ptr[strlen(extra[u].name)] == '\0')
 		continue;
-	    ptr += strlen(extra[u].pre);
+	    ptr += strlen(extra[u].name);
+	    /* check for " (" separator */
+	    if (*ptr != ' ')
+		continue;
+	    ptr++;
+	    if (*ptr != '(')
+		continue;
 	    for (s = 0; s < extra[u].nscale; s++) {
 fprintf(stderr, "%s %s %d\n", extra[u].scale[s].text, ptr, (int)strncasecmp(ptr, extra[u].scale[s].text, strlen(extra[u].scale[s].text)));
 		if (strncasecmp(ptr, extra[u].scale[s].text, strlen(extra[u].scale[s].text)) == 0) {
@@ -123,10 +128,9 @@ fprintf(stderr, "%s %s %d\n", extra[u].scale[s].text, ptr, (int)strncasecmp(ptr,
 		    if (ptr[strlen(extra[u].scale[s].text)] == '\0')
 			continue;
 		    ptr += strlen(extra[u].scale[s].text);
-fprintf(stderr, "%s %s %d\n", extra[u].post, ptr, (int)strncasecmp(ptr, extra[u].post, strlen(extra[u].post)));
-		    if (extra[u].post == NULL || strncasecmp(ptr, extra[u].post, strlen(extra[u].post)) == 0) {
-			/* matched postfix */
-			ptr += strlen(extra[u].post);
+		    if (*ptr == ')') {
+			/* matched trailing ) */
+			ptr++;
 			pu->extraUnit = extra[u].type;
 			pu->extraScale = extra[u].scale[s].ident;
 fprintf(stderr, "%s\n", ptr);
@@ -141,4 +145,261 @@ fprintf(stderr, "%s\n", ptr);
     }
 
     return buf;
+}
+
+static int
+append(char **buf, size_t *buflen, char *preamble, char *new)
+{
+    char	*buf_tmp;
+
+    if (*buflen == 0) {
+	if ((buf_tmp = (char *)malloc(1)) == NULL)
+	    return -1;
+	*buf = buf_tmp;
+	**buf = '\0';
+	*buflen = 1;
+    }
+    if (preamble != NULL)
+	*buflen += strlen(preamble);
+    *buflen += strlen(new);
+    if ((buf_tmp = (char *)realloc(*buf, *buflen)) == NULL)
+	return -1;
+    *buf = buf_tmp;
+    if (preamble != NULL)
+	pmstrncat(*buf, *buflen, preamble);
+    pmstrncat(*buf, *buflen, new);
+
+    return 0;
+}
+
+/*
+ * Check the integrity of a pmDesc
+ *
+ * Returns 0 if OK else 1 if problem found else < 0 for fatal error
+ * (most likely NOMEM).
+ *
+ * If an issue is found then errmsg also returns one or more lines of
+ * explanation messages (each terminated by a newline) and the caller
+ * must call free() to release the allocation for the message(s).
+ * If preamble is not NULL then this text is prefixed before each
+ * message line.
+ */
+int __pmCheckDesc(pmDesc *dp, char *preamble, char **errmsg)
+{
+    int			sts = 0;
+    char		*err = NULL;
+    size_t		errlen = 0;
+    char		buf[MAXPATHLEN];
+    static int		known_domain[512];
+    static int		onetrip = 0;	/* state of known_domain[] */
+
+    if (onetrip == 0) {
+	/* load known_domain[] from $PCP_VAR_DIR/pmns/stdpmid */
+	int	sep = pmPathSeparator();
+	FILE	*f;
+	char	*p;
+
+	pmsprintf(buf, sizeof(buf), "%s%cpmns%cstdpmid", pmGetConfig("PCP_VAR_DIR"), sep, sep);
+	if ((f = fopen(buf, "r")) == NULL) {
+	    fprintf(stderr, "__pmCheckDesc: fopen(\"%s\", ...) failed: domain checks skipped\n", buf);
+	    onetrip = -1;
+	}
+	else {
+	    int		domain;
+	    onetrip = 1;
+	    while (fgets(buf, sizeof(buf), f) != NULL) {
+		if (strncmp(buf, "#define ", 8) != 0)
+		    continue;
+		p = buf;
+		/* #define */
+		while (*p && !isspace(*p))
+		    p++;
+		/* white space */
+		while (*p && isspace(*p))
+		    p++;
+		/* domain name */
+		while (*p && !isspace(*p))
+		    p++;
+		/* white space */
+		while (*p && isspace(*p))
+		    p++;
+		domain = atoi(p);
+		if (domain > 0 && domain < 511)
+		    known_domain[domain] = 1;
+	    }
+	    fclose(f);
+	    known_domain[DYNAMIC_PMID] = 1;	/* dynamic metrics */
+	}
+    }
+
+    if (onetrip == 1) {
+	if (known_domain[pmID_domain(dp->pmid)] == 0) {
+	    pmsprintf(buf, sizeof(buf), "Warning: domain (%d) in metric pmid (%s) is not recognized\n", pmID_domain(dp->pmid), pmIDStr(dp->pmid));
+	    if (append(&err, &errlen, preamble, buf) < 0) {
+		sts = -ENOMEM;
+		goto done;
+	    }
+	    sts = 1;
+	}
+    }
+
+    /* if PM_TYPE_NOSUPPORT => no other metadata can be checked */
+    if (dp->type == PM_TYPE_NOSUPPORT)
+	goto done;
+
+    if (dp->indom != PM_INDOM_NULL) {
+	if (onetrip == 1) {
+	    if (known_domain[pmInDom_domain(dp->indom)] == 0) {
+		pmsprintf(buf, sizeof(buf), "Warning: domain (%d) in metric indom (%s) is not recognized\n", pmInDom_domain(dp->indom), pmInDomStr(dp->indom));
+		if (append(&err, &errlen, preamble, buf) < 0) {
+		    sts = -ENOMEM;
+		    goto done;
+		}
+		sts = 1;
+	    }
+	}
+	if (pmID_domain(dp->pmid) != DYNAMIC_PMID &&
+	    pmID_domain(dp->pmid) != pmInDom_domain(dp->indom)) {
+	    pmsprintf(buf, sizeof(buf), "Warning: domain (%d) in metric pmid (%s) different to domain (%d) in metric indom (%s)\n", pmID_domain(dp->pmid), pmIDStr(dp->pmid), pmInDom_domain(dp->indom), pmInDomStr(dp->indom));
+	    if (append(&err, &errlen, preamble, buf) < 0) {
+		sts = -ENOMEM;
+		goto done;
+	    }
+	    sts = 1;
+	}
+    }
+
+    if (dp->type < PM_TYPE_32 || dp->type > PM_TYPE_HIGHRES_EVENT) {
+	pmsprintf(buf, sizeof(buf), "Error: metric type (%d) is not one of the valid PM_TYPE_* values\n", dp->type);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+
+    if (dp->sem != PM_SEM_COUNTER && dp->sem != PM_SEM_INSTANT && dp->sem != PM_SEM_DISCRETE) {
+	pmsprintf(buf, sizeof(buf), "Error: metric semantics (%d) is not one of the valid PM_SEM_* values\n", dp->sem);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+
+    /*
+     * Heuristic ... for regular units, dimension should really be
+     * in the range -2,2 (inclusive)
+     */
+    if (dp->units.dimSpace < -2 || dp->units.dimSpace > 2) {
+	pmsprintf(buf, sizeof(buf), "Warning: unusual dimension (%d) for Space in pmUnits\n", dp->units.dimSpace);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+    if (dp->units.dimTime < -2 || dp->units.dimTime > 2) {
+	pmsprintf(buf, sizeof(buf), "Warning: unusual dimension (%d) for Time in pmUnits\n", dp->units.dimTime);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+    if (dp->units.dimCount < -2 || dp->units.dimCount > 2) {
+	pmsprintf(buf, sizeof(buf), "Warning: unusual dimension (%d) for Count in pmUnits\n", dp->units.dimCount);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+
+    /*
+     * only Space and Time have sensible upper bounds, but if dimension
+     * is 0, scale should also be 0
+     */
+    if (dp->units.dimSpace == 0 && dp->units.scaleSpace != 0) {
+	pmsprintf(buf, sizeof(buf), "Error: non-zero scale (%d) with zero dimension for Space in pmUnits\n", dp->units.scaleSpace);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+    if (dp->units.scaleSpace > PM_SPACE_EBYTE) {
+	pmsprintf(buf, sizeof(buf), "Error: scale (%d) for Space in pmUnits is not one of the valid PM_SPACE_* values\n", dp->units.scaleSpace);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+    if (dp->units.dimTime == 0 && dp->units.scaleTime != 0) {
+	pmsprintf(buf, sizeof(buf), "Error: non-zero scale (%d) with zero dimension for Time in pmUnits\n", dp->units.scaleTime);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+    if (dp->units.scaleTime > PM_TIME_HOUR) {
+	pmsprintf(buf, sizeof(buf), "Error: scale (%d) for Time in pmUnits is not one of the valid PM_SPACE_* values\n", dp->units.scaleTime);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+    if (dp->units.dimCount == 0 && dp->units.scaleCount != 0) {
+	pmsprintf(buf, sizeof(buf), "Error: non-zero scale (%d) with zero dimension for Count in pmUnits\n", dp->units.scaleCount);
+	if (append(&err, &errlen, preamble, buf) < 0) {
+	    sts = -ENOMEM;
+	    goto done;
+	}
+	sts = 1;
+    }
+
+    if (dp->units.extraUnit != 0) {
+	int		u;	/* index into extra[] */
+	int		s;	/* scale selector */
+
+	for (u = 0; u < nextra; u++) {
+	    if (dp->units.extraUnit == extra[u].type)
+		break;
+	}
+	if (u < nextra) {
+	    for (s = 0; s < extra[u].nscale; s++) {
+		if (dp->units.extraScale == extra[u].scale[s].ident)
+		    break;
+	    }
+	    if (s == extra[u].nscale) {
+		char	macro[20];	/* 12 is enough for temperature\0 */
+		char	*p, *q;
+		for (q = extra[u].name, p = macro; *q; )
+		    *p++ = toupper(*q++);
+		*p = '\0';
+		pmsprintf(buf, sizeof(buf), "Error: extraScale (%d) in pmUnits is not one of the valid PM_%s_* values\n", dp->units.extraScale, macro);
+		if (append(&err, &errlen, preamble, buf) < 0) {
+		    sts = -ENOMEM;
+		    goto done;
+		}
+		sts = 1;
+	    }
+	}
+	else {
+	    pmsprintf(buf, sizeof(buf), "Error: extraUnit (%d) in pmUnits is not one of the valid PM_UNITS_* values\n", dp->units.extraUnit);
+	    if (append(&err, &errlen, preamble, buf) < 0) {
+		sts = -ENOMEM;
+		goto done;
+	    }
+	    sts = 1;
+	}
+    }
+
+done:
+    if (err != NULL)
+	*errmsg = err;
+    return sts;
 }
