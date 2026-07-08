@@ -15,3 +15,35 @@ ExecStart=@PCP_BINADM_DIR@/pmlogger_check --noerror $PMLOGGER_CHECK_PARAMS
 WorkingDirectory=@PCP_VAR_DIR@
 Group=@PCP_GROUP@
 User=@PCP_USER@
+## Paths
+ProtectProc=invisible
+# Capabilities
+CapabilityBoundingSet=
+AmbientCapabilities=
+# Security
+NoNewPrivileges=true
+# Process properties
+UMask=077
+# Sandboxing ...
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+PrivateMounts=true
+# System call filtering
+SystemCallFilter=@system-service
+SystemCallFilter=~@aio @resources @keyring @memlock
+SystemCallArchitectures=native

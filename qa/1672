@@ -55,6 +55,7 @@ _cleanup()
     _wait_for_pmlogger
 
     $sudo rm -rf $tmp.*
+    _secure_cleanup
 }
 
 status=1	# failure is the default!

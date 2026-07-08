@@ -35,6 +35,7 @@ _cleanup()
     _wait_for_pmlogger
 
     rm -rf $tmp.*
+    _secure_cleanup
 }
 
 status=1	# failure is the default!

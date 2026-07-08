@@ -2280,7 +2280,7 @@ suse
 1747 pmlogger labels local
 1748 atop local
 1753 fetch valgrind local
-1763 pmlogctl local pmlogger_check
+1763 pmlogctl local logutil pmlogger_check
 1768 pmfind local
 1769 pmda.linux local
 1770 pmda.proc pmcd pmproxy local pmjson

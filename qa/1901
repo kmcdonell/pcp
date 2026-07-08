@@ -18,6 +18,7 @@ _cleanup()
 {
     cd $here
     $sudo rm -rf $tmp $tmp.*
+    _secure_cleanup
 }
 
 _need_metric proc.fd.count

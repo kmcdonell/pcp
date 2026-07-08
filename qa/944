@@ -67,6 +67,7 @@ _cleanup()
 {
     _stop_local_pmcd
     cd $here; rm -rf $tmp.*
+    _secure_cleanup
 }
 
 # remove -Dauth diags

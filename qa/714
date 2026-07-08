@@ -21,6 +21,7 @@ _cleanup()
 
     $sudo rm -f $tmp.*
     $sudo rm -fr $tmp
+    _secure_cleanup
 }
 
 status=1	# failure is the default!

@@ -11,6 +11,39 @@ Restart=always
 ExecStart=@PCP_SERVICES_DIR@/pmproxy start-systemd
 Group=@PCP_GROUP@
 User=@PCP_USER@
+## Paths
+ProtectProc=invisible
+# Capabilities
+CapabilityBoundingSet=
+AmbientCapabilities=
+# Security
+NoNewPrivileges=true
+# Process properties
+UMask=077
+# Sandboxing ...
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+PrivateMounts=true
+# System call filtering
+SystemCallFilter=@system-service
+# Note: pmproxy needs @aio
+SystemCallFilter=~@resources @keyring @memlock
+SystemCallArchitectures=native
 
 [Install]
 WantedBy=multi-user.target

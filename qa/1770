@@ -57,6 +57,7 @@ _cleanup()
     fi
 
     $sudo rm -rf $tmp $tmp.*
+    _secure_cleanup
 }
 
 trap "_cleanup; exit \$status" 0 1 2 3 15

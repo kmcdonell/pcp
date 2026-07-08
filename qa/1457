@@ -25,6 +25,7 @@ _cleanup()
 	_sighup_pmcd
     fi
     $sudo rm -rf $tmp $tmp.*
+    _secure_cleanup
 }
 
 status=1	# failure is the default!
@@ -81,8 +82,8 @@ echo "pcp.enabled = true" >> $tmp.conf
 echo "http.enabled = true" >> $tmp.conf
 echo "resp.enabled = true" >> $tmp.conf
 echo "secure.enabled = true" >> $tmp.conf
-echo "private_key = $tmp.tls/pcp.key" >> $tmp.conf
-echo "certificates = $tmp.tls/pcp.crt" >> $tmp.conf
+echo "private_key = $tmp_secure/tls/pcp.key" >> $tmp.conf
+echo "certificates = $tmp_secure/tls/pcp.crt" >> $tmp.conf
 
 port=`_find_free_port`
 mkdir -p $tmp.pmproxy/pmproxy

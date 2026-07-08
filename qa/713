@@ -37,6 +37,7 @@ _cleanup()
     fi
 
     $sudo rm -fr $tmp.* $tmp
+    _secure_cleanup
 }
 
 status=1	# failure is the default!
@@ -79,13 +80,13 @@ _setup_tls
 if ! _service pmcd start
 then
     echo "--- cert & key files and sum by user $PCP_USER"
-    for file in $tmp.tls/*
+    for file in $tmp_certs/*
     do
 	ls -l $file
 	$sudo -u $PCP_USER sum $file
     done
     echo "--- openssl.log from key & cert setup"
-    cat $tmp.tls/openssl.log
+    cat $tmp_secure/tls/openssl.log
     _exit 1
 fi | _filter_pcp_start
 

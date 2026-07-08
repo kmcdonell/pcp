@@ -18,6 +18,7 @@ _cleanup()
 {
     cd $here
     $sudo rm -rf $tmp $tmp.* Latest
+    _secure_cleanup
 }
 
 status=1	# failure is the default!

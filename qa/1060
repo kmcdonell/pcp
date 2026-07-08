@@ -25,6 +25,7 @@ _cleanup()
 	_service pmie stop >>$seq_full 2>&1
 	$sudo $PCP_BINADM_DIR/pmsignal -a -s TERM pmie >/dev/null 2>&1
 	$sudo rm -f ${PCP_PMIECONTROL_PATH}.d/qa-$seq
+	$sudo rm -rf $PCP_LOG_DIR/pmie/qa
 	_wait_pmie_end
 	if $pmie_was_running
 	then
@@ -44,8 +45,8 @@ _report()
     #
     # and the 12.YYYYMMDD pmie_check summary file may, or may not be there
     #
-    (cd $tmp; ls -lR pmie ) | tee -a $seq_full | $PCP_AWK_PROG '
-$1 == "pmie:"		{ next }
+    (cd $PCP_LOG_DIR/pmie; ls -lR qa ) | tee -a $seq_full | $PCP_AWK_PROG '
+$1 == "qa:"		{ next }
 $NF ~ /^12\.[0-9]/	{ next }
 NF < 4		{ print; next }
 		{ print "mode=" $1 " user=" $3 " group=" $4 " name=" $NF }' \
@@ -71,13 +72,33 @@ then
     if ! _service pmie stop >>$seq_full 2>&1; then _exit 1; fi
 fi
 
+# after systemd services were hardened, this needs to be a
+# directory not below $tmp (pmie has a PrivateTmp) and one
+# that $PCP_USER can write into ...
+#
+if [ ! -d $PCP_LOG_DIR/pmie/qa ]
+then
+    if ! $sudo mkdir $PCP_LOG_DIR/pmie/qa
+    then
+	echo "Arrgh: failed mkdir for $PCP_LOG_DIR/pmie/qa ..."
+	ls -ld $PCP_LOG_DIR/pmie
+	exit
+    fi
+fi
+if ! $sudo chown $PCP_USER:$PCP_GROUP $PCP_LOG_DIR/pmie/qa
+then
+    echo "Arrgh: failed chown for $PCP_LOG_DIR/pmie/qa ..."
+    ls -ld $PCP_LOG_DIR/pmie
+    exit
+fi
+
 # real QA test starts here
 cat <<End-of-File >$tmp.tmp
 # dummy file created by qa/$seq on `date`
 # the goal here is to have a non-primary pmie instance that has a deeply
 # nested directory structure for the logs
 \$version=1.1
-LOCALHOSTNAME n n $tmp/pmie/myhost/2017/02/12 -c config.default
+LOCALHOSTNAME n n $PCP_LOG_DIR/pmie/qa/myhost/2017/02/12 -c config.default
 End-of-File
 $sudo cp $tmp.tmp ${PCP_PMIECONTROL_PATH}.d/qa-$seq
 

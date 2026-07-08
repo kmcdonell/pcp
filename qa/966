@@ -25,6 +25,7 @@ _cleanup()
     _wait_for_pmlogger
 
     $sudo rm -rf $tmp.*
+    _secure_cleanup
 }
 
 status=1	# failure is the default!
@@ -56,13 +57,13 @@ _setup_tls
 if ! _service pmcd start || ! _wait_for_pmcd
 then
     echo "--- cert & key files and sum by user $PCP_USER"
-    for file in $tmp.tls/*
+    for file in $tmp_secure/tls/*
     do
 	ls -l $file
 	$sudo -u $PCP_USER sum $file
     done
     echo "--- openssl.log from key & cert setup"
-    cat $tmp.tls/openssl.log
+    cat $tmp_secure/tls/openssl.log
     _exit 1
 fi | _filter_pcp_start
 
@@ -76,9 +77,9 @@ yes | pminfo -h $hostname -f hinv.ncpu 2>&1 | tee -a $seq_full | _filter_tls
 #
 echo
 echo "checking client, bad secure config.  should fail..." | tee -a $seq_full
-cp $PCP_TLSCONF_PATH $tmp.tls.conf
-sed -i -e 's,^tls-cert-file = .*,tls-cert-file = /dev/null,g' $tmp.tls.conf
-$sudo cp $tmp.tls.conf $PCP_TLSCONF_PATH
+cp $PCP_TLSCONF_PATH $tmp_secure/tls.conf
+sed -i -e 's,^tls-cert-file = .*,tls-cert-file = /dev/null,g' $tmp_secure/tls.conf
+$sudo cp $tmp_secure/tls.conf $PCP_TLSCONF_PATH
 yes | pminfo -h $hostname -f hinv.ncpu 2>&1 | tee -a $seq_full | _filter_tls
 
 echo

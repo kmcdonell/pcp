@@ -29,6 +29,7 @@ _cleanup()
     _service pmlogger restart 2>&1 | _filter_pcp_restart
     _wait_for_pmlogger
     $sudo rm -rf $tmp.*
+    _secure_cleanup
 }
 
 status=1	# failure is the default!

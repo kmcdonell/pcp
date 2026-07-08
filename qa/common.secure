@@ -13,9 +13,36 @@
 _get_libpcp_config
 [ "$secure_sockets" = "true" ] || _notrun "Secure sockets not supported"
 
+# after systemd services were hardened, this needs to be a
+# directory not below $tmp (pmcd has a PrivateTmp) and one
+# that everyone can write into ...
+#
+if [ ! -d $PCP_LOG_DIR/pmcd/secure ]
+then
+    if ! $sudo mkdir $PCP_LOG_DIR/pmcd/secure
+    then
+	echo "Arrgh: failed: mkdir $PCP_LOG_DIR/pmcd/secure"
+	ls -ld $PCP_LOG_DIR/pmcd
+	exit
+    fi
+fi
+if ! $sudo chown $PCP_USER:$PCP_GROUP $PCP_LOG_DIR/pmcd/secure
+then
+    echo "Arrgh: failed: chown $PCP_USER:$PCP_GROUP $PCP_LOG_DIR/pmcd/secure"
+    ls -ld $PCP_LOG_DIR/pmcd
+    exit
+fi
+if ! $sudo chmod 777 $PCP_LOG_DIR/pmcd/secure
+then
+    echo "Arrgh: failed: chmod 777 $PCP_LOG_DIR/pmcd/secure"
+    ls -ld $PCP_LOG_DIR/pmcd
+    exit
+fi
+tmp_secure=$PCP_LOG_DIR/pmcd/secure
+
 usersdb=${HOME}/.pki/nssdb
-collectordb=$tmp/pki/nssdb
-collectorpw=$tmp/pki/nssdb/pass
+collectordb=$tmp_secure/pki/nssdb
+collectorpw=$tmp_secure/pki/nssdb/pass
 PCP_SECURE_DB_METHOD=${PCP_SECURE_DB_METHOD-'sql:'}
 __certopts="-d $PCP_SECURE_DB_METHOD$collectordb -f $collectorpw -z $tmp.rand"
 
@@ -146,21 +173,41 @@ nss_setup_collector()
 
     # prepare new locations for certificates
     $sudo rm -fr $collectordb
-    $sudo mkdir -p -m 0755 $collectordb
+    if ! $sudo mkdir -p -m 0755 $collectordb
+    then
+	echo "Arrgh: failed: mkdir -p -m 0755 $collectordb"
+	_exit 1
+    fi
 
     # prepare password file for certificates
     echo "$seq.password" > $tmp.password
-    $sudo mv $tmp.password $collectorpw
+    if ! $sudo mv $tmp.password $collectorpw
+    then
+	echo "Arrgh: failed: mv $tmp.password $collectorpw"
+	_exit 1
+    fi
 
     echo "== Creating empty certificate DB" | tee -a $seq_full
-    $sudo certutil $__certopts -N
+    if ! $sudo certutil $__certopts -N
+    then
+	echo "Arrgh: failed: certutil $__certopts -N"
+	_exit 1
+    fi
 
     $__withcerts && nss_setup_certificates $__fqdn $__host
 
     if [ -d $collectordb ]
     then
-	$sudo chmod -R 0644 $collectordb/*
-	$sudo chown -R $PCP_USER:$PCP_GROUP $collectordb
+	if ! $sudo chmod -R 0644 $collectordb/*
+	then
+	    echo "Arrgh: failed: chmod -R 0644 $collectordb/*"
+	    _exit 1
+	fi
+	if ! $sudo chown -R $PCP_USER:$PCP_GROUP $collectordb
+	then
+	    echo "Arrgh: failed: chown -R $PCP_USER:$PCP_GROUP $collectordb"
+	    _exit 1
+	fi
     fi
 
     if [ -n "$__force_client_cert" ]
@@ -295,31 +342,31 @@ _setup_cert()
 	return
     fi
 
-    local __keyfile=$tmp.tls/${__name}.key
-    local __certfile=$tmp.tls/${__name}.crt
+    local __keyfile=$tmp_secure/tls/${__name}.key
+    local __certfile=$tmp_secure/tls/${__name}.crt
 
-    [ -d $tmp.tls ] || mkdir $tmp.tls
+    [ -d $tmp_secure/tls ] || mkdir $tmp_secure/tls
 
     # some versions of openssl babble if this file does not exist
     # with some good "randomness"
     #
     [ -f $HOME/.rnd ] || openssl rand 10240 >$HOME/.rnd
 
-    openssl genrsa -out $__keyfile 2048 >>$tmp.tls/openssl.log 2>&1
+    openssl genrsa -out $__keyfile 2048 >>$tmp_secure/tls/openssl.log 2>&1
 
     openssl req \
 	    -new -sha256 \
 	    -subj "/O=PCP QA/CN=$__cn" \
 	    -key $__keyfile \
     | openssl x509 -req -sha256 -days 365 $__opts \
-	    -CA $tmp.tls/ca.crt \
-	    -CAkey $tmp.tls/ca.key \
-	    -CAserial $tmp.tls/ca.txt \
+	    -CA $tmp_secure/tls/ca.crt \
+	    -CAkey $tmp_secure/tls/ca.key \
+	    -CAserial $tmp_secure/tls/ca.txt \
 	    -CAcreateserial \
-	    -out $__certfile >>$tmp.tls/openssl.log 2>&1
+	    -out $__certfile >>$tmp_secure/tls/openssl.log 2>&1
 
     echo "--- openssl.log after _setup_cert() ---" >>$seq_full
-    cat $tmp.tls/openssl.log >>$seq_full
+    cat $tmp_secure/tls/openssl.log >>$seq_full
     echo "--- end openssl.log ---" >>$seq_full
 }
 
@@ -336,21 +383,21 @@ _setup_tls()
 	echo "_setup_tls: Arrgh \$tmp not set, I give up"
 	return
     fi
-    if ! mkdir $tmp.tls
+    if ! mkdir $tmp_secure/tls
     then
-	echo "_setup_tls: Arrgh cannot create $tmp.tls dir, I give up"
+	echo "_setup_tls: Arrgh cannot create $tmp_secure/tls dir, I give up"
 	return
     fi
 
-    openssl genrsa -out $tmp.tls/ca.key 4096 >>$tmp.tls/openssl.log 2>&1
+    openssl genrsa -out $tmp_secure/tls/ca.key 4096 >>$tmp_secure/tls/openssl.log 2>&1
 
     openssl req \
 	    -x509 -new -nodes -sha256 -days 3650 \
 	    -subj "/O=PCP QA/CN=Certificate Authority" \
-	    -key $tmp.tls/ca.key \
-	    -out $tmp.tls/ca.crt >>$tmp.tls/openssl.log 2>&1
+	    -key $tmp_secure/tls/ca.key \
+	    -out $tmp_secure/tls/ca.crt >>$tmp_secure/tls/openssl.log 2>&1
 
-    cat >$tmp.tls/openssl.cnf <<__END__
+    cat >$tmp_secure/tls/openssl.cnf <<__END__
 [ server_cert ]
 keyUsage = digitalSignature, keyEncipherment
 nsCertType = server
@@ -360,27 +407,33 @@ keyUsage = digitalSignature, keyEncipherment
 nsCertType = client
 __END__
 
-    _setup_cert server "Server-only" "-extfile $tmp.tls/openssl.cnf -extensions server_cert"
-    _setup_cert client "Client-only" "-extfile $tmp.tls/openssl.cnf -extensions client_cert"
+    _setup_cert server "Server-only" "-extfile $tmp_secure/tls/openssl.cnf -extensions server_cert"
+    _setup_cert client "Client-only" "-extfile $tmp_secure/tls/openssl.cnf -extensions client_cert"
     _setup_cert pcp "Generic-cert"
 
-    $sudo chown -R $PCP_USER:$PCP_GROUP $tmp.tls
-    $sudo chmod ugo+r $tmp.tls/*
+    $sudo chown -R $PCP_USER:$PCP_GROUP $tmp_secure/tls
+    $sudo chmod ugo+r $tmp_secure/tls/*
 
-    echo >$tmp.tls.conf
-    echo "# settings related to TLS certificates and keys" >>$tmp.tls.conf
-    echo "# created by QA test $seq" >>$tmp.tls.conf
-    echo >>$tmp.tls.conf
-    echo "tls-key-file = $tmp.tls/pcp.key" >>$tmp.tls.conf
-    echo "tls-cert-file = $tmp.tls/pcp.crt" >>$tmp.tls.conf
-    echo "tls-ca-cert-file = $tmp.tls/ca.crt" >>$tmp.tls.conf
+    echo >$tmp_secure/tls.conf
+    echo "# settings related to TLS certificates and keys" >>$tmp_secure/tls.conf
+    echo "# created by QA test $seq" >>$tmp_secure/tls.conf
+    echo >>$tmp_secure/tls.conf
+    echo "tls-key-file = $tmp_secure/tls/pcp.key" >>$tmp_secure/tls.conf
+    echo "tls-cert-file = $tmp_secure/tls/pcp.crt" >>$tmp_secure/tls.conf
+    echo "tls-ca-cert-file = $tmp_secure/tls/ca.crt" >>$tmp_secure/tls.conf
 
-    $sudo cp $tmp.tls.conf $PCP_TLSCONF_PATH
+    $sudo cp $tmp_secure/tls.conf $PCP_TLSCONF_PATH
     echo "--- new $PCP_TLSCONF_PATH ---" >>$seq_full
     cat $PCP_TLSCONF_PATH >>$seq_full
     echo "--- end $PCP_TLSCONF_PATH ---" >>$seq_full
 
     echo "--- openssl.log after _setup_tls() ---" >>$seq_full
-    cat $tmp.tls/openssl.log >>$seq_full
+    cat $tmp_secure/tls/openssl.log >>$seq_full
     echo "--- end openssl.log ---" >>$seq_full
 }
+
+_secure_cleanup()
+{
+    [ -n "$tmp_secure" ] && $sudo rm -rf $tmp_secure
+}
+

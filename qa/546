@@ -16,7 +16,7 @@ _get_libpcp_config
 $unix_domain_sockets || _notrun "No unix domain socket support available"
 
 status=1	# failure is the default!
-trap "cd $here; rm -rf $tmp.*; exit \$status" 0 1 2 3 15
+trap "cd $here; rm -rf $tmp.*; _secure_cleanup; exit \$status" 0 1 2 3 15
 
 _filter()
 {

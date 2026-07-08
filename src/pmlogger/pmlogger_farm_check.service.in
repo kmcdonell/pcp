@@ -16,3 +16,35 @@ TimeoutStopSec=120
 # known to pmlogctl(1)
 ExecStart=@PCP_BIN_DIR@/pmlogctl -m check
 WorkingDirectory=@PCP_VAR_DIR@
+## Paths
+ProtectProc=invisible
+# Capabilities
+CapabilityBoundingSet=
+AmbientCapabilities=
+# Security
+NoNewPrivileges=true
+# Process properties
+UMask=077
+# Sandboxing ...
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHostname=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+PrivateMounts=true
+# System call filtering
+SystemCallFilter=@system-service
+SystemCallFilter=~@aio @resources @keyring @memlock
+SystemCallArchitectures=native
