@@ -9,16 +9,13 @@ echo "QA output created by $seq"
 . ./common.bpftrace
 
 _pmdabpftrace_check
-version=`bpftrace --version | sed -e 's/.* v0\.//' -e 's/\..*//'`
-echo "bpftrace version=$version" >>$seq_full
-if [ -f "$PCP_SHARE_DIR/pmdas/bpftrace/examples/biolatency-v$version.bt" ]
-then
-    $sudo cp "$PCP_SHARE_DIR/pmdas/bpftrace/examples/biolatency-v$version.bt" $PCP_PMDAS_DIR/bpftrace/autostart/biolatency.bt
-else
-    echo "Arrgh: no biolatency.bt for bpftrace version $version in $PCP_SHARE_DIR/pmdas/bpftrace/examples"
-    exit
-fi
-_pmdabpftrace_check_probes $PCP_PMDAS_DIR/bpftrace/autostart/biolatency.bt
+
+# this is early, but pmcd.control.creds_timeout has already
+# been changed, so we need the trap and _cleanup(), but
+# _pmdabpftrace_cleanup() fails if _prepare_pmda() has not
+# been called
+#
+_prepare_pmda bpftrace
 
 _cleanup()
 {
@@ -26,13 +23,39 @@ _cleanup()
     _pmdabpftrace_cleanup
 }
 
-
 status=1       # failure is the default!
-
-_prepare_pmda bpftrace
 trap "_cleanup; exit \$status" 0 1 2 3 15
-_stop_auto_restart pmcd
 
+version=`bpftrace --version | sed -e 's/.* v0\.//' -e 's/\..*//'`
+echo "bpftrace version=$version" >>$seq_full
+if [ -f "$PCP_SHARE_DIR/pmdas/bpftrace/examples/biolatency-v$version.bt" ]
+then
+    $sudo cp "$PCP_SHARE_DIR/pmdas/bpftrace/examples/biolatency-v$version.bt" $PCP_PMDAS_DIR/bpftrace/autostart/biolatency.bt
+else
+    ( cd "$PCP_SHARE_DIR/pmdas/bpftrace/examples"; ls biolatency-v*.bt 2>/dev/null ) \
+    | sed -e 's/biolatency-v//' -e 's/\.bt$//' \
+    | sort -n >$tmp.tmp
+    minver=`head -1 <$tmp.tmp`
+    maxver=`tail -1 <$tmp.tmp`
+    echo "minver=$minver" >>$seq_full
+    echo "maxver=$maxver" >>$seq_full
+    if [ -n "$minver" -a "$minver" -gt $version ]
+    then
+	_notrun "no biolatency.bt for bpftrace old version $version (oldest we support is $minver)"
+	#NOTREACHED
+    fi
+    if [ -n "$maxver" -a "$maxver" -lt $version ]
+    then
+	echo "Arrgh: no biolatency.bt for new bpftrace version $version (newest we support is $maxver)"
+	echo "       see README in the src/pmdas/bftrace/examples directory"
+	echo "       for the refresh recipe"
+	exit
+    fi
+fi
+
+_pmdabpftrace_check_probes $PCP_PMDAS_DIR/bpftrace/autostart/biolatency.bt
+
+_stop_auto_restart pmcd
 
 # real QA test starts here
 cat <<EOF | _pmdabpftrace_install
