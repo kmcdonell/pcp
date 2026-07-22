@@ -26,6 +26,15 @@ from pcp.pmapi import pmUnits
 from pcp.pmda import PMDA, pmdaIndom, pmdaMetric
 import subprocess
 
+import pwd
+
+def user_exists(username):
+    try:
+        pwd.getpwnam(username)
+        return True
+    except KeyError:
+        return False
+
 # functions to convert `chronyc -c tracking` values to typed values
 TRACKING_FXNS = (
     lambda x: int(x, 16), # ref id
@@ -374,7 +383,13 @@ class ChronyPMDA(PMDA):
 
         if not self.is_pmda_setup():
             if os.getuid() == 0 and 'CHRONYC' not in os.environ:
-                self.set_user("chrony")
+                if user_exists("chrony"):
+                    self.set_user("chrony")
+                elif user_exists("_chrony"):
+                    self.log("Warning: using user _chrony not chrony")
+                    self.set_user("_chrony")
+                else:
+                    self.log("Warning: cannot find user chrony nor _chrony")
             # pre-populate instance domain to avoid "unknown instance" on first fetch
             self.chrony_refresh(1)
 
