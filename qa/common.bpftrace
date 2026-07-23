@@ -68,7 +68,7 @@ _pmdabpftrace_cleanup()
 
     # restore the credentials exchange timeout to the default
     #
-    pmstore pmcd.control.creds_timeout 3 >>$seq_full 2>&1
+    $sudo pmstore pmcd.control.creds_timeout 3 >>$seq_full 2>&1
 }
 
 # Usage: _pmdabpftrace_wait_for_value [value_regex [timeout_sec]]
@@ -158,4 +158,4 @@ _pmdabpftrace_check_probes()
 # on vm03 the PMDA takes a long time to get into gear, so increase
 # the credentials exchange timeout
 #
-pmstore pmcd.control.creds_timeout 30 >>$seq_full 2>&1
+$sudo pmstore pmcd.control.creds_timeout 30 >>$seq_full 2>&1
