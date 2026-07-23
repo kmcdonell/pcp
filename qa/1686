@@ -41,6 +41,8 @@ echo
 echo "=== install ===" | tee -a $here/$seq.full
 $sudo ./Install </dev/null >$tmp.out 2>&1
 cat $tmp.out >>$here/$seq.full
+echo "=== logfile ===" >>$here/$seq.full
+cat $PCP_LOG_DIR/pmcd/$iam.log >>$here/$seq.full
 
 echo
 echo "=== verify metric descriptors ==="
@@ -79,8 +81,6 @@ then
 else
     echo "chrony metrics removed OK"
 fi
-
-cd $here
 
 # success, all done
 status=0
