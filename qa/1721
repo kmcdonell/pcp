@@ -36,14 +36,14 @@ else
     | sed -e 's/biolatency-v//' -e 's/\.bt$//' \
     | sort -n >$tmp.tmp
     minver=`head -1 <$tmp.tmp`
-    maxver=`tail -1 <$tmp.tmp`
     echo "minver=$minver" >>$seq_full
-    echo "maxver=$maxver" >>$seq_full
     if [ -n "$minver" -a "$minver" -gt $version ]
     then
 	_notrun "no biolatency.bt for bpftrace old version $version (oldest we support is $minver)"
 	#NOTREACHED
     fi
+    maxver=`tail -1 <$tmp.tmp`
+    echo "maxver=$maxver" >>$seq_full
     if [ -n "$maxver" -a "$maxver" -lt $version ]
     then
 	echo "Arrgh: no biolatency.bt for new bpftrace version $version (newest we support is $maxver)"
@@ -51,6 +51,8 @@ else
 	echo "       for the refresh recipe"
 	exit
     fi
+    _notrun "missing biolatency.bt for bpftrace version $version"
+    #NOTREACHED
 fi
 
 _pmdabpftrace_check_probes $PCP_PMDAS_DIR/bpftrace/autostart/biolatency.bt
