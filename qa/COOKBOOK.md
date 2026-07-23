@@ -668,6 +668,7 @@ In the descriptions below "output" means output to stdout.
 |<a id="idx+funcs+setdsosuffix"></a>**\_set\_dsosuffix**|Usage: **\_set\_dsosuffix**<br>Set the shell variable <a id="idx+vars+dsosuffix"></a>**$DSOSUFFIX** to the suffix used for shared libraries. This is platform-specific, but for Linux it is **so**.|
 |<a id="idx+funcs+sighuppmcd"></a>**\_sighup\_pmcd**|Usage: **\_sighup\_pmcd**<br>Send **pmcd**(1) a SIGHUP signal and reliably check that it received (at least) one.<br>Returns **0** on success, else the return value is **1** and an explanatory message is output.|
 |<a id="idx+funcs+startuppmlogger"></a>**\_start\_up\_pmlogger**|Usage: **\_start\_up\_pmlogger** _arg_ ...<br>Start a new **pmlogger**(1) instance in the background with appropriate privileges so that it can create the portmap files in **$PCP\_TMP\_DIR** and thus be managed by **pmlogctl**(1) or **pmlc**(1).  All of the _arg_ arguments are passed to the new **pmlogger** and the process ID of the new **pmlogger** is returned in <a id="idx+vars+pid"></a>**$pid** (which will be empty if **pmlogger** was not started).<br>The process will be run as the user **pcp** (or **root** if **pcp** is not available), so the current directory needs to be writable by that user and the test's **_cleanup** function needs to use **$sudo** to remove the files created by **pmlogger**.|
+|<a id="idx+funcs+stashpmdalogs"></a>**\_stash\_pmda\_logs**|Usage: **\_stash\_pmda\_logs** _pmda\_name_<br>Append the _pmda\_name_ PMDA's log file and any reference to the _pmda\_name_ PMDA (plus a little context) in **pmcd**(1)'s log file to **$seq\_full**.<br>Usually called before the PMDA **Remove** script is run, or at the end of the test.|
 |<a id="idx+funcs+stopautorestart"></a>**\_stop\_auto\_restart**|Usage: **\_stop\_auto\_restart** _service_<br>When testing error handling or timeout conditions for services it may be important to ensure the system does not try to restart a failed service (potentially leading to an hard loop of retry-fail-retry). **\_stop\_auto\_restart** will change system configuration to prevent restarting for _service_ if the platform supports this function.<br>Use [**\_restore\_auto\_restart**](#idx+funcs+restoreautorestart) with the same _service_ to reinstate the system configuration.|
 |<a id="idx+funcs+systemctlstatus"></a>**\_systemctl\_status**|Usage: **\_systemctl\_status** _service_<br>If the service _service_ is being managed by **systemd**(1) then call **systemctl**(1) and **journalctl**(1) to provide a verbose report on the status of the service.  Mostly used by other functions in this group in the event of failure to start or stop _service_.|
 |<a id="idx+funcs+triagepmcd"></a>**\_triage\_pmcd**|Usage: **\_triage\_pmcd**<br>Produce a triage report for a failing **pmcd**(1).|
@@ -1555,61 +1556,61 @@ General Index|Commands and Scripts|Shell Functions|Shell Variables|Files
 
 |**General Index**|**Shell Functions ...**|**Shell Functions ...**|**Shell Functions ...**|
 |---|---|---|---|
-|[PCP](#idx+pcp)|[\_check\_job\_scheduler](#idx+funcs+checkjobscheduler)|[\_get\_fqdn](#idx+funcs+getfqdn)|[\_wait\_for\_pmcd\_stop](#idx+funcs+waitforpmcdstop)|
-|[PMAPI](#idx+pmapi)|[\_check\_key\_server](#idx+funcs+checkkeyserver)|[\_get\_libpcp\_config](#idx+funcs+getlibpcpconfig)|[\_wait\_for\_pmie](#idx+funcs+waitforpmie)|
-|[PMCD](#idx+pmcd)|[\_check\_key\_server\_ping](#idx+funcs+checkkeyserverping)|[\_get\_port](#idx+funcs+getport)|[\_wait\_for\_pmlogger](#idx+funcs+waitforpmlogger)|
-|[PMDA](#idx+pmda)|[\_check\_key\_server\_version](#idx+funcs+checkkeyserverversion)|[\_get\_primary\_logger\_pid](#idx+funcs+getprimaryloggerpid)|[\_wait\_for\_pmproxy](#idx+funcs+waitforpmproxy)|
-|[PMID](#idx+pmid)|[\_check\_key\_server\_version\_offline](#idx+funcs+checkkeyserverversionoffline)|[\_get\_word\_size](#idx+funcs+getwordsize)|[\_wait\_for\_pmproxy\_logfile](#idx+funcs+waitforpmproxylogfile)|
-|[PMNS](#idx+pmns)|[\_check\_local\_primary\_archive](#idx+funcs+checklocalprimaryarchive)|[\_host\_to\_fqdn](#idx+funcs+hosttofqdn)|[\_wait\_for\_pmproxy\_metrics](#idx+funcs+waitforpmproxymetrics)|
-|**Commands and Scripts**|[\_check\_metric](#idx+funcs+checkmetric)|[\_host\_to\_ipaddr](#idx+funcs+hosttoipaddr)|[\_wait\_for\_port](#idx+funcs+waitforport)|
-|[admin/list-packages](#idx+cmds+list-packages)|[\_check\_search](#idx+funcs+checksearch)|[\_host\_to\_ipv6addrs](#idx+funcs+hosttoipv6addrs)|[\_wait\_pmcd\_end](#idx+funcs+waitpmcdend)|
-|[all-by-group](#idx+cmds+all-by-group)|[\_check\_series](#idx+funcs+checkseries)|[\_instances\_filter\_any](#idx+funcs+instancesfilterany)|[\_wait\_pmie\_end](#idx+funcs+waitpmieend)|
-|[appchange](#idx+cmds+appchange)|[\_check\_valgrind](#idx+funcs+checkvalgrind)|[\_instances\_filter\_exact](#idx+funcs+instancesfilterexact)|[\_wait\_pmlogctl](#idx+funcs+waitpmlogctl)|
-|[bad-by-group](#idx+cmds+bad-by-group)|[\_clean\_display](#idx+funcs+cleandisplay)|[\_instances\_filter\_nonzero](#idx+funcs+instancesfilternonzero)|[\_wait\_pmlogger\_end](#idx+funcs+waitpmloggerend)|
-|[check](#idx+cmds+check)|[\_cleanup\_pmda](#idx+funcs+cleanuppmda)|[\_inst\_value\_filter](#idx+funcs+instvaluefilter)|[\_wait\_pmproxy\_end](#idx+funcs+waitpmproxyend)|
-|[check.app.ok](#idx+cmds+check.app.ok)|[\_cull\_dup\_lines](#idx+funcs+cullduplines)|[\_ipaddr\_to\_host](#idx+funcs+ipaddrtohost)|[\_wait\_process\_end](#idx+funcs+waitprocessend)|
-|[check-auto](#idx+cmds+check-auto)|[\_disable\_loggers](#idx+funcs+disableloggers)|[\_ipv6\_localhost](#idx+funcs+ipv6localhost)|[\_webapi\_header\_filter](#idx+funcs+webapiheaderfilter)|
-|[check-flakey](#idx+cmds+check-flakey)|[\_domain\_name](#idx+funcs+domainname)|[\_libvirt\_is\_ok](#idx+funcs+libvirtisok)|[\_webapi\_response\_filter](#idx+funcs+webapiresponsefilter)|
-|[check-group](#idx+cmds+check-group)|[\_exit](#idx+funcs+exit)|[\_machine\_id](#idx+funcs+machineid)|[\_within\_tolerance](#idx+funcs+withintolerance)|
-|[check-pdu-coverage](#idx+cmds+check-pdu-coverage)|[\_fail](#idx+funcs+fail)|[\_make\_helptext](#idx+funcs+makehelptext)|[\_writable\_primary\_logger](#idx+funcs+writableprimarylogger)|
-|[check-setup](#idx+cmds+check-setup)|[\_filesize](#idx+funcs+filesize)|[\_make\_proc\_stat](#idx+funcs+makeprocstat)|**Shell Variables**|
-|[check-vars](#idx+cmds+check-vars)|[\_filterall\_pcp\_start](#idx+funcs+filterallpcpstart)|[\_need\_metric](#idx+funcs+needmetric)|[$DSOSUFFIX](#idx+vars+dsosuffix)|
-|[cull-pmlogger-config](#idx+cmds+cull-pmlogger-config)|[\_filter\_compiler\_babble](#idx+funcs+filtercompilerbabble)|[\_notrun](#idx+funcs+notrun)|[$grind\_extra](#idx+vars+grindextra)|
-|[daily-cleanup](#idx+cmds+daily-cleanup)|[\_filter\_console](#idx+funcs+filterconsole)|[\_path\_readable](#idx+funcs+pathreadable)|[$here](#idx+vars+here)|
-|[find-app](#idx+cmds+find-app)|[\_filter\_cron\_scripts](#idx+funcs+filtercronscripts)|[\_pid\_in\_container](#idx+funcs+pidincontainer)|[$PCP\_\*](#idx+vars+pcpstar)|
-|[find-archive](#idx+cmds+find-archive)|[\_filter\_dbg](#idx+funcs+filterdbg)|[\_prefer\_valgrind](#idx+funcs+prefervalgrind)|[$PCP\_PLATFORM](#idx+vars+pcpplatform)|
-|[find-bound](#idx+cmds+find-bound)|[\_filter\_dumpresult](#idx+funcs+filterdumpresult)|[\_prepare\_pmda](#idx+funcs+preparepmda)|[$PCPQA\_CLOSE\_X\_SERVER](#idx+vars+pcpqaclosexserver)|
-|[find-metric](#idx+cmds+find-metric)|[\_filter\_helgrind](#idx+funcs+filterhelgrind)|[\_prepare\_pmda\_install](#idx+funcs+preparepmdainstall)|[$PCPQA\_DESKTOP\_HACK](#idx+vars+pcpqadesktophack)|
-|[flakey-summary](#idx+cmds+flakey-summary)|[\_filter\_init\_distro](#idx+funcs+filterinitdistro)|[\_prepare\_pmda\_mmv](#idx+funcs+preparepmdammv)|[$PCPQA\_FAR\_PMCD](#idx+vars+pcpqafarpmcd)|
-|[getpmcdhosts](#idx+cmds+getpmcdhosts)|[\_filter\_ls](#idx+funcs+filterls)|[\_private\_pmcd](#idx+funcs+privatepmcd)|[$PCPQA\_HYPHEN\_HOST](#idx+vars+pcpqahyphenhost)|
-|[grind](#idx+cmds+grind)|[\_filter\_optional\_labels](#idx+funcs+filteroptionallabels)|[\_ps\_tcp\_port](#idx+funcs+pstcpport)|[$PCPQA\_IN\_CI](#idx+vars+pcpqainci)|
-|[grind-pmda](#idx+cmds+grind-pmda)|[\_filter\_optional\_pmda\_instances](#idx+funcs+filteroptionalpmdainstances)|[\_pstree\_all](#idx+funcs+pstreeall)|[$PCPQA\_PREFER\_VALGRIND](#idx+vars+pcpqaprefervalgrind)|
-|[group-stats](#idx+cmds+group-stats)|[\_filter\_optional\_pmdas](#idx+funcs+filteroptionalpmdas)|[\_pstree\_oneline](#idx+funcs+pstreeoneline)|[$PCPQA\_SYSTEMD](#idx+vars+pcpqasystemd)|
-|[mk.localconfig](#idx+cmds+mk.localconfig)|[\_filter\_pcp\_restart](#idx+funcs+filterpcprestart)|[\_quote\_filter](#idx+funcs+quotefilter)|[$PCPQA_VALGRIND](#idx+vars+pcpqavalgrind)|
-|[mk.logfarm](#idx+cmds+mk.logfarm)|[\_filter\_pcp\_start](#idx+funcs+filterpcpstart)|[\_remove\_job\_scheduler](#idx+funcs+removejobscheduler)|[$PCP\_VER](#idx+vars+pcpver)|
-|[mk.qa\_hosts](#idx+cmds+mk.qahosts)|[\_filter\_pcp\_start\_distro](#idx+funcs+filterpcpstartdistro)|[\_restore\_auto\_restart](#idx+funcs+restoreautorestart)|[$pid](#idx+vars+pid)|
-|[mk.variant](#idx+cmds+mk.variant)|[\_filter\_pcp\_stop](#idx+funcs+filterpcpstop)|[\_restore\_config](#idx+funcs+restoreconfig)|[$pmcd\_args](#idx+vars+pmcdargs)|
-|[new](#idx+cmds+new)|[\_filter\_pmcd\_log](#idx+funcs+filterpmcdlog)|[\_restore\_job\_scheduler](#idx+funcs+restorejobscheduler)|[$pmcd\_pid](#idx+vars+pmcdpid)|
-|[new-dup](#idx+cmds+new-dup)|[\_filter\_pmda\_install](#idx+funcs+filterpmdainstall)|[\_restore\_loggers](#idx+funcs+restoreloggers)|[$pmcd\_port](#idx+vars+pmcdport)|
-|[new-grind](#idx+cmds+new-grind)|[\_filter\_pmda\_remove](#idx+funcs+filterpmdaremove)|[\_restore\_pmda\_install](#idx+funcs+restorepmdainstall)|[$seq](#idx+vars+seq)|
-|[new-seqs](#idx+cmds+new-seqs)|[\_filter\_pmdumplog](#idx+funcs+filterpmdumplog)|[\_restore\_pmda\_mmv](#idx+funcs+restorepmdammv)|[$seq\_full](#idx+vars+seqfull)|
-|[really-retire](#idx+cmds+really-retire)|[\_filter\_pmdumptext](#idx+funcs+filterpmdumptext)|[\_restore\_pmlogger\_control](#idx+funcs+restorepmloggercontrol)|[$status](#idx+vars+status)|
-|[recheck](#idx+cmds+recheck)|[\_filter\_pmie\_log](#idx+funcs+filterpmielog)|[\_restore\_primary\_logger](#idx+funcs+restoreprimarylogger)|[$sudo](#idx+vars+sudo)|
-|[remake](#idx+cmds+remake)|[\_filter\_pmie\_start](#idx+funcs+filterpmiestart)|[\_run\_helgrind](#idx+funcs+runhelgrind)|[$tmp](#idx+vars+tmp)|
-|[sameas](#idx+cmds+sameas)|[\_filter\_pmie\_stop](#idx+funcs+filterpmiestop)|[\_run\_valgrind](#idx+funcs+runvalgrind)|[$valgrind\_clean\_assert](#idx+vars+valgrindcleanassert)|
-|[show-me](#idx+cmds+show-me)|[\_filter\_pmproxy\_log](#idx+funcs+filterpmproxylog)|[\_save\_config](#idx+funcs+saveconfig)|**Files**|
-|[var-use](#idx+cmds+var-use)|[\_filter\_pmproxy\_start](#idx+funcs+filterpmproxystart)|[\_service](#idx+funcs+service)|[$seq\_full](#idx+files+seqfull)|
-|[whatami](#idx+cmds+whatami)|[\_filter\_pmproxy\_stop](#idx+funcs+filterpmproxystop)|[\_set\_dsosuffix](#idx+funcs+setdsosuffix)|[_check.log_](#idx+files+check.log)|
-|**Shell Functions**|[\_filter\_post](#idx+funcs+filterpost)|[\_show\_pmie\_errors](#idx+funcs+showpmieerrors)|[_check.time_](#idx+files+check.time)|
-|[\_all\_hostnames](#idx+funcs+allhostnames)|[\_filter\_slow\_pmie](#idx+funcs+filterslowpmie)|[\_show\_pmie\_exit](#idx+funcs+showpmieexit)|[_common.\*_](#idx+files+common.star)|
-|[\_all\_ipaddrs](#idx+funcs+allipaddrs)|[\_filter\_top\_pmns](#idx+funcs+filtertoppmns)|[\_sighup\_pmcd](#idx+funcs+sighuppmcd)|[_common_](#idx+files+common)|
-|[\_arch\_start](#idx+funcs+archstart)|[\_filter\_torture\_api](#idx+funcs+filtertortureapi)|[\_sort\_pmdumplog\_d](#idx+funcs+sortpmdumplogd)|[_common.config_](#idx+files+common.config)|
-|[\_avail\_metric](#idx+funcs+availmetric)|[\_filter\_valgrind](#idx+funcs+filtervalgrind)|[\_start\_up\_pmlogger](#idx+funcs+startuppmlogger)|[_group_](#idx+files+group)|
-|[\_change\_config](#idx+funcs+changeconfig)|[\_filter\_valgrind\_possibly](#idx+funcs+filtervalgrindpossibly)|[\_stop\_auto\_restart](#idx+funcs+stopautorestart)|[_localconfig_](#idx+files+localconfig)|
-|[\_check\_64bit\_platform](#idx+funcs+check64bitplatform)|[\_filter\_views](#idx+funcs+filterviews)|[\_systemctl\_status](#idx+funcs+systemctlstatus)|[_qa\_hosts_](#idx+files+qahosts)|
-|[\_check\_agent](#idx+funcs+checkagent)|[\_find\_free\_port](#idx+funcs+findfreeport)|[\_triage\_pmcd](#idx+funcs+triagepmcd)|[_qa\_hosts.primary_](#idx+files+qahosts.primary)|
-|[\_check\_big\_file](#idx+funcs+checkbigfile)|[\_find\_key\_server\_modules](#idx+funcs+findkeyservermodules)|[\_triage\_wait\_point](#idx+funcs+triagewaitpoint)|[_triaged_](#idx+files+triaged)|
-|[\_check\_core](#idx+funcs+checkcore)|[\_find\_key\_server\_name](#idx+funcs+findkeyservername)|[\_try\_pmlc](#idx+funcs+trypmlc)||
-|[\_check\_display](#idx+funcs+checkdisplay)|[\_find\_key\_server\_search](#idx+funcs+findkeyserversearch)|[\_value\_filter\_any](#idx+funcs+valuefilterany)||
-|[\_check\_freespace](#idx+funcs+checkfreespace)|[\_get\_config](#idx+funcs+getconfig)|[\_value\_filter\_nonzero](#idx+funcs+valuefilternonzero)||
-|[\_check\_helgrind](#idx+funcs+checkhelgrind)|[\_get\_endian](#idx+funcs+getendian)|[\_wait\_for\_pmcd](#idx+funcs+waitforpmcd)||
+|[PCP](#idx+pcp)|[\_check\_job\_scheduler](#idx+funcs+checkjobscheduler)|[\_get\_fqdn](#idx+funcs+getfqdn)|[\_wait\_for\_pmcd](#idx+funcs+waitforpmcd)|
+|[PMAPI](#idx+pmapi)|[\_check\_key\_server](#idx+funcs+checkkeyserver)|[\_get\_libpcp\_config](#idx+funcs+getlibpcpconfig)|[\_wait\_for\_pmcd\_stop](#idx+funcs+waitforpmcdstop)|
+|[PMCD](#idx+pmcd)|[\_check\_key\_server\_ping](#idx+funcs+checkkeyserverping)|[\_get\_port](#idx+funcs+getport)|[\_wait\_for\_pmie](#idx+funcs+waitforpmie)|
+|[PMDA](#idx+pmda)|[\_check\_key\_server\_version](#idx+funcs+checkkeyserverversion)|[\_get\_primary\_logger\_pid](#idx+funcs+getprimaryloggerpid)|[\_wait\_for\_pmlogger](#idx+funcs+waitforpmlogger)|
+|[PMID](#idx+pmid)|[\_check\_key\_server\_version\_offline](#idx+funcs+checkkeyserverversionoffline)|[\_get\_word\_size](#idx+funcs+getwordsize)|[\_wait\_for\_pmproxy](#idx+funcs+waitforpmproxy)|
+|[PMNS](#idx+pmns)|[\_check\_local\_primary\_archive](#idx+funcs+checklocalprimaryarchive)|[\_host\_to\_fqdn](#idx+funcs+hosttofqdn)|[\_wait\_for\_pmproxy\_logfile](#idx+funcs+waitforpmproxylogfile)|
+|**Commands and Scripts**|[\_check\_metric](#idx+funcs+checkmetric)|[\_host\_to\_ipaddr](#idx+funcs+hosttoipaddr)|[\_wait\_for\_pmproxy\_metrics](#idx+funcs+waitforpmproxymetrics)|
+|[admin/list-packages](#idx+cmds+list-packages)|[\_check\_search](#idx+funcs+checksearch)|[\_host\_to\_ipv6addrs](#idx+funcs+hosttoipv6addrs)|[\_wait\_for\_port](#idx+funcs+waitforport)|
+|[all-by-group](#idx+cmds+all-by-group)|[\_check\_series](#idx+funcs+checkseries)|[\_instances\_filter\_any](#idx+funcs+instancesfilterany)|[\_wait\_pmcd\_end](#idx+funcs+waitpmcdend)|
+|[appchange](#idx+cmds+appchange)|[\_check\_valgrind](#idx+funcs+checkvalgrind)|[\_instances\_filter\_exact](#idx+funcs+instancesfilterexact)|[\_wait\_pmie\_end](#idx+funcs+waitpmieend)|
+|[bad-by-group](#idx+cmds+bad-by-group)|[\_clean\_display](#idx+funcs+cleandisplay)|[\_instances\_filter\_nonzero](#idx+funcs+instancesfilternonzero)|[\_wait\_pmlogctl](#idx+funcs+waitpmlogctl)|
+|[check](#idx+cmds+check)|[\_cleanup\_pmda](#idx+funcs+cleanuppmda)|[\_inst\_value\_filter](#idx+funcs+instvaluefilter)|[\_wait\_pmlogger\_end](#idx+funcs+waitpmloggerend)|
+|[check.app.ok](#idx+cmds+check.app.ok)|[\_cull\_dup\_lines](#idx+funcs+cullduplines)|[\_ipaddr\_to\_host](#idx+funcs+ipaddrtohost)|[\_wait\_pmproxy\_end](#idx+funcs+waitpmproxyend)|
+|[check-auto](#idx+cmds+check-auto)|[\_disable\_loggers](#idx+funcs+disableloggers)|[\_ipv6\_localhost](#idx+funcs+ipv6localhost)|[\_wait\_process\_end](#idx+funcs+waitprocessend)|
+|[check-flakey](#idx+cmds+check-flakey)|[\_domain\_name](#idx+funcs+domainname)|[\_libvirt\_is\_ok](#idx+funcs+libvirtisok)|[\_webapi\_header\_filter](#idx+funcs+webapiheaderfilter)|
+|[check-group](#idx+cmds+check-group)|[\_exit](#idx+funcs+exit)|[\_machine\_id](#idx+funcs+machineid)|[\_webapi\_response\_filter](#idx+funcs+webapiresponsefilter)|
+|[check-pdu-coverage](#idx+cmds+check-pdu-coverage)|[\_fail](#idx+funcs+fail)|[\_make\_helptext](#idx+funcs+makehelptext)|[\_within\_tolerance](#idx+funcs+withintolerance)|
+|[check-setup](#idx+cmds+check-setup)|[\_filesize](#idx+funcs+filesize)|[\_make\_proc\_stat](#idx+funcs+makeprocstat)|[\_writable\_primary\_logger](#idx+funcs+writableprimarylogger)|
+|[check-vars](#idx+cmds+check-vars)|[\_filterall\_pcp\_start](#idx+funcs+filterallpcpstart)|[\_need\_metric](#idx+funcs+needmetric)|**Shell Variables**|
+|[cull-pmlogger-config](#idx+cmds+cull-pmlogger-config)|[\_filter\_compiler\_babble](#idx+funcs+filtercompilerbabble)|[\_notrun](#idx+funcs+notrun)|[$DSOSUFFIX](#idx+vars+dsosuffix)|
+|[daily-cleanup](#idx+cmds+daily-cleanup)|[\_filter\_console](#idx+funcs+filterconsole)|[\_path\_readable](#idx+funcs+pathreadable)|[$grind\_extra](#idx+vars+grindextra)|
+|[find-app](#idx+cmds+find-app)|[\_filter\_cron\_scripts](#idx+funcs+filtercronscripts)|[\_pid\_in\_container](#idx+funcs+pidincontainer)|[$here](#idx+vars+here)|
+|[find-archive](#idx+cmds+find-archive)|[\_filter\_dbg](#idx+funcs+filterdbg)|[\_prefer\_valgrind](#idx+funcs+prefervalgrind)|[$PCP\_\*](#idx+vars+pcpstar)|
+|[find-bound](#idx+cmds+find-bound)|[\_filter\_dumpresult](#idx+funcs+filterdumpresult)|[\_prepare\_pmda](#idx+funcs+preparepmda)|[$PCP\_PLATFORM](#idx+vars+pcpplatform)|
+|[find-metric](#idx+cmds+find-metric)|[\_filter\_helgrind](#idx+funcs+filterhelgrind)|[\_prepare\_pmda\_install](#idx+funcs+preparepmdainstall)|[$PCPQA\_CLOSE\_X\_SERVER](#idx+vars+pcpqaclosexserver)|
+|[flakey-summary](#idx+cmds+flakey-summary)|[\_filter\_init\_distro](#idx+funcs+filterinitdistro)|[\_prepare\_pmda\_mmv](#idx+funcs+preparepmdammv)|[$PCPQA\_DESKTOP\_HACK](#idx+vars+pcpqadesktophack)|
+|[getpmcdhosts](#idx+cmds+getpmcdhosts)|[\_filter\_ls](#idx+funcs+filterls)|[\_private\_pmcd](#idx+funcs+privatepmcd)|[$PCPQA\_FAR\_PMCD](#idx+vars+pcpqafarpmcd)|
+|[grind](#idx+cmds+grind)|[\_filter\_optional\_labels](#idx+funcs+filteroptionallabels)|[\_ps\_tcp\_port](#idx+funcs+pstcpport)|[$PCPQA\_HYPHEN\_HOST](#idx+vars+pcpqahyphenhost)|
+|[grind-pmda](#idx+cmds+grind-pmda)|[\_filter\_optional\_pmda\_instances](#idx+funcs+filteroptionalpmdainstances)|[\_pstree\_all](#idx+funcs+pstreeall)|[$PCPQA\_IN\_CI](#idx+vars+pcpqainci)|
+|[group-stats](#idx+cmds+group-stats)|[\_filter\_optional\_pmdas](#idx+funcs+filteroptionalpmdas)|[\_pstree\_oneline](#idx+funcs+pstreeoneline)|[$PCPQA\_PREFER\_VALGRIND](#idx+vars+pcpqaprefervalgrind)|
+|[mk.localconfig](#idx+cmds+mk.localconfig)|[\_filter\_pcp\_restart](#idx+funcs+filterpcprestart)|[\_quote\_filter](#idx+funcs+quotefilter)|[$PCPQA\_SYSTEMD](#idx+vars+pcpqasystemd)|
+|[mk.logfarm](#idx+cmds+mk.logfarm)|[\_filter\_pcp\_start](#idx+funcs+filterpcpstart)|[\_remove\_job\_scheduler](#idx+funcs+removejobscheduler)|[$PCPQA_VALGRIND](#idx+vars+pcpqavalgrind)|
+|[mk.qa\_hosts](#idx+cmds+mk.qahosts)|[\_filter\_pcp\_start\_distro](#idx+funcs+filterpcpstartdistro)|[\_restore\_auto\_restart](#idx+funcs+restoreautorestart)|[$PCP\_VER](#idx+vars+pcpver)|
+|[mk.variant](#idx+cmds+mk.variant)|[\_filter\_pcp\_stop](#idx+funcs+filterpcpstop)|[\_restore\_config](#idx+funcs+restoreconfig)|[$pid](#idx+vars+pid)|
+|[new](#idx+cmds+new)|[\_filter\_pmcd\_log](#idx+funcs+filterpmcdlog)|[\_restore\_job\_scheduler](#idx+funcs+restorejobscheduler)|[$pmcd\_args](#idx+vars+pmcdargs)|
+|[new-dup](#idx+cmds+new-dup)|[\_filter\_pmda\_install](#idx+funcs+filterpmdainstall)|[\_restore\_loggers](#idx+funcs+restoreloggers)|[$pmcd\_pid](#idx+vars+pmcdpid)|
+|[new-grind](#idx+cmds+new-grind)|[\_filter\_pmda\_remove](#idx+funcs+filterpmdaremove)|[\_restore\_pmda\_install](#idx+funcs+restorepmdainstall)|[$pmcd\_port](#idx+vars+pmcdport)|
+|[new-seqs](#idx+cmds+new-seqs)|[\_filter\_pmdumplog](#idx+funcs+filterpmdumplog)|[\_restore\_pmda\_mmv](#idx+funcs+restorepmdammv)|[$seq](#idx+vars+seq)|
+|[really-retire](#idx+cmds+really-retire)|[\_filter\_pmdumptext](#idx+funcs+filterpmdumptext)|[\_restore\_pmlogger\_control](#idx+funcs+restorepmloggercontrol)|[$seq\_full](#idx+vars+seqfull)|
+|[recheck](#idx+cmds+recheck)|[\_filter\_pmie\_log](#idx+funcs+filterpmielog)|[\_restore\_primary\_logger](#idx+funcs+restoreprimarylogger)|[$status](#idx+vars+status)|
+|[remake](#idx+cmds+remake)|[\_filter\_pmie\_start](#idx+funcs+filterpmiestart)|[\_run\_helgrind](#idx+funcs+runhelgrind)|[$sudo](#idx+vars+sudo)|
+|[sameas](#idx+cmds+sameas)|[\_filter\_pmie\_stop](#idx+funcs+filterpmiestop)|[\_run\_valgrind](#idx+funcs+runvalgrind)|[$tmp](#idx+vars+tmp)|
+|[show-me](#idx+cmds+show-me)|[\_filter\_pmproxy\_log](#idx+funcs+filterpmproxylog)|[\_save\_config](#idx+funcs+saveconfig)|[$valgrind\_clean\_assert](#idx+vars+valgrindcleanassert)|
+|[var-use](#idx+cmds+var-use)|[\_filter\_pmproxy\_start](#idx+funcs+filterpmproxystart)|[\_service](#idx+funcs+service)|**Files**|
+|[whatami](#idx+cmds+whatami)|[\_filter\_pmproxy\_stop](#idx+funcs+filterpmproxystop)|[\_set\_dsosuffix](#idx+funcs+setdsosuffix)|[$seq\_full](#idx+files+seqfull)|
+|**Shell Functions**|[\_filter\_post](#idx+funcs+filterpost)|[\_show\_pmie\_errors](#idx+funcs+showpmieerrors)|[_check.log_](#idx+files+check.log)|
+|[\_all\_hostnames](#idx+funcs+allhostnames)|[\_filter\_slow\_pmie](#idx+funcs+filterslowpmie)|[\_show\_pmie\_exit](#idx+funcs+showpmieexit)|[_check.time_](#idx+files+check.time)|
+|[\_all\_ipaddrs](#idx+funcs+allipaddrs)|[\_filter\_top\_pmns](#idx+funcs+filtertoppmns)|[\_sighup\_pmcd](#idx+funcs+sighuppmcd)|[_common.\*_](#idx+files+common.star)|
+|[\_arch\_start](#idx+funcs+archstart)|[\_filter\_torture\_api](#idx+funcs+filtertortureapi)|[\_sort\_pmdumplog\_d](#idx+funcs+sortpmdumplogd)|[_common_](#idx+files+common)|
+|[\_avail\_metric](#idx+funcs+availmetric)|[\_filter\_valgrind](#idx+funcs+filtervalgrind)|[\_start\_up\_pmlogger](#idx+funcs+startuppmlogger)|[_common.config_](#idx+files+common.config)|
+|[\_change\_config](#idx+funcs+changeconfig)|[\_filter\_valgrind\_possibly](#idx+funcs+filtervalgrindpossibly)|[\_stash\_pmda\_logs](#idx+funcs+stashpmdalogs)|[_group_](#idx+files+group)|
+|[\_check\_64bit\_platform](#idx+funcs+check64bitplatform)|[\_filter\_views](#idx+funcs+filterviews)|[\_stop\_auto\_restart](#idx+funcs+stopautorestart)|[_localconfig_](#idx+files+localconfig)|
+|[\_check\_agent](#idx+funcs+checkagent)|[\_find\_free\_port](#idx+funcs+findfreeport)|[\_systemctl\_status](#idx+funcs+systemctlstatus)|[_qa\_hosts_](#idx+files+qahosts)|
+|[\_check\_big\_file](#idx+funcs+checkbigfile)|[\_find\_key\_server\_modules](#idx+funcs+findkeyservermodules)|[\_triage\_pmcd](#idx+funcs+triagepmcd)|[_qa\_hosts.primary_](#idx+files+qahosts.primary)|
+|[\_check\_core](#idx+funcs+checkcore)|[\_find\_key\_server\_name](#idx+funcs+findkeyservername)|[\_triage\_wait\_point](#idx+funcs+triagewaitpoint)|[_triaged_](#idx+files+triaged)|
+|[\_check\_display](#idx+funcs+checkdisplay)|[\_find\_key\_server\_search](#idx+funcs+findkeyserversearch)|[\_try\_pmlc](#idx+funcs+trypmlc)||
+|[\_check\_freespace](#idx+funcs+checkfreespace)|[\_get\_config](#idx+funcs+getconfig)|[\_value\_filter\_any](#idx+funcs+valuefilterany)||
+|[\_check\_helgrind](#idx+funcs+checkhelgrind)|[\_get\_endian](#idx+funcs+getendian)|[\_value\_filter\_nonzero](#idx+funcs+valuefilternonzero)||

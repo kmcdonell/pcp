@@ -58,15 +58,7 @@ echo "=== verify metric count ==="
 count=`pminfo chrony | wc -l | sed -e 's/ //g'`
 echo "$count chrony metrics registered"
 
-echo "+++ chrony PMDA log +++" >>$seq_full
-if [ -f $PCP_LOG_DIR/pmcd/chrony.log ]
-then
-    cat $PCP_LOG_DIR/pmcd/chrony.log >>$seq_full
-else
-    echo "Missing!" >>$seq_full
-fi
-echo "+++ chrony PMDA lines in pmcd log +++" >>$seq_full
-grep chrony $PCP_LOG_DIR/pmcd/pmcd.log >>$seq_full
+_stash_pmda_logs chrony
 
 echo
 echo "=== remove ===" | tee -a $here/$seq.full
