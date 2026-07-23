@@ -58,6 +58,8 @@ echo "=== verify metric count ==="
 count=`pminfo chrony | wc -l | sed -e 's/ //g'`
 echo "$count chrony metrics registered"
 
+_stash_pmda_logs chrony
+
 echo
 echo "=== remove ===" | tee -a $here/$seq.full
 $sudo ./Remove >$tmp.out 2>&1

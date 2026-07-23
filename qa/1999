@@ -30,6 +30,8 @@ _cleanup()
     cd $here
     _cleanup_pmda nixl
     rm -f "$agent_file"
+    # restore default timeout
+    pmstore pmcd.control.timeout 5 >>$seq_full 2>&1
     $sudo rm -rf $tmp $tmp.*
 }
 
@@ -62,6 +64,11 @@ pmdanixl_install()
     $sudo ./Install </dev/null >>$seq_full 2>&1
     cd "$here"
 }
+
+# on slow VMs this puppy takes a while to get going so extend
+# timeout window
+#
+pmstore pmcd.control.timeout 20 >>$seq_full 2>&1
 
 # Real QA test starts here
 _prepare_pmda nixl
@@ -105,6 +112,8 @@ pminfo -f nixl.performance.xfer_time_us \
 echo
 echo "=== Error metric values ==="
 pminfo -f nixl.errors.backend 2>&1
+
+_stash_pmda_logs nixl
 
 pmdanixl_remove
 

@@ -3826,6 +3826,27 @@ _pid_in_container()
     return 1
 }
 
+
+# Usage: _stash_pmda_logs pmda_name
+#
+# Append the pmda_name PMDA's log file and any reference to the
+# pmda_name PMDA (plus a little context) in pmcd's log file to
+# $seq_full.
+#
+_stash_pmda_logs()
+{
+    iam="$1"
+    echo "+++ $iam PMDA log +++" >>$seq_full
+    if [ -f "$PCP_LOG_DIR/pmcd/$iam.log" ]
+    then
+	cat "$PCP_LOG_DIR/pmcd/$iam.log" >>$seq_full
+    else
+	echo "Missing!" >>$seq_full
+    fi
+    echo "+++ $iam PMDA lines (plus 2 lines of context) from pmcd log +++" >>$seq_full
+    grep -C 2 "$iam" "$PCP_LOG_DIR/pmcd/pmcd.log" >>$seq_full
+}
+
 # Usage: _triage_wait_point [[file] message]
 #
 # If file (defaults to $seq.wait) exists in the $here directory,

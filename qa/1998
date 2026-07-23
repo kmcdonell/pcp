@@ -71,19 +71,21 @@ pmdards_install
 if ! pminfo -f pmcd.agent.status 2>&1 | grep -q '"rds"'
 then
     echo "Arrgh! PMDA install failed ... see $seq.full"
-    _exit 1
-fi
-
-echo "=== Report metric values ==="
-
-metrics=`pminfo rds | LC_COLLATE=POSIX sort`
-echo "metric=$metrics" >>$seq_full
-if [ -z "$metrics" ]
-then
-    echo "Botch: no rds metrics in the PMNS"
 else
-    pminfo -dfmtT $metrics 2>&1
+    echo "=== Report metric values ==="
+
+    metrics=`pminfo rds | LC_COLLATE=POSIX sort`
+    echo "metric=$metrics" >>$seq_full
+    if [ -z "$metrics" ]
+    then
+	echo "Botch: no rds metrics in the PMNS"
+    else
+	pminfo -dfmtT $metrics 2>&1
+	_triage_wait_point "rds PMDA installed"
+    fi
 fi
+
+_stash_pmda_logs rds
 
 pmdards_remove
 

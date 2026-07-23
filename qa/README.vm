@@ -287,6 +287,7 @@ FreeBSD
     # which files are in an installed package
     $ pkg list pkgname
     # sort packages on installed size, largest to smallest
+    $ pkg query '%s %n' | sort -nr
     # package install recipe
     $ sudo pkg install -y <package>
     # package removal recipe
@@ -335,6 +336,7 @@ NetBSD
     # installed packages
     $ pkgin list
     # sort packages on installed size, largest to smallest
+    $ pkg_info -as | awk '$1 == "Information" { pkg=$NF } $1 == "Size" { print $NF,pkg }' | sort -k 1nr
     # package install recipe
     $ sudo pkgin install <package>
     # update all packages recipe
@@ -364,6 +366,7 @@ Gentoo
     # which files are in an installed package
     $ equery files <package>
     # sort packages on installed size, largest to smallest
+    $ qsize -A | awk '{print $(NF-1) $NF, $1}' | sort -k1hr
     # package install recipe
     $ sudo emerge --ask <package> [...]
     # update all packages recipe
@@ -442,6 +445,7 @@ Arch Linux
     $         pacman -F -o <fullpath> (package(s) owning a file)
     $         pacman -F -x <regexp> (package(s) owning matching files)
     # sort packages on installed size, largest to smallest
+    $ expac -H M '%m\t%n' | sort -hr
     # package install recipe, always do 
     $ sudo pacman -Syu
     # then install the package ... never try to upgrade a package
@@ -477,6 +481,9 @@ OpenIndiana
     # which files are in a package (installed or not installed)
     $ pkg contents -r <package>
     # sort packages on installed size, largest to smallest
+    # Note: this is VERY SLOOOOW ... needs to extact the size of *every*
+    #       file from *every* package
+    $ pkg list -H | awk '{print $1}' | while read pkg; do pkg contents -t file -o pkg.size $pkg 2>/dev/null | awk '{sum+=$1} END {printf "%6.2fMB %s\n",sum/1024/1024,"'$pkg'"'}; done | sort -k1hr
     # package install recipe
     $ sudo pkg install <package>
     # update all packages recipe
@@ -507,6 +514,7 @@ OpenBSD
     # which files are in an installed package
     $ pkg_info -L <package>
     # sort packages on installed size, largest to smallest
+    $ TODO
     # package install recipe
     $ sudo pkg_add <package>
     # update all packages recipe
