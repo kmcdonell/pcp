@@ -75,8 +75,8 @@ main(int argc, char *argv[])
 	exit(1);
     }
 
-    if ((sts = pmNewContext(PM_CONTEXT_HOST, "localhost")) < 0) {
-	fprintf(stderr, "pmNewContext(..., \"localhost\"): %s\n",
+    if ((sts = pmNewContext(PM_CONTEXT_HOST, "local:")) < 0) {
+	fprintf(stderr, "pmNewContext(..., \"local:\"): %s\n",
 		pmErrStr(sts));
 	exit(1);
     }

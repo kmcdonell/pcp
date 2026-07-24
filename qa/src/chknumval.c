@@ -20,7 +20,7 @@ main(int argc, char **argv)
     int		errflag = 0;
     char	*errmsg;
     int		type = 0;
-    char	*host = "localhost";
+    char	*host = "local:";
     char	*namespace = PM_NS_DEFAULT;
     int		i;
     int		ctlport;
@@ -94,7 +94,7 @@ main(int argc, char **argv)
 \n\
 Options\n\
   -D debug	standard PCP debug options\n\
-  -h host	metrics source is PMCD on host (default is localhost)\n\
+  -h host	metrics source is PMCD on host (default is local:)\n\
   -L            metrics source is local connection to PMDA, no PMCD\n\
   -K spec       optional additional PMDA spec for local connection\n\
                 spec is of the form op,domain,dso-path,init-routine\n\
