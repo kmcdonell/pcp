@@ -875,6 +875,13 @@ then
     fi
 elif which resolvconf >/dev/null 2>&1
 then
+    # TODO ... may be better to simply whack resolvconf and force
+    #      resolv.conf to be what we need ... on vm10 this meant
+    #      installing this (new in this case) file
+    #      -rw-r--r--  1 root wheel 24 Aug 28 15:06 /etc/resolvconf.conf
+    #      with this one config
+    #      resolv_conf="/dev/null"
+    #
     rm -f $tmp.tmp
     if grep -q '^nameserver[ 	][ 	]*'$nameserver'$' </etc/resolv.conf
     then
