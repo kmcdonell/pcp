@@ -587,7 +587,7 @@ in
 	| sed -n -e '/ installed$/s/ .*//p' >$tmp.installed
 	;;
 
-    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva)
+    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva|AmazonLinux)
 	mytype=rpm
 	if which zypper >/dev/null 2>&1
 	then

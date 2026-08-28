@@ -1647,18 +1647,6 @@ slackpkg?	postfix			[? {Slackware}]
 pacman?		/usr/bin/qshape		[extra/postfix]
 brew?		postfix			[? {MacOS?}]
 
-# -- sqlite3.h (for pmsearch)
-dpkg?		/usr/include/sqlite3.h	[libsqlite3-dev]
-rpm?		/usr/include/sqlite3.h	[sqlite-devel]
-emerge?		/usr/include/sqlite3.h	[dev-db/sqlite]
-pkgin?		/usr/include/sqlite3.h	[sqlite3]
-pkg_add?	/usr/include/sqlite3.h	[sqlite3]
-F_pkg?		/usr/include/sqlite3.h	[sqlite3]
-S_pkg?		/usr/include/sqlite3.h	[database/sqlite-3]
-slackpkg?	/usr/include/sqlite3.h	[sqlite]
-pacman?		/usr/include/sqlite3.h	[sqlite]
-brew?		/usr/include/sqlite3.h	[? {MacOS?}]
-
 # -- /usr/share/pkgconfig/systemd.pc needed for configure testing to
 # set systemd paths
 #
