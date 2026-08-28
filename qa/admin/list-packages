@@ -17,6 +17,7 @@ _usage()
     echo >&2 "  -n           report my packing-list file and quit"
     echo >&2 "  -u           update => -c + fixups"
     echo >&2 "  -v           verbose (debugging)"
+    echo >&2 "               second -v => also keep tmp.* files"
     echo >&2 "  -V version   override platform version"
     echo >&2 "  -x tag       exclude lines with a tag"
     exit 1
@@ -145,7 +146,9 @@ BEGIN		{ sts=1 }
 		    if ($i == "'"$pkg"'" || $i ~ /^'"$pkg_re"'$/) {
 			print $0 >>"'$tmp.matched'"
 			sts=0
-			exit
+			# keep going because there may be more than one package
+			# in the packing list that matches the pattern in the
+			# manifest, e.g. may need to have 2 versions of a pkg
 		    }
 		  }
 		}

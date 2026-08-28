@@ -41,6 +41,8 @@ iproute
 httpd
 initscripts
 jq
+libbpf-devel
+libcmocka-devel
 libbpf
 libdrm-devel
 libicu-devel
@@ -63,6 +65,7 @@ net-tools
 nmap
 openssl
 openssl-devel
+perl-Archive-Zip
 perl-CPAN
 perl-DBD-MySQL
 perl-Date-Manip
@@ -87,11 +90,10 @@ postgresql
 psmisc
 pylint
 python3-elasticsearch
-python39-libs
+python3-libs
 python3-libvirt
 python39-lxml
-# broken install on RHEL 8.10 (vm39) 20 Sep 2024
-#python3-pandas
+python3-pandas
 python3-pillow
 python3-prometheus_client
 python39-psycopg2
@@ -123,6 +125,7 @@ sqlite-devel
 sqlite-libs
 sudo
 sysstat
+systemd
 systemd-devel
 targetcli
 time
