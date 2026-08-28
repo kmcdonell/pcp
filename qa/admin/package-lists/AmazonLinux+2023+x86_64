@@ -2,7 +2,6 @@
 # cloned from Fedora 43 list
 # Done by kvalin on a container Wed Nov 19 09:57:41 AM EST 2025
 #
-#RediSearch - switch to ValkeySearch when available
 Spreadsheet::Read cpan
 audit
 autoconf

@@ -74,7 +74,7 @@ Debian       10\.     -       python3-bpfcc
 # Qt4
 Fedora       40       -       qt-devel SoQt-devel
 # redis stuff
-Fedora       .*       -       redis RediSearch
+Fedora       .*       -       redis
 # kubernetes-node pulls in moby-engine which is really bad for podman-docker
 # - expect Fedora to clean this up in at a later release when moby-engine is
 #   dropped
