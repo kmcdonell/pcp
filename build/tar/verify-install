@@ -133,7 +133,11 @@ then
     echo "Error: Python code failed to extract toc"
     exit
 fi
-cp $tmp.toc $tmp.work
+if ! cp "$tmp.toc" "$tmp.work"
+then
+    echo "Error: failed to copy toc"
+    exit 1
+fi
 
 echo "Symlinks ..."
 # like ...
