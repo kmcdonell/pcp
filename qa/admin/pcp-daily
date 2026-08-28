@@ -66,7 +66,8 @@ then
 fi
 
 tmp=${TMPDIR:-/tmp}/pcp-daily-\$\$
-trap "rm -f \$tmp.*; exit 0" 0 1 2 3 15
+sts=1
+trap "rm -f \$tmp.*; exit \\\$sts" 0 1 2 3 15
 End-of-File
     if $lflag
     then
@@ -122,7 +123,7 @@ else
 	echo "Info: pcp git branch $pcp_branch set up for remote tracking" | tee -a \$HOME/daily.log
     else
 	echo "Error: pcp git branch $pcp_branch unknown!" | tee -a \$HOME/daily.log
-	exit 1
+	exit
     fi
 fi
 End-of-File
@@ -154,7 +155,7 @@ then
     echo "Info: pcp git checkout $pcp_branch" | tee -a \$HOME/daily.log
 else
     echo "Error: pcp git checkout $pcp_branch failed!" | tee -a \$HOME/daily.log
-    exit 1
+    exit
 fi
 # on some VMs, there is a problem with the shutdown that deletes
 # some files which causes the subsequent Makepkgs to fail ... try
@@ -165,7 +166,7 @@ then
     echo "Info: pcp git pull" | tee -a \$HOME/daily.log
 else
     echo "Error: pcp git pull failed!" | tee -a \$HOME/daily.log
-    exit 1
+    exit
 fi
 End-of-File
 }
@@ -176,10 +177,21 @@ _script_make()
     cat <<End-of-File
 if [ -f qa/admin/list-packages ]
 then
+    qa/admin/list-packages -u
     qa/admin/list-packages -m >\$tmp.tmp
     if [ -s \$tmp.tmp ]
     then
 	echo "Info: list-packages reports missing: \`cat \$tmp.tmp\`" | tee -a \$HOME/daily.log
+    fi
+    qa/admin/list-packages -m -x cpan -x pip3 >\$tmp.tmp
+    if [ -s \$tmp.tmp ] && [ -f qa/admin/install-packages ]
+    then
+	echo "Info: installing missing system packages: \`cat \$tmp.tmp\`" | tee -a \$HOME/daily.log
+	if ! qa/admin/install-packages \`cat \$tmp.tmp\`
+	then
+	    echo "Error: installing missing system packages failed" | tee -a \$HOME/daily.log
+	    exit
+	fi
     fi
 fi
 ok=false
@@ -215,7 +227,7 @@ else
 	echo "Warning: Makepkgs failed to sign dpkg's" | tee -a \$HOME/daily.log
     else
 	echo "Error: Makepkgs failed!" | tee -a \$HOME/daily.log
-	exit 1
+	exit
     fi
 fi
 # Look for errors/warnings in the build logs ...
@@ -255,7 +267,7 @@ then
     ls -l VERSION.pcp | tee -a $HOME/daily.log
     cat VERSION.pcp | tee -a $HOME/daily.log
     echo "Error: VERSION.pcp is damaged" | tee -a $HOME/daily.log
-    exit 1
+    exit
 fi
 buildversion=$PACKAGE_MAJOR.$PACKAGE_MINOR.$PACKAGE_REVISION
 # find lsm ... in pcp-$buildversion for most build types, but in 
@@ -267,7 +279,7 @@ if [ -z "$lsm" ]
 then
     ls -l pcp.lsm* pcp-$buildversion/pcp.lsm* | tee -a $HOME/daily.log
     echo "Error: pcp.lsm not found" | tee -a $HOME/daily.log
-    exit 1
+    exit
 fi
 src_version=`sed -n <$lsm -e 's/[ 	]*$//' -e '/^Version:/{
 s/Version:[ 	]*//
@@ -280,7 +292,7 @@ in
     *\ *)
 	ls -l build/deb/pcp_[0-9]*.deb
 	echo "Error: more than one deb pkg found" | tee -a $HOME/daily.log
-	exit 1
+	exit
 	;;
     'build/deb/pcp_[0-9]*.deb')
 	# no deb packages
@@ -292,7 +304,7 @@ in
 	    echo "Info: dpkg install" | tee -a $HOME/daily.log
 	else
 	    echo "Error: dpkg failed!" | tee -a $HOME/daily.log
-	    exit 1
+	    exit
 	fi
 	notfound=false
 	;;
@@ -302,7 +314,7 @@ in
     *\ *)
 	ls -l pcp-$buildversion/build/rpm/pcp-[0-9]*.src.rpm | tee -a $HOME/daily.log
 	echo "Error: more than one rpm pkg found" | tee -a $HOME/daily.log
-	exit 1
+	exit
 	;;
     "pcp-$buildversion"'/build/rpm/pcp-[0-9]*.src.rpm')
 	# no rpm source package, assume some other sort of packaging
@@ -318,7 +330,7 @@ in
 	if [ ! -d pcp-$buildversion/build/rpm ]
 	then
 	    echo "Error: pcp-$buildversion/build/rpm: no dir: rpm failed!" | tee -a $HOME/daily.log
-	    exit 1
+	    exit
 	fi
 	cd pcp-$buildversion/build/rpm
 	if sudo rpm --nosignature -U --force `./cherrypick 2>$tmp.err` >$tmp.out 2>&1
@@ -333,7 +345,7 @@ in
 	    if [ -s $tmp.tmp ]
 	    then
 		echo "Error: rpm failed!" | tee -a $HOME/daily.log
-		exit 1
+		exit
 	    else
 		echo "Warning: rpm packages already installed" | tee -a $HOME/daily.log
 	    fi
@@ -352,7 +364,7 @@ then
 	echo "Info: installer install" | tee -a $HOME/daily.log
     else
 	echo "Error: installer failed!" | tee -a $HOME/daily.log
-	exit 1
+	exit
     fi
     cd $here
 elif [ -f pcp-$buildversion/build/sun/pcp-$src_version ]
@@ -366,7 +378,7 @@ then
 	echo "Info: pkgadd install" | tee -a $HOME/daily.log
     else
 	echo "Error: pkgadd failed!" | tee -a $HOME/daily.log
-	exit 1
+	exit
     fi
     cd $here
     sudo /usr/sbin/svcadm enable -s svc:/application/pcp/pmcd >>$HOME/daily.log 2>&1
@@ -385,7 +397,7 @@ then
 	echo "Info: tar install" | tee -a $HOME/daily.log
     else
 	echo "Error: tar install failed!" | tee -a $HOME/daily.log
-	exit 1
+	exit
     fi
     cd $here
     cd pcp-$buildversion/build/tar
@@ -393,12 +405,12 @@ then
     cd $here
 else
     echo "Don't know how to install packages" | tee -a $HOME/daily.log
-    exit 1
+    exit
 fi
 if [ ! -f /etc/pcp.env ]
 then
     echo "Error: /etc/pcp.env not installed" | tee -a $HOME/daily.log
-    exit 1
+    exit
 fi
 . /etc/pcp.env
 if [ -f pcp-$buildversion/build/sun/pcp-$src_version ]
@@ -412,7 +424,7 @@ else
     else
 	cat $tmp.out >>$HOME/daily.log
 	echo "Error: pmcd start failed" | tee -a $HOME/daily.log
-	exit 1
+	exit
     fi
     if sudo $PCP_RC_DIR/pmlogger start >$tmp.out 2>&1
     then
@@ -421,7 +433,7 @@ else
     else
 	cat $tmp.out >>$HOME/daily.log
 	echo "Error: pmlogger start failed" | tee -a $HOME/daily.log
-	exit 1
+	exit
     fi
 fi
 running_version=`pmprobe -v pmcd.version | sed -e 's/"//g' -e 's/pmcd.version 1 //'`
@@ -431,10 +443,13 @@ if [ "$src_version" != "$running_version" ]
 then
     pcp >>$HOME/daily.log
     echo "Error: version mismatch src=$src_version running=$running_version" | tee -a $HOME/daily.log
-    exit 1
+    exit
 fi
 # sample PMDA may have an updated PMNS, so re-install just in case
 ( cd $PCP_VAR_DIR/pmdas/sample; sudo ./Install </dev/null ) >>$HOME/daily.log
+
+# all done
+sts=0
 End-of-File
 }
 
