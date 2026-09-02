@@ -449,8 +449,28 @@ LINKER_MAKERULE = \
     for lib in `otool -L $@ | ${AWK} '/libpcp/ {print $$1}'`; do \
         install_name_tool -change $$lib $(PCP_LIB_DIR)/$$lib $@; \
     done
+
+# Same fixup as LINKER_MAKERULE above, but for qmake/QTMAKE-built binaries.
+# These are linked directly by qmake's generated Makefile, bypassing the
+# $(PROGTARGET)/$(LIBTARGET) rules in buildrules that invoke
+# LINKER_MAKERULE via $@, so without this the binary keeps a bare
+# "libpcp.N.dylib" dependency that dyld cannot resolve outside the build
+# tree. Call as $(call QT_LINKER_FIXUP,$(BINARY)) after $(LNMAKE).
+# Unlike the $(PROGTARGET)/$(LIBTARGET) rules, "build-me" has no mtime-based
+# prerequisites, so its recipe (and this fixup) can run again on an already-
+# fixed binary; skip anything already absolute (not just already rooted at
+# $(PCP_LIB_DIR)) so repeat invocations stay a no-op instead of nesting the
+# prefix onto a path that is already usable.
+QT_LINKER_FIXUP = \
+    for lib in `otool -L $(1) | ${AWK} '/libpcp/ {print $$1}'`; do \
+        case "$$lib" in \
+            /*) ;; \
+            *) install_name_tool -change $$lib $(PCP_LIB_DIR)/$$lib $(1) ;; \
+        esac; \
+    done
 else
 LINKER_MAKERULE =
+QT_LINKER_FIXUP =
 endif
 
 # prepare domain.h used during the PMDA build process for each PMDA
