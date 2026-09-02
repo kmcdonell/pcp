@@ -467,11 +467,6 @@ do
 		;;
 
 	R)	# raw tmp.* files generated
-		if $very_verbose
-		then
-		    echo >&2 "Error: cannot use -R with -v -v"
-		    exit
-		fi
 		raw=true
 		;;
 
@@ -489,11 +484,6 @@ do
 
 	v)	if $verbose
 		then
-		    if $raw
-		    then
-			echo >&2 "Error: cannot use -v -v with -R"
-			exit
-		    fi
 		    very_verbose=true
 		else
 		    verbose=true
@@ -705,7 +695,7 @@ tags="debian redhat centos suse arch mandriva freebsd netbsd openbsd"
 # And strip {...} (usually comments in [...]
 #
 $PCP_AWK_PROG 'NF > 0 { gsub("\\[\\?", "[?:" NR); print $0 " :" NR }' <$manifest \
-| sed -E >$tmp.manifest -e '/\{/s/(\[.*)\{[^}]*}(.*])/\1\2/'
+| sed -E >$tmp.manifest.lineno -e '/\{/s/(\[.*)\{[^}]*}(.*])/\1\2/'
 
 if which $PCP_PYTHON_PROG >/dev/null 2>&1
 then
@@ -723,36 +713,22 @@ then
 	    touch $tmp.need
 	fi
 	[ -f $tmp.need ] && \
-	    echo "rpm?	/usr/share/doc/python-ctypes*	[python-ctypes]" >>$tmp.manifest
+	    echo "rpm?	/usr/share/doc/python-ctypes*	[python-ctypes] : 99999" >>$tmp.manifest.lineno
     fi
 fi
 
 # Strip the packaging-dependent lines that do not apply ...
 # this is an optimization remove checks from the main loop below
 #
-rm -f $tmp.ok
-for pkgtype in $pkgtypes
-do
-    want=false
-    [ "$pkgtype" = "$mytype" ] && want=true
-    if $want
-    then
-	$very_verbose && echo >&2 "include ${pkgtype}? lines"
-	sed -e "s/^${pkgtype}?[ 	]//" <$tmp.manifest >$tmp.tmp
-	mv $tmp.tmp $tmp.manifest
-	touch $tmp.ok
-    else
-	#debug# $very_verbose && echo >&2 "exclude ${pkgtype}? lines"
-	grep -v "^${pkgtype}?[ 	]" <$tmp.manifest >$tmp.tmp
-	mv $tmp.tmp $tmp.manifest
-    fi
-done
-if [ ! -f $tmp.ok ]
+# start with the ones we need ...
+$very_verbose && echo >&2 "include ${mytype}? entries"
+sed -n -e "/^${mytype}?[ 	][ 	]*/s///p" <$tmp.manifest.lineno >$tmp.manifest
+if ! [ -s $tmp.manifest ]
 then
     echo >&2 "Warning: don't understand what packing is being used here ..."
-    echo >&2 "         it is none of: $pkgtypes"
+    echo >&2 "         no manifest lines match ${mytype}?"
+    exit
 fi
-rm -f $tmp.ok
 
 # Strip the distro-dependent lines that do not apply ...
 # this is an optimization remove checks from the main loop below
@@ -797,7 +773,7 @@ elif [ -f /etc/lsb-release ]
 then
     iam=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
 fi
-#debug# $very_verbose && echo >&2 "distro iam=$iam"
+$very_verbose && echo >&2 "distro iam=$iam"
 
 for tag in $tags
 do
@@ -813,13 +789,8 @@ do
     esac
     if $pick
     then
-	$very_verbose && echo >&2 "include ${tag}? lines"
-	sed -e "s/^${tag}?[ 	]//" <$tmp.manifest >$tmp.tmp
-	mv $tmp.tmp $tmp.manifest
-    else
-	#debug# $very_verbose && echo >&2 "exclude ${tag}? lines"
-	grep -v "^${tag}?[ 	]" <$tmp.manifest >$tmp.tmp
-	mv $tmp.tmp $tmp.manifest
+	$very_verbose && echo >&2 "include ${tag}? entries"
+	sed -n -e "/^${tag}?[ 	][ 	]*/s///p" <$tmp.manifest.lineno >>$tmp.manifest
     fi
 done
 
@@ -984,9 +955,9 @@ else
     fi
     if [ -n "$cull" ]
     then
-	#debug# echo "cull=$cull"
+	$very_verbose && echo "cull=$cull"
 	grep -vi "$cull" <$tmp.manifest >$tmp.tmp
-	#debug# diff $tmp.manifest $tmp.tmp
+	$very_verbose && diff $tmp.manifest $tmp.tmp
 	mv $tmp.tmp $tmp.manifest
     fi
 fi
@@ -1004,8 +975,11 @@ if $raw
 then
     # for -R we're all done
     #
-    echo "Created ..."
-    echo $tmp.*
+    if $verbose
+    then
+	echo "Created in ..."
+	echo $tmp.*
+    fi
     sts=0
     exit
 fi

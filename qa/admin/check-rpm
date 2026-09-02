@@ -45,7 +45,8 @@ rm -f $tmp.*
 
 if ! which rpmspec >/dev/null 2>&1
 then
-    echo >&2 "Botch: executable rpmspec not found"
+    echo >&2 "Warning: no rpmspec executable, nothing to see here"
+    sts=0
     exit
 fi
 

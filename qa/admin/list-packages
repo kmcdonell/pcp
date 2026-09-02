@@ -14,9 +14,9 @@ _usage()
     echo >&2 "  -c           check package list"
     echo >&2 "  -i tag       include only lines with a tag"
     echo >&2 "  -m           list only missing packages"
-    echo >&2 "  -n           report my packing-list file and quit"
+    echo >&2 "  -n           report my package list file and quit"
     echo >&2 "  -u           update => -c + fixups"
-    echo >&2 "  -U           update and show-me (no changes made)"
+    echo >&2 "  -U           -u but show me (no changes to package list)"
     echo >&2 "  -v           verbose (debugging)"
     echo >&2 "               second -v => also keep tmp.* files"
     echo >&2 "  -V version   override platform version"
@@ -434,13 +434,13 @@ do
 	n)	nflag=true
 		;;
 
+	u)	check=true
+		update=true
+		;;
+
 	U)	check=true
 		update=true
 		show_me=true
-		;;
-
-	u)	check=true
-		update=true
 		;;
 
 	v)	if $verbose
@@ -838,13 +838,15 @@ END			{ if (done == 0) print "'"$pkg"'" }'
 	then
 	    if $verbose || $show_me
 	    then
-		echo "Diffs after update ..."
+		echo "Diffs ..."
 		diff -u "$home/package-lists/${distro}+${version}+${arch}" $tmp.new
 	    fi
 	    if ! $show_me
 	    then
 		cp $tmp.new "$home/package-lists/${distro}+${version}+${arch}"
 	    fi
+	else
+	    $show_me && echo "No package list updates."
 	fi
     fi
     status=0

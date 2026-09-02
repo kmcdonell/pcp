@@ -177,7 +177,7 @@ _script_make()
     cat <<End-of-File
 if [ -f qa/admin/list-packages ]
 then
-    qa/admin/list-packages -u
+    qa/admin/list-packages -U
     qa/admin/list-packages -m >\$tmp.tmp
     if [ -s \$tmp.tmp ]
     then

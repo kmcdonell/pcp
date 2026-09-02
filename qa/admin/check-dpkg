@@ -1,0 +1,220 @@
+#!/bin/sh
+#
+# For dbpkg packaging, check that the package list contains all of
+# the packages mentioned in enabled Build-Depends: and Depends:
+# stanzas in the control file
+#
+
+iam=check-dpkg
+debug=false
+
+# Need directory where this script is located so we can find the other
+# scripts and control files
+#
+home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
+if [ ! -f "$home/whatami" ]
+then
+    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
+    exit 1
+fi
+
+cd "$home" || exit
+home=`pwd`
+
+if [ ! -f "$home/packages.rc" ]
+then
+    echo >&2 "Botch: cannot find $home/packages.rc"
+    exit
+fi
+
+. $home/packages.rc
+
+_setversions
+# $distro, $version $full_version, $arch and $full_arch now set
+
+pkg_list="package-lists/${distro}+${version}+${arch}"
+if [ ! -f "$pkg_list" ]
+then
+    echo >&2 "Botch: $pkg_list does not exist"
+    exit
+fi
+
+sts=1		# failure is the default
+tmp=${TMPDIR:-/tmp}/$iam-$$
+trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
+rm -f $tmp.*
+
+control="$home/../../debian/control"
+if [ ! -f "$control" ]
+then
+    echo >&2 "Error: no debian control file ($control), nothing to see here"
+    exit
+fi
+
+# get Build-Depends: and Depends: packages one per line w/out version
+# info and skipping all the pcp ones
+#
+sed -e 's/^	/+ /' <"$control" \
+| awk >$tmp.out '
+$1 == "Build-Depends:" || $1 == "Depends:"	{ want = 1; print; next }
+want == 1 	{
+		    if ($1 != "+") { want = 0; next }
+		    print
+		}'
+sed <$tmp.out \
+    -e 's/^Build-Depends://' \
+    -e 's/^Depends://' \
+    -e 's/^+ //' \
+    -e 's/([^)]*)//' \
+| tr ',' '\012' \
+| sed \
+    -e 's/^[ 	][ 	]*//' \
+| sort \
+| uniq \
+| sed >$tmp.need \
+    -e '/^${/d' \
+    -e '/^libpcp/d' \
+    -e '/^pcp/d' \
+    -e '/-pcp$/d' \
+    -e '/^[ 	]*$/d' \
+# end
+
+cd "$home" || exit
+
+_find_packages || exit
+
+rm -f $tmp.err
+cat $tmp.need \
+| while read line
+do
+    rm -f $tmp.alts $tmp.match
+    case "$line"
+    in
+	*'['*)	tags=`echo "$line" | sed -e 's/.*\[//' -e 's/].*//'`
+		rm -f $tmp.tag-ok
+		# TODO limited tag inclusion logic here
+		#
+		for tag in $tags
+		do
+		    arch=`uname -m`
+		    if [ "$tag" = "$arch" ]
+		    then
+			touch $tmp.tag-ok
+			break
+		    elif [ "$tag" = amd64 -a "$arch" = x86_64 ]
+		    then
+			touch $tmp.tag-ok
+			break
+		    fi
+		done
+		if [ -f $tmp.tag-ok ]
+		then
+		    $debug && echo "match tags=$tags"
+		else
+		    $debug && echo "no match tags=$tags"
+		    continue
+		fi
+		;;
+	*'|'*)	pkgs=`echo "$line" | sed -e 's/|/ /g'`
+		touch $tmp.alts
+		;;
+	*)	pkgs="$line"
+		;;
+    esac
+    $debug && echo pkgs=$pkgs
+
+    for pkg in $pkgs
+    do
+	# some are "special" and not real packages, or ones we cannot
+	# check here ...
+	#
+	rm -f $tmp.perl
+	case "$pkg"
+	in
+	    perl-xs-dev)	# this one is in transit and not properly available
+			    # from Debian
+		    continue
+		    ;;
+	    perl-*|'perl('*)
+		    # turn into canonical cpan name
+		    #
+		    echo "$pkg" \
+		    | sed >$tmp.perl \
+			-e '/perl(/{
+s/perl(//
+s/)//
+}' \
+		    -e '/^perl-/{
+s/^perl-//
+s/-/::/g
+}' \
+		    # end
+		    ;;
+	esac
+	# TODO ... don't expect | and perl modules to be together
+	if [ -f $tmp.perl ]
+	then
+	    perl_pkg="`sed -e 's/::/-/g' -e 's/^/perl-/' <$tmp.perl`"
+	    cpan_pkg="`cat $tmp.perl | sed -e '/::/!s/$/::/'`"
+	    $debug && echo perl_pkg=$perl_pkg cpan_pkg=$cpan_pkg
+	    if grep -q "^$perl_pkg\$" $tmp.allpkgs >$tmp.tmp
+	    then
+		# perl package is available
+		#
+		if ! grep -q "^$perl_pkg\$" "$pkg_list" >$tmp.tmp
+		then
+		    echo "Error: $perl_pkg is available but it is not in the package list"
+		    touch $tmp.err
+		fi
+		if grep -q "$pkg cpan" "$pkg_list" >$tmp.tmp
+		then
+		    echo "Error: $perl_pkg is available but $pkg cpan is in the package list"
+		    touch $tmp.err
+		fi
+	    else
+		# expect cpan entry in package list
+		#
+		if grep -q "^$perl_pkg\$" "$pkg_list" >$tmp.tmp
+		then
+		    echo "Error: $perl_pkg is not available but it is in the package list"
+		    touch $tmp.err
+		fi
+		if ! grep -q "$cpan_pkg cpan" "$pkg_list" >$tmp.tmp
+		then
+		    echo "Error: $perl_pkg is not available but $cpan_pkg cpan is not in the package list"
+		    touch $tmp.err
+		fi
+	    fi
+	else
+	    if ! grep -q "^$pkg\$" $tmp.allpkgs >$tmp.tmp
+	    then
+		if [ ! -f $tmp.alts ]
+		then
+		    echo "Error: $pkg in dpkg control but not available"
+		    touch $tmp.err
+		fi
+	    else
+		if ! grep -q "^$pkg\$" "$pkg_list" >$tmp.tmp
+		then
+		    if [ ! -f $tmp.alts ]
+		    then
+			echo "Error: $pkg available and in dpkg control but not in package list"
+			touch $tmp.err
+		    else
+			touch $tmp.found
+			break
+		    fi
+		fi
+	    fi
+	fi
+    done
+    if [ $tmp.alts ] && [ ! $tmp.found ]
+    then
+	echo "Error: none of (alternate) $pkgs from dpkg control are in the package list"
+	touch $tmp.err
+    fi
+
+done
+
+[ ! -f $tmp.err ] && sts=0
+exit
