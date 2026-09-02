@@ -16,6 +16,7 @@ _usage()
     echo >&2 "  -m           list only missing packages"
     echo >&2 "  -n           report my packing-list file and quit"
     echo >&2 "  -u           update => -c + fixups"
+    echo >&2 "  -U           update and show-me (no changes made)"
     echo >&2 "  -v           verbose (debugging)"
     echo >&2 "               second -v => also keep tmp.* files"
     echo >&2 "  -V version   override platform version"
@@ -405,7 +406,8 @@ missing=false
 check=false
 nflag=false
 update=false
-while getopts 'A:cD:i:mnuvV:x:?' p
+show_me=false
+while getopts 'A:cD:i:mnuUvV:x:?' p
 do
     case "$p"
     in
@@ -430,6 +432,11 @@ do
 		;;
 
 	n)	nflag=true
+		;;
+
+	U)	check=true
+		update=true
+		show_me=true
 		;;
 
 	u)	check=true
@@ -829,12 +836,15 @@ END			{ if (done == 0) print "'"$pkg"'" }'
 	fi
 	if ! diff -q "$home/package-lists/${distro}+${version}+${arch}" $tmp.new >/dev/null
 	then
-	    if $verbose
+	    if $verbose || $show_me
 	    then
 		echo "Diffs after update ..."
 		diff -u "$home/package-lists/${distro}+${version}+${arch}" $tmp.new
 	    fi
-	    cp $tmp.new "$home/package-lists/${distro}+${version}+${arch}"
+	    if ! $show_me
+	    then
+		cp $tmp.new "$home/package-lists/${distro}+${version}+${arch}"
+	    fi
 	fi
     fi
     status=0
