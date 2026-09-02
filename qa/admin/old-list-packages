@@ -20,6 +20,7 @@ _usage()
     echo "  -p           generate list of likely packages that should be"
     echo "               installed with dnf or apt-get or yum or ..."
     echo "  -P           same as -p, but emit shell commands for installer"
+    echo "  -R           raw ... generate parsed tmp.* files"
     echo "  -r require   use alternative require file"
     echo "  -s skip      use alternative skip file"
     echo "  -S skipbase  use alternative basename for skipbase.<hostname> files"
@@ -88,7 +89,7 @@ _build_allpkgs()
 	apt-cache dumpavail | sed -n -e '/^Package: /s///p' >$tmp.allpkgs
 	;;
 
-    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva|AmazonLinux)
+    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux)
 	if which zypper >/dev/null 2>&1
 	then
 	    zypper --no-refresh packages 2>&1 \
@@ -164,7 +165,7 @@ p
 
     *)
 	echo >&2 "Botch: _build_allpkgs(): no recipe for $distro"
-	exit 1
+	exit
 	;;
 
     esac
@@ -388,7 +389,7 @@ home=`echo $0 | sed -e 's/\/*old-list-packages$//'`
 if [ ! -f $home/whatami ]
 then
     echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
-    exit 1
+    exit
 fi
 
 if [ ! -f $home/packages.rc ]
@@ -414,11 +415,12 @@ check_manifest_args=''
 manifest="$home"/other-packages/manifest		# default, see -m
 otherdir=other-packages					# default, see -o
 require="$home"/other-packages/require			# default, see -r
+raw=false
 skip="$home"/other-packages/skip			# default, see -s
 skipbase="$home"/other-packages/skip			# default, see -S
 unavailable="$home"/other-packages/unavailable		# default, see -u
 include_meta=true
-while getopts 'abcfm:Mo:pPr:s:S:u:v?' p
+while getopts 'abcfm:Mo:pPr:Rs:S:u:v?' p
 do
     case "$p"
     in
@@ -464,6 +466,15 @@ do
 		require="$OPTARG"
 		;;
 
+	R)	# raw tmp.* files generated
+		if $very_verbose
+		then
+		    echo >&2 "Error: cannot use -R with -v -v"
+		    exit
+		fi
+		raw=true
+		;;
+
 	s)	# alternate skip
 		skip="$OPTARG"
 		;;
@@ -478,6 +489,11 @@ do
 
 	v)	if $verbose
 		then
+		    if $raw
+		    then
+			echo >&2 "Error: cannot use -v -v with -R"
+			exit
+		    fi
 		    very_verbose=true
 		else
 		    verbose=true
@@ -492,12 +508,13 @@ done
 shift `expr $OPTIND - 1`
 [ $# -eq 0 ] || _usage
 
-if $very_verbose
+sts=1
+if $very_verbose || $raw
 then
     tmp=tmp
 else
     tmp=${TMPDIR:-/tmp}/old-list-packages-$$
-    trap "rm -f $tmp.*; exit 0" 0 1 2 3 15
+    trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
 fi
 rm -f $tmp.*
 
@@ -537,17 +554,17 @@ then
 fi
 if [ ! -f "$require" ]
 then
-    echo 2>&1 "Botch: cannot find require: $require"
+    echo >&2 "Botch: cannot find require: $require"
     exit 1
 fi
 if [ ! -f "$unavailable" ]
 then
-    echo 2>&1 "Botch: cannot find unavailable: $unavailable"
+    echo >&2 "Botch: cannot find unavailable: $unavailable"
     exit 1
 fi
 if [ ! -f "$skip" ]
 then
-    echo 2>&1 "Botch: cannot find skip: $skip"
+    echo >&2 "Botch: cannot find skip: $skip"
     exit 1
 fi
 
@@ -587,7 +604,7 @@ in
 	| sed -n -e '/ installed$/s/ .*//p' >$tmp.installed
 	;;
 
-    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva|AmazonLinux)
+    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux)
 	mytype=rpm
 	if which zypper >/dev/null 2>&1
 	then
@@ -653,17 +670,17 @@ in
 esac
 if [ -z "$mytype" ]
 then
-    echo 2>&1 "$0: Botch: don't recognize mytype for: $distro"
+    echo >&2 "$0: Botch: don't recognize mytype for: $distro"
     exit
 fi
 if [ -z "$installcmd" ]
 then
-    echo 2>&1 "$0: Botch: don't recognize installcmd for: $distro"
+    echo >&2 "$0: Botch: don't recognize installcmd for: $distro"
     exit
 fi
 if [ ! -f $tmp.installed ]
 then
-    echo 2>&1 "$0: Botch: can't generate tmp.installed for: $distro"
+    echo >&2 "$0: Botch: can't generate tmp.installed for: $distro"
     exit
 fi
 
@@ -735,6 +752,7 @@ then
     echo >&2 "Warning: don't understand what packing is being used here ..."
     echo >&2 "         it is none of: $pkgtypes"
 fi
+rm -f $tmp.ok
 
 # Strip the distro-dependent lines that do not apply ...
 # this is an optimization remove checks from the main loop below
@@ -748,15 +766,15 @@ then
 elif [ -f /etc/centos-release ]
 then
     iam=centos
+elif [ -f /etc/mandriva-release ]
+then
+    iam=mandriva
 elif [ -f /etc/redhat-release ]
 then
     iam=redhat
 elif [ -f /etc/debian_version ]
 then
     iam=debian
-elif [ -f /etc/mandriva-release ]
-then
-    iam=mandriva
 elif [ -f /etc/gentoo-release ]
 then
     iam=gentoo
@@ -813,10 +831,10 @@ mv $tmp.tmp $tmp.manifest
 # the "unavailable" file records packages that are not available for a
 # particular distribution and version and architecture ... 
 #
-_parse_file $unavailable >$tmp.pkgs
-if [ -s $tmp.pkgs ]
+_parse_file $unavailable >$tmp.unavailable
+if [ -s $tmp.unavailable ]
 then
-    unavail_pkg="`cat $tmp.pkgs`"
+    unavail_pkg="`cat $tmp.unavailable`"
 fi
 $very_verbose && echo >&2 "unavailable: $unavail_pkg"
 
@@ -824,10 +842,10 @@ $very_verbose && echo >&2 "unavailable: $unavail_pkg"
 # particular distribution and version and archtecture ... 
 #
 require_pkg=''
-_parse_file $require >$tmp.pkgs
-if [ -s $tmp.pkgs ]
+_parse_file $require >$tmp.require
+if [ -s $tmp.require ]
 then
-    $very_verbose && echo >&2 "require: `cat $tmp.pkgs`"
+    $very_verbose && echo >&2 "require: `cat $tmp.require`"
     for _need in `cat $tmp.pkgs`
     do
 	if grep "^$_need\$" $tmp.installed >/dev/null
@@ -888,7 +906,7 @@ then
     $verbose && echo >&2 "Processing $skipbase.`hostname -s` ..."
     skip_pkg=`sed <$skipbase.$_hostname \
 	    -e 's/#.*//' \
-	    -e '/^[ 	]*$/d' | tr '\012' ' '`
+	    -e '/^[ 	]*$/d' | tr '\012' ' ' | tee $tmp.skip.$_hostname`
     if [ -n "$skip_pkg" ]
     then
 	$very_verbose && echo >&2 "skip on host: $skip_pkg"
@@ -903,11 +921,11 @@ fi
 # the "skip" file records packages that should NOT be installed for a
 # particular distribution and version and architecture ... 
 #
-_parse_file $skip >$tmp.pkgs
+_parse_file $skip >$tmp.skip
 if [ -s $tmp.pkgs ]
 then
-    $very_verbose && echo >&2 "skip: `cat $tmp.pkgs`"
-    skip_pkg="$skip_pkg `cat $tmp.pkgs`"
+    $very_verbose && echo >&2 "skip: `cat $tmp.skip`"
+    skip_pkg="$skip_pkg `cat $tmp.skip`"
     for _pkg in `cat $tmp.pkgs`
     do
 	_cull_from_manifest "$_pkg" SKIP
@@ -981,6 +999,17 @@ fi
 # as appropriate.
 #
 _build_allpkgs
+
+if $raw
+then
+    # for -R we're all done
+    #
+    echo "Created ..."
+    echo $tmp.*
+    sts=0
+    exit
+fi
+
 rm -f $tmp.sed
 sed <$tmp.manifest \
     -e 's/[^[]*\[//' \
@@ -1386,7 +1415,13 @@ then
     fi
 fi
 
-$pkglist && exit
+if $pkglist
+then
+    # for -p we'r all done
+    #
+    sts=0
+    exit
+fi
 
 # Any required packages not installed?
 #
@@ -1486,3 +1521,5 @@ End-of-File
 fi
 
 $very_verbose && echo >&2 "temp files:" $tmp.*
+
+sts=0

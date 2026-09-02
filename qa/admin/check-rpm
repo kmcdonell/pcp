@@ -1,0 +1,174 @@
+#!/bin/sh
+#
+# For rpm packaging, check that the package list contains all of
+# the packages mentioned in enabled BuildRequires: and Requires:
+# lines from pcp.spec
+#
+
+iam=check-rpm
+
+# Need directory where this script is located so we can find the other
+# scripts and control files
+#
+home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
+if [ ! -f "$home/whatami" ]
+then
+    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
+    exit 1
+fi
+
+cd "$home" || exit
+home=`pwd`
+
+if [ ! -f "$home/packages.rc" ]
+then
+    echo >&2 "Botch: cannot find $home/packages.rc"
+    exit
+fi
+
+. $home/packages.rc
+
+_setversions
+# $distro, $version $full_version, $arch and $full_arch now set
+
+pkg_list="package-lists/${distro}+${version}+${arch}"
+if [ ! -f "$pkg_list" ]
+then
+    echo >&2 "Botch: $pkg_list does not exist"
+    exit
+fi
+
+sts=1		# failure is the default
+tmp=${TMPDIR:-/tmp}/$iam-$$
+trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
+rm -f $tmp.*
+
+if ! which rpmspec >/dev/null 2>&1
+then
+    echo >&2 "Botch: executable rpmspec not found"
+    exit
+fi
+
+if [ ! -d "../../build/rpm" ]
+then
+    echo >&2 "Botch: cannot find ../../build/rpm from $home"
+    exit
+fi
+
+cd ../../build/rpm || exit
+
+rm -f pcp.spec
+if ! make pcp.spec >$tmp.tmp 2>&1
+then
+    cat $tmp.tmp
+    echo >&2 "Botch: make pcp.spec failed"
+    exit
+fi
+
+# get BuildRequires and Requires packages one per line w/out version
+# info and skipping all the pcp ones
+#
+if ! rpmspec -P pcp.spec >$tmp.out 2>$tmp.err
+then
+    cat $tmp.err $tmp.out
+    echo >&2 "Botch: make rpmspec failed"
+    exit
+fi
+grep -E '^(Requires|BuildRequires)' <$tmp.out \
+| sed \
+    -e 's/.*Requires: //' \
+    -e 's/ [<>=!]=* [0-9][0-9]*\.[0-9.-]*$//g' \
+    -e 's/ [<>=!]=* [0-9][0-9]*\.[0-9.-]* / /g' \
+| tr ' ' '\012' \
+| sed >$tmp.need \
+    -e '/^pcp/d' \
+    -e '/-pcp/d' \
+    -e '/-PCP-/d' \
+# end
+
+cd "$home" || exit
+
+_find_packages || exit
+
+rm -f $tmp.err
+cat $tmp.need \
+| sort \
+| uniq \
+| while read pkg
+do
+    #debug# echo pkg=$pkg
+
+    # some are "special" and not real packages, or ones we cannot
+    # check here ...
+    #
+    rm -f $tmp.perl
+    case "$pkg"
+    in
+	procps)
+		continue
+		;;
+	perl-*|'perl('*)
+		# turn into canonical cpan name
+		#
+		echo "$pkg" \
+		| sed >$tmp.perl \
+		    -e '/perl(/{
+s/perl(//
+s/)//
+}' \
+		    -e '/^perl-/{
+s/^perl-//
+s/-/::/g
+}' \
+		# end
+		;;
+    esac
+    if [ -f $tmp.perl ]
+    then
+	perl_pkg="`sed -e 's/::/-/g' -e 's/^/perl-/' <$tmp.perl`"
+	cpan_pkg="`cat $tmp.perl | sed -e '/::/!s/$/::/'`"
+	#debug# echo perl_pkg=$perl_pkg cpan_pkg=$cpan_pkg
+	if grep -q "^$perl_pkg\$" $tmp.allpkgs >$tmp.tmp
+	then
+	    # perl package is available
+	    #
+	    if ! grep -q "^$perl_pkg\$" "$pkg_list" >$tmp.tmp
+	    then
+		echo "Error: $perl_pkg is available but it is not in the package list"
+		touch $tmp.err
+	    fi
+	    if grep -q "$pkg cpan" "$pkg_list" >$tmp.tmp
+	    then
+		echo "Error: $perl_pkg is available but $pkg cpan is in the package list"
+		touch $tmp.err
+	    fi
+	else
+	    # expect cpan entry in package list
+	    #
+	    if grep -q "^$perl_pkg\$" "$pkg_list" >$tmp.tmp
+	    then
+		echo "Error: $perl_pkg is not available but it is in the package list"
+		touch $tmp.err
+	    fi
+	    if ! grep -q "$cpan_pkg cpan" "$pkg_list" >$tmp.tmp
+	    then
+		echo "Error: $perl_pkg is not available but $cpan_pkg cpan is not in the package list"
+		touch $tmp.err
+	    fi
+	fi
+    else
+	if ! grep -q "^$pkg\$" $tmp.allpkgs >$tmp.tmp
+	then
+	    echo "Error: $pkg in rpm spec but not available"
+	    touch $tmp.err
+	fi
+	if ! grep -q "^$pkg\$" "$pkg_list" >$tmp.tmp
+	then
+	    echo "Error: $pkg in rpm spec but not in package list"
+	    touch $tmp.err
+	fi
+    fi
+done
+
+[ ! -f $tmp.err ] && sts=0
+exit

@@ -186,12 +186,19 @@ then
     qa/admin/list-packages -m -x cpan -x pip3 >\$tmp.tmp
     if [ -s \$tmp.tmp ] && [ -f qa/admin/install-packages ]
     then
-	echo "Info: installing missing system packages: \`cat \$tmp.tmp\`" | tee -a \$HOME/daily.log
-	if ! qa/admin/install-packages \`cat \$tmp.tmp\`
-	then
-	    echo "Error: installing missing system packages failed" | tee -a \$HOME/daily.log
-	    exit
-	fi
+	case \`hostname\`
+	in
+	    vm*)
+		echo "Info: installing missing system packages: \`cat \$tmp.tmp\`" | tee -a \$HOME/daily.log
+		if ! qa/admin/install-packages \`cat \$tmp.tmp\`
+		then
+		    echo "Error: installing missing system packages failed" | tee -a \$HOME/daily.log
+		    exit
+		fi
+		;;
+	    *)
+		echo "Info: not a vm* host, so skip installing missing system packages" | tee -a \$HOME/daily.log
+	esac
     fi
 fi
 ok=false

@@ -142,3 +142,5 @@ xkb-data
 zabbix-agent
 zlib1g-dev
 zstd
+redis-server
+redis-tools

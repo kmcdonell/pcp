@@ -17,7 +17,6 @@ build-essential
 chrpath
 clang
 coreutils
-cppcheck
 cron
 curl
 debhelper
@@ -38,6 +37,7 @@ grep
 iproute2
 jq
 kubernetes-client
+libarchive-zip-perl
 libbpf-dev
 libbpf1
 libclass-dbi-perl
@@ -60,6 +60,7 @@ liblist-moreutils-perl
 liblzma-dev
 libncurses-dev
 libnet-snmp-perl
+libperl-dev
 libperl5.40
 libpfm4-dev
 libpython3-dev
@@ -100,6 +101,7 @@ openssl
 perl
 perl-modules-5.40
 pkg-config
+postfix
 postgresql-client-common
 psmisc
 pylint
@@ -110,9 +112,11 @@ python3-elasticsearch
 python3-libvirt
 python3-lxml
 python3-openpyxl
+python3-pandas
 python3-pil
 python3-prometheus-client
 python3-psycopg2
+python3-pyarrow
 python3-pymongo
 python3-pyodbc
 python3-requests
@@ -120,6 +124,8 @@ python3-setuptools
 qtbase5-dev
 qtbase5-dev-tools
 qtchooser
+redis-server
+redis-tools
 sasl2-bin
 sed
 smartmontools
@@ -136,7 +142,6 @@ valkey-tools
 xfsprogs
 xkb-data
 zabbix-agent
-# suspect licensing restrictions will break this in CI
-zfsutils-linux not4ci
+zfs-fuse
 zlib1g-dev
 zstd

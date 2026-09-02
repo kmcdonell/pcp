@@ -1348,7 +1348,7 @@ slackpkg?	redis-server	[N/A (QA optional)]
 pacman?		redis-server	[N/A (QA optional)]
 brew?		redis-server	[redis (QA optional)]
 # -- zpool (pmdazfs QA)	# may need contrib & non-free repos enabled
-dpkg?		zpool		[zfsutils-linux (QA optional)]
+dpkg?		zpool		[zfsutils-linux or zfs-fuse (QA optional)]
 rpm?		zpool		[zfs-fuse (QA optional)]
 emerge?		zpool		[? (QA optional)]
 pkgin?		zpool		[N/A (QA optional)]

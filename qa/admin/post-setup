@@ -452,6 +452,12 @@ then
     is_amazon_linux=true
     $debug && echo "Debug: is_amazon_linux=$is_amazon_linux"
 fi
+is_mandriva=false
+if [ -f /etc/mandriva-release ]
+then
+    is_mandriva=true
+    $debug && echo "Debug: is_mandriva=$is_mandriva"
+fi
 
 use_systemctl=false
 # check if systemd is PID 0, so it is running, not just the
@@ -1311,7 +1317,7 @@ fi
 # - debug packages for Ubuntu
 #
 if [ "$pkg_cmd" = yum -o "$pkg_cmd" = dnf ] && \
-    ! $is_rawhide && ! $is_amazon_linux && ! $is_fedora
+    ! $is_rawhide && ! $is_amazon_linux && ! $is_fedora && ! $is_mandriva
 then
     # RHEL-based, need EPEL repo
     #
