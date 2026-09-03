@@ -122,6 +122,10 @@ ifeq "$(TARGET_OS)" "openbsd"
 DSOSUFFIX = so
 endif
 
+# This is set by rpmbuild for OpenMandriva is is probably a "good" thing to
+# have by default
+LDFLAGS += -Wl,--no-undefined
+
 CFLAGS_DEV =
 CFLAGS_ABI = @cflags_abi@
 CFLAGS_OPT = @optimization@
@@ -758,7 +762,10 @@ else
 SETUP_PY_INSTALL_OPTIONS += --prefix=$(PYTHON_PREFIX)
 endif
 # RPM byte-compiles and installs results in our DIST_ROOT, cater for this:
-ifeq "$(shell [ '$(TARGET_OS)' = linux -a '$(PACKAGE_DISTRIBUTION)' != gentoo \
+ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = mandriva ] && echo 1)" "1"
+PYTHON3_INSTALL = \
+	cp $(TOPDIR)/python3-pcp.list $(TOPDIR)/python3-pcp.list.rpm
+else ifeq "$(shell [ '$(TARGET_OS)' = linux -a '$(PACKAGE_DISTRIBUTION)' != gentoo \
 	      ] && echo 1)" "1"
 # Linux and not Gentoo (which needs tarball packaging)
 PYTHON3_INSTALL = \
@@ -772,8 +779,7 @@ PYTHON3_INSTALL = \
 	cat $(TOPDIR)/python3-pcp.list.rpm | while read f; do \
 	    touch "$${DIST_ROOT-/}$$f"; \
 	done
-else
-ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = macos \
+else ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = macos \
                 -o '$(PACKAGE_DISTRIBUTION)' = gentoo \
                 -o '$(PACKAGE_DISTRIBUTION)' = solaris \
                 -o '$(PACKAGE_DISTRIBUTION)' = freebsd \
@@ -794,8 +800,7 @@ PYTHON3_INSTALL = \
 	        done; \
 	    done; \
 	fi
-else
-ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = openbsd \
+else ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = openbsd \
 	      ] && echo 1)" "1"
 # similar to above, but files already installed in DIST_ROOT so
 # just append to the manifest
@@ -810,9 +815,7 @@ PYTHON3_INSTALL = \
 		$(INSTALL) $$src $$f || exit 1; \
 	    done; \
 	fi
-endif	# openbsd if
-endif	# macos ... freebsd if
-endif	# linux && !gentoo if
+endif
 
 # Linux and Unix platforms:
 ifeq "$(findstring $(PCP_PLATFORM),darwin mingw)" ""

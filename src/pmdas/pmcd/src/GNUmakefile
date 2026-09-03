@@ -45,6 +45,12 @@ endif
 LCFLAGS += -DBUILD=\"$(BUILD)\"
 LCFLAGS += $(INVISIBILITY)
 
+# expect pmda_pmcd.so to have undefined external symbols
+#
+remove = -Wl,--no-undefined
+LDFLAGS := $(subst $(remove),,$(LDFLAGS))
+LLDFLAGS = -Wl,--allow-shlib-undefined
+
 LLDLIBS = $(PCP_PMDALIB)
 ifeq "$(TARGET_OS)" "mingw"
 LLDLIBS += -lpcp_pmcd

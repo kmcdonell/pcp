@@ -26,6 +26,17 @@ else
 ENV = nothing=''
 endif
 
+# expect Python wrappers to have undefined external symbols
+#
+remove = -Wl,--no-undefined
+LDFLAGS := $(subst $(remove),,$(LDFLAGS))
+LDFLAGS += -Wl,--allow-shlib-undefined
+ENV += LDFLAGS="$(LDFLAGS)"
+
+# force byte-compiling, even on OpenMandriva
+#
+ENV += PYTHONDONTWRITEBYTECODE=0
+
 ifeq ($(PCP_PLATFORM),mingw)
 ENV += CC="$(CC)"
 ENV += LD="$(LD)"
@@ -86,5 +97,8 @@ build_python3:	$(TOPDIR)/src/include/pcp/libpcp.h
 pre_build:
 	cd pcp; $(MAKE) default
 
+.PHONY: foo
 foo:
-	echo $(CFLAGS)
+	echo "CFLAGS=$(CFLAGS)"
+	echo "PYTHON3_INSTALL=$(PYTHON3_INSTALL)"
+
