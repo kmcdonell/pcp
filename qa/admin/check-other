@@ -3,6 +3,21 @@
 # Check other-packages/* control files
 #
 
+iam=check-other
+
+# Need directory where this script is located so we can find the other
+# scripts and control files
+#
+home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
+if [ ! -f "$home/whatami" ]
+then
+    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
+    exit 1
+fi
+
+cd "$home" || exit
+home=`pwd`
+
 _usage()
 {
     echo >&2 "Usage: $0 [options]"
@@ -190,6 +205,11 @@ do
     fi
     if [ ! -f $tmp/match ]
     then
-	echo "manifest:$lineno no packages match target=$target pkgs=$line"
+	# not matched, but may be a pattern than matches an entry for unavailable
+	#
+	if ! grep -q -E "[ 	]$pkg([ 	]|$)" <$tmp/tmp.unavailable
+	then
+	    echo "manifest:$lineno no packages match target=$target pkgs=$line"
+	fi
     fi
 done

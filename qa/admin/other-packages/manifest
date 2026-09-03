@@ -18,6 +18,8 @@
 #				directory names can be used.
 #	contain ::		test for presence of the associated Perl module
 #	otherwise		test for an executable with which(1)
+#   Note: shell glob patterns are allowed in this field (and NOT sed
+#         regular expressions like in the next field!)
 # - text after [ is treated as annotation (usually package name and notes,
 #   but also marked N/A if a package is not available on a particular
 #   platform, if the package is installed with an alternate installer,
@@ -26,6 +28,8 @@
 #   if there is more than one alternate package source, these can be
 #   separated by white space or the word "or", e.g. for RedHat and SuSE
 #   rpm naming differences
+#   Note: classical sed (not -E) regular expressions are support for the
+#         names of packages
 # - text after # is treated as a comment
 # - blank lines are ignored
 #
@@ -1197,7 +1201,7 @@ S_pkg?		SoQt.h				[N/A (build optional)]
 slackpkg?	SoQt.h				[N/A (build optional)]
 pacman?		/usr/include/Inventor/Qt/SoQt.h	[N/A (build optional)]
 brew?		SoQt.h				[N/A (build optional)]
-dpkg?		/usr/lib/*/libCoin.so		[libcoin-dev (build optional)]
+dpkg?		/usr/lib/*/libCoin.so		[libcoin[0-9]*-dev (build optional)]
 rpm?		/usr/include/Inventor/SoPath.h|/usr/include/Coin*/Inventor/SoPath.h	[Coin-devel or Coin[0-9]-devel (build optional)]
 emerge?		/usr/include/coin/Inventor/SoPath.h	[media-libs/coin (build optional)]
 pkgin?		SoPath.h	[N/A (build optional)]

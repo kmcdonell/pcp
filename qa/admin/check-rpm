@@ -105,9 +105,6 @@ do
     rm -f $tmp.perl
     case "$pkg"
     in
-	procps)
-		continue
-		;;
 	perl-*|'perl('*)
 		# turn into canonical cpan name
 		#
