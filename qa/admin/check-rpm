@@ -106,11 +106,18 @@ then
     echo >&2 "Botch: make rpmspec failed"
     exit
 fi
+# Notes: on things to dodge
+# - Requires: libibmad >= 1.1.7 libibumad >= 1.1.7
+#                      ^^^^^^^^           ^^^^^^^^
+# - Requires: (pcp-selinux = 7.2.2 if selinux-policy-targeted)
+#             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#
 grep -E '^(Requires|BuildRequires)' <$tmp.out \
 | sed \
     -e 's/.*Requires: //' \
     -e 's/ [<>=!]=* [0-9][0-9]*\.[0-9.-]*$//g' \
     -e 's/ [<>=!]=* [0-9][0-9]*\.[0-9.-]* / /g' \
+    -e '/(pcp-.* if selinux/d' \
 | tr ' ' '\012' \
 | sed >$tmp.need \
     -e '/^pcp/d' \

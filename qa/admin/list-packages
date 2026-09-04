@@ -100,55 +100,11 @@ End-of-File
 	exit
     fi
     $verbose && echo >&2 "Info: pkg_mgr_tag=$pkg_mgr_tag"
-
-    # tests here are copied from whatami
-    #
-    iam=''
-    if [ -f /etc/SuSE-release ]
-    then
-	iam=suse
-    elif [ -f /etc/centos-release ]
-    then
-	iam=centos
-    elif [ -f /etc/mandriva-release ]
-    then
-	iam=mandriva
-    elif [ -f /etc/redhat-release ]
-    then
-	iam=redhat
-    elif [ -f /etc/debian_version ]
-    then
-	iam=debian
-    elif [ -f /etc/gentoo-release ]
-    then
-	iam=gentoo
-    elif [ -f /etc/amazon-linux-release ]
-    then
-	iam=amazon-linux
-    elif [ -f /etc/fedora-release ]
-    then
-	iam=fedora
-    elif [ -f /etc/os-release ]
-    then
-	iam=opensuse
-    elif [ -f /etc/release ]
-    then
-	iam=openindiana
-    elif [ -f /etc/slackware-version ]
-    then
-	iam=slackware
-    elif [ -f /etc/arch-release ]
-    then
-	iam=arch
-    elif [ -f /etc/lsb-release ]
-    then
-	iam=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
-    fi
-    $verbose && echo >&2 "Info: iam=$iam"
+    $verbose && echo >&2 "Info: distro_tag=$distro_tag"
 
     rm -f $tmp.matched
     awk <$home/other-packages/manifest '{ print NR ":" $0 }' \
-	| grep -E ":($pkg_mgr_tag|$iam)\?" \
+	| grep -E ":($pkg_mgr_tag|$distro_tag)\?" \
     | sed \
 	-e 's/[ 	]*#.*//' \
 	-e 's/:[^[]*\[/ /' \
@@ -476,7 +432,7 @@ status=1		# failure is the default
 if $very_verbose
 then
     tmp=`pwd`/tmp
-    trap "echo exit sts=\$sts; exit \$sts" 0 1 2 3 15
+    trap "echo exit sts=\$status; exit \$status" 0 1 2 3 15
 else
     tmp=${TMPDIR:-/tmp}/list-packages-$$
     trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
@@ -503,6 +459,8 @@ fi
 
 _setversions
 # $distro, $version $full_version, $arch and $full_arch now set
+
+_get_distro_tag || exit
 
 # optionally over-ridden from the comand line ...
 #
@@ -619,6 +577,17 @@ then
 		| sed >$tmp.allpkgs \
 		    -e 's/  *//g' \
 		# end
+	    elif which dnf5 >/dev/null 2>&1
+	    then
+		( dnf5 list --available ; dnf5 list --installed ) 2>/dev/null \
+		| sed \
+		    -e '/^Available packages/d' \
+		    -e '/^Installed packages/d' \
+		| awk '{ print $1 }' \
+		| sed \
+		    -e 's/\.[^.]*$//' \
+		| sort \
+		| uniq >$tmp.allpkgs
 	    elif which dnf >/dev/null 2>&1
 	    then
 		# note using dnf's system cache, so no metadata refresh,

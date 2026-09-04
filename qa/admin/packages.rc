@@ -384,3 +384,59 @@ p
 
     return 0
 }
+
+# set $distro_tag to match tag expected in manifest
+#
+_get_distro_tag()
+{
+    # logic here copied from whatami
+    #
+    distro_tag=''
+    if [ -f /etc/SuSE-release ]
+    then
+	distro_tag=suse
+    elif [ -f /etc/centos-release ]
+    then
+	distro_tag=centos
+    elif [ -f /etc/mandriva-release ]
+    then
+	distro_tag=mandriva
+    elif [ -f /etc/fedora-release ]
+    then
+	distro_tag=fedora
+    elif [ -f /etc/redhat-release ]
+    then
+	distro_tag=redhat
+    elif [ -f /etc/debian_version ]
+    then
+	distro_tag=debian
+    elif [ -f /etc/gentoo-release ]
+    then
+	distro_tag=gentoo
+    elif [ -f /etc/amazon-linux-release ]
+    then
+	distro_tag=amazon-linux
+    elif [ -f /etc/os-release ]
+    then
+	distro_tag=opensuse
+    elif [ -f /etc/release ]
+    then
+	distro_tag=openindiana
+    elif [ -f /etc/slackware-version ]
+    then
+	distro_tag=slackware
+    elif [ -f /etc/arch-release ]
+    then
+	distro_tag=arch
+    elif [ -f /etc/lsb-release ]
+    then
+	distro_tag=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
+    fi
+    if [ -z "$distro_tag" ]
+    then
+	echo "Botch: _get_distro_tag: no clue what \$distro_tag should be"
+	return 1
+    else
+	return 0
+    fi
+}
