@@ -33,9 +33,11 @@ LDFLAGS := $(subst $(remove),,$(LDFLAGS))
 LDFLAGS += -Wl,--allow-shlib-undefined
 ENV += LDFLAGS="$(LDFLAGS)"
 
-# force byte-compiling, even on OpenMandriva
+ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = mandriva ] && echo 1)" "1"
+# force byte-compiling
 #
 ENV += PYTHONDONTWRITEBYTECODE=0
+endif
 
 ifeq ($(PCP_PLATFORM),mingw)
 ENV += CC="$(CC)"

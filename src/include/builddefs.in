@@ -762,15 +762,29 @@ else
 SETUP_PY_INSTALL_OPTIONS += --prefix=$(PYTHON_PREFIX)
 endif
 # RPM byte-compiles and installs results in our DIST_ROOT, cater for this:
-# we're forcing integrated byte-compiling in the builds now with
+# 
+ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = mandriva ] && echo 1)" "1"
+# For OpenMandriva we're forcing integrated byte-compiling in the builds
+# now with
 # PYTHONDONTWRITEBYTECODE=0
 # over in src/python/GNUmakefile
 # so we don't need the find and append to the end of python3-pcp.list
-ifeq "$(shell [ '$(TARGET_OS)' = linux -a '$(PACKAGE_DISTRIBUTION)' != gentoo \
+PYTHON3_INSTALL = \
+	cp $(TOPDIR)/python3-pcp.list $(TOPDIR)/python3-pcp.list.rpm
+else ifeq "$(shell [ '$(TARGET_OS)' = linux -a '$(PACKAGE_DISTRIBUTION)' != gentoo \
 	      ] && echo 1)" "1"
 # Linux and not Gentoo (which needs tarball packaging)
 PYTHON3_INSTALL = \
-	cp $(TOPDIR)/python3-pcp.list $(TOPDIR)/python3-pcp.list.rpm
+	cat $(TOPDIR)/python3-pcp.list | while read f; do \
+	    dirname $$f | $(SED) -e '/.*packages$$/d'; \
+	done | $(PCP_SORT_PROG) -u > $(TOPDIR)/python3-pcp.list.rpm; \
+	$(AWK) '{print} /\.pyc$$/ {sub(/\.pyc$$/,".pyo"); print}' \
+	    < $(TOPDIR)/python3-pcp.list >> $(TOPDIR)/python3-pcp.list.rpm; \
+	$(AWK) '/\.pyc$$/ {sub(/\.pyc$$/,".opt-1.pyc"); print}' \
+	    < $(TOPDIR)/python3-pcp.list >> $(TOPDIR)/python3-pcp.list.rpm; \
+	cat $(TOPDIR)/python3-pcp.list.rpm | while read f; do \
+	    touch "$${DIST_ROOT-/}$$f"; \
+	done
 else ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = macos \
                 -o '$(PACKAGE_DISTRIBUTION)' = gentoo \
                 -o '$(PACKAGE_DISTRIBUTION)' = solaris \
@@ -808,20 +822,7 @@ PYTHON3_INSTALL = \
 	    done; \
 	fi
 else
-# oldskool Linux way ... included for reference unti we're
-# sure it is no longer needed
-#
-PYTHON3_INSTALL = \
-	cat $(TOPDIR)/python3-pcp.list | while read f; do \
-	    dirname $$f | $(SED) -e '/.*packages$$/d'; \
-	done | $(PCP_SORT_PROG) -u > $(TOPDIR)/python3-pcp.list.rpm; \
-	$(AWK) '{print} /\.pyc$$/ {sub(/\.pyc$$/,".pyo"); print}' \
-	    < $(TOPDIR)/python3-pcp.list >> $(TOPDIR)/python3-pcp.list.rpm; \
-	$(AWK) '/\.pyc$$/ {sub(/\.pyc$$/,".opt-1.pyc"); print}' \
-	    < $(TOPDIR)/python3-pcp.list >> $(TOPDIR)/python3-pcp.list.rpm; \
-	cat $(TOPDIR)/python3-pcp.list.rpm | while read f; do \
-	    touch "$${DIST_ROOT-/}$$f"; \
-	done
+Botch - need recipe for PYTHON3_INSTALL
 endif
 
 # Linux and Unix platforms:

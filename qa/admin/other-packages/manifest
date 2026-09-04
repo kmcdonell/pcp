@@ -405,7 +405,7 @@ pacman?		/usr/include/readline/readline.h	[core/readline]
 brew?		/usr/local/opt/readline/include/readline/readline.h	[readline]
 # -- libncurses
 dpkg?		/usr/include/ncurses.h		[libncurses-dev or libncurses5-dev]
-rpm?		/usr/include/ncurses.h		[ncurses-devel] # is this a bug in the spec file?
+rpm?		/usr/include/ncurses.h		[ncurses-devel]
 emerge?		/usr/include/ncurses.h		[sys-libs/ncurses]
 pkgin?		/usr/pkg/include/ncurses/ncurses.h	[ncurses]
 pkg_add?	/usr/include/ncurses.h		[base OpenBSD install]
@@ -888,7 +888,7 @@ brew?		netstat		[base Darwin install]
 # it involves adding the https://k8s.io repo and then a complicated host
 # configuration setup
 dpkg?		kubectl		[N/A (build optional)]
-rpm?		kubectl		[kubernetes-client or kubernetes[0-9].*-client or kubectl (build optional)]
+rpm?		kubectl		[kubernetes-client or kubernetes[0-9.]*-client or kubectl (build optional)]
 emerge?		kubectl		[sys-cluster/kubectl (build optional)]
 pkgin?		kubectl		[N/A (build optional)]
 pkg_add?	kubectl		[N/A (build optional)]
@@ -1088,7 +1088,7 @@ pacman?		zabbix_agentd		[extra/zabbix-agent (QA optional)]
 brew?		zabbix_agentd		[N/A (QA optional)]
 # -- mysql
 dpkg?		mysql			[mariadb-client-core or mariadb-client-core-[0-9][0-9.]* or mysql-client-core or mysql-client-core-[0-9][0-9.]* (QA optional)]
-rpm?		mysql			[mysql or community-mysql or mariadb-client or mariadb (QA optional)]
+rpm?		mysql			[mysql or community-mysql or mariadb[0-9]*-client or mariadb[0-9]* (QA optional)]
 emerge?		mysql			[dev-db/mariadb (QA optional)]
 pkgin?		mysql			[mysql-client (QA optional)]
 pkg_add?	mysql			[mariadb-client (QA optional)]
@@ -1102,7 +1102,7 @@ rpm?		/opt/mssql/bin/sqlservr		[mssql-server (QA optional)]
 rpm?		/opt/mssql-tools/bin/sqlcmd	[mssql-tools (QA optional)]
 # -- postgresql
 dpkg?		psql			[postgresql-client-common (QA optional)]
-rpm?		psql			[postgresql (QA optional)]
+rpm?		psql			[postgresql[0-9]* (QA optional)]
 emerge?		psql			[dev-db/postgresql (QA optional)]
 pkgin?		psql			[postgresql[0-9][0-9]*-client (QA optional)]
 pkg_add?	psql			[postgresql-client (QA optional)]
@@ -1427,7 +1427,7 @@ brew?		ss		[? (QA optional)]
 # -- tc sockets statistics tool (pmdalio QA)
 #
 dpkg?		tc		[iproute2 (QA optional)]
-rpm?		tc		[iproute2 (QA optional)]
+rpm?		tc		[iproute2 or iproute-tc (QA optional)]
 emerge?		tc		[? (QA optional)]
 pkgin?		tc		[N/A (QA optional)]
 pkg_add?	tc		[N/A (QA optional)]
@@ -1643,7 +1643,7 @@ brew?		postfix			[? {MacOS?}]
 dpkg?		/usr/share/pkgconfig/systemd.pc 	[systemd or systemd-dev]
 rpm?		/usr/share/pkgconfig/systemd.pc		[systemd]
 
-# -- additional build dependencies from debian/control or build/rpm/*spec*
+# -- additional build and install dependencies from debian/control
 #
 dpkg?		/usr/bin/pgrep			[procps]
 dpkg?		/usr/share/doc/libdbi-perl	[libdbi-perl]
@@ -1651,6 +1651,27 @@ dpkg?		/usr/share/doc/libwww-perl	[libwww-perl]
 dpkg?		/usr/share/doc/manpages		[manpages]
 dpkg?		/usr/share/doc/python3		[python3]
 dpkg?		/usr/share/doc/python3-urllib3	[python3-urllib3]
+
+# -- additional build and install dependencies from build/rpm/pcp.spec
+#
+rpm?		bzip2				[bzip2]
+rpm?		sort				[coreutils]
+rpm?		diff				[diffutils]
+rpm?		find				[findutils]
+rpm?		gcc-c++				[gcc-c++]
+rpm?		gzip				[gzip]
+rpm?		/usr/share/doc/infiniband-diags	[infiniband-diags]
+rpm?		/usr/share/doc/libibumad	[libibumad]
+rpm?		/usr/share/doc/libdrm		[libdrm]
+rpm?		/usr/share/doc/libpfm		[libpfm]
+rpm?		/usr/share/doc/libsemanage	[libsemanage]
+rpm?		/usr/share/doc/perl-DBI		[perl-DBI]
+rpm?		/usr/share/doc/policycoreutils	[policycoreutils]
+rpm?		/usr/bin/pgrep			[procps or procps-ng]
+rpm?		postfix				[postfix]
+rpm?		/usr/share/doc/python3-packaging	[python3-packaging]
+rpm?		/bin/which			[which]
+rpm?		xz				[xz]
 
 # misc
 #

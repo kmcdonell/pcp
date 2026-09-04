@@ -22,15 +22,13 @@ _usage()
 {
     echo >&2 "Usage: $0 [options]"
     echo >&2 "Options:"
-    echo >&2 "  -d           debug"
-    echo >&2 "  -v           verbose (debugging)"
-    echo >&2 "               second -v => also keep tmp.* files"
+    echo >&2 "  -d           debug and keep tmp files"
+    echo >&2 "  -v           verbose"
     exit 1
 }
 
 debug=false
 verbose=false
-very_verbose=false
 while getopts 'dv?' p
 do
     case "$p"
@@ -38,12 +36,7 @@ do
 	d)	debug=true
 		;;
 
-	v)	if $verbose
-		then
-		    very_verbose=true
-		else
-		    verbose=true
-		fi
+	v)	verbose=true
 		;;
 
 	?)	_usage
@@ -54,9 +47,10 @@ shift `expr $OPTIND - 1`
 [ $# -ne 1 ] || _usage
 
 sts=1		# failure is the default
-if $very_verbose
+if $debug
 then
-    tmp=tmp
+    tmp=`pwd`/tmp
+    trap "echo exit sts=\$sts; exit \$sts" 0 1 2 3 15
     rm -rf tmp
 else
     tmp=${TMPDIR:-/tmp}/list-packages-$$
@@ -149,6 +143,7 @@ echo "Checking manifest ..."
 sed <$tmp/tmp.manifest \
     -e 's/[ 	][ 	]*/ /g' \
     -e 's/^ //' \
+    -e 's/cpan([^)]*)//' \
     -e 's/([^)]*)//' \
     -e 's/ or / /g' \
     -e 's/[[]//' \
@@ -162,6 +157,9 @@ do
 	N/A\ on\ *|N/A)	continue
 			;;
 	SKIP\ on\ *)	continue
+			;;
+	'')		# comes from cpan(...) alone, so no real pkgs
+			continue
 			;;
     esac
 

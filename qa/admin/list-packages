@@ -122,6 +122,9 @@ End-of-File
     elif [ -f /etc/gentoo-release ]
     then
 	iam=gentoo
+    elif [ -f /etc/amazon-linux-release ]
+    then
+	iam=amazon-linux
     elif [ -f /etc/fedora-release ]
     then
 	iam=fedora
@@ -472,7 +475,8 @@ shift `expr $OPTIND - 1`
 status=1		# failure is the default
 if $very_verbose
 then
-    tmp=tmp
+    tmp=`pwd`/tmp
+    trap "echo exit sts=\$sts; exit \$sts" 0 1 2 3 15
 else
     tmp=${TMPDIR:-/tmp}/list-packages-$$
     trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15

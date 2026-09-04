@@ -32,9 +32,7 @@ default install install_pcp default_pcp :
 # local build distro defaults do their jobs.
 pack_pcp : rpmmacros $(SPEC)
 	DEFS=`grep '^--define' rpmmacros`; \
-	if ! eval $(RPMPROG) -ba $$DEFS --clean $(SPEC); then \
-	    echo "Warning: $(RPMPROG) -ba exited with status \\$$?"; \
-	fi
+	eval $(RPMPROG) -ba $$DEFS --clean $(SPEC)
 	@if [ -n "$$RPM_SIGN_KEYID" ]; then \
 	    echo "Signing packages with key: $$RPM_SIGN_KEYID"; \
 	    RPMDIR=`sed -n -e "s,'$$,/,g" -e 's/.*_rpmdir *//p' < rpmmacros`; \

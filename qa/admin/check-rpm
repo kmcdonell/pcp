@@ -38,9 +38,40 @@ then
     exit
 fi
 
+_usage()
+{
+    echo >&2 "Usage: $iam [options]"
+    echo >&2 
+    echo >&2 "  -d           debug and save tmp files"
+    exit 1
+}
+
+debug=false
+while getopts 'd?' p
+do
+    case "$p"
+    in
+	d)	debug=true
+		;;
+
+	?)	_usage
+		# NOTREACHED
+    esac
+done
+shift `expr $OPTIND - 1`
+[ $# -eq 0 ] || _usage
+
 sts=1		# failure is the default
-tmp=${TMPDIR:-/tmp}/$iam-$$
-trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
+if $debug
+then
+    # tmp needs to be an absolute path because we cd later
+    #
+    tmp=`pwd`/tmp
+    trap "echo exit sts=\$sts; exit \$sts" 0 1 2 3 15
+else
+    tmp=${TMPDIR:-/tmp}/$iam-$$
+    trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
+fi
 rm -f $tmp.*
 
 if ! which rpmspec >/dev/null 2>&1
@@ -97,7 +128,8 @@ cat $tmp.need \
 | uniq \
 | while read pkg
 do
-    #debug# echo pkg=$pkg
+    egrep_pkg=`echo "$pkg" | sed -e 's/[+]/[&]/g'`
+    $debug && echo "pkg=$pkg egrep_pkg=$grep_pkg"
 
     # some are "special" and not real packages, or ones we cannot
     # check here ...
@@ -125,17 +157,17 @@ s/-/::/g
     then
 	perl_pkg="`sed -e 's/::/-/g' -e 's/^/perl-/' <$tmp.perl`"
 	cpan_pkg="`cat $tmp.perl | sed -e '/::/!s/$/::/'`"
-	#debug# echo perl_pkg=$perl_pkg cpan_pkg=$cpan_pkg
+	$debug && echo perl_pkg=$perl_pkg cpan_pkg=$cpan_pkg
 	if grep -q "^$perl_pkg\$" $tmp.allpkgs >$tmp.tmp
 	then
 	    # perl package is available
 	    #
-	    if ! grep -q "^$perl_pkg\$" "$pkg_list" >$tmp.tmp
+	    if ! grep -Eq "(^| )$perl_pkg( |\$)" "$pkg_list" >$tmp.tmp
 	    then
 		echo "Error: $perl_pkg is available but it is not in the package list"
 		touch $tmp.err
 	    fi
-	    if grep -q "$pkg cpan" "$pkg_list" >$tmp.tmp
+	    if grep -q "^$pkg cpan" "$pkg_list" >$tmp.tmp
 	    then
 		echo "Error: $perl_pkg is available but $pkg cpan is in the package list"
 		touch $tmp.err
@@ -143,27 +175,43 @@ s/-/::/g
 	else
 	    # expect cpan entry in package list
 	    #
-	    if grep -q "^$perl_pkg\$" "$pkg_list" >$tmp.tmp
+	    if grep -Eq "(^| )$perl_pkg( |\$)" "$pkg_list" >$tmp.tmp
 	    then
 		echo "Error: $perl_pkg is not available but it is in the package list"
 		touch $tmp.err
 	    fi
-	    if ! grep -q "$cpan_pkg cpan" "$pkg_list" >$tmp.tmp
+	    if ! grep -q "^$cpan_pkg cpan" "$pkg_list" >$tmp.tmp
 	    then
 		echo "Error: $perl_pkg is not available but $cpan_pkg cpan is not in the package list"
 		touch $tmp.err
 	    fi
 	fi
     else
+	provider=''
 	if ! grep -q "^$pkg\$" $tmp.allpkgs >$tmp.tmp
 	then
-	    echo "Error: $pkg in rpm spec but not available"
-	    touch $tmp.err
+	    # could be another package that provides this ...
+	    #
+	    if rpm -q --whatprovides "$pkg" >$tmp.tmp
+	    then
+		provider=`sed -e 's/-[0-9].*//' <$tmp.tmp`
+	    else
+		echo "Error: $pkg in rpm spec but not available"
+		touch $tmp.err
+	    fi
 	fi
-	if ! grep -q "^$pkg\$" "$pkg_list" >$tmp.tmp
+	if ! grep -Eq "(^| )$egrep_pkg( |\$)" "$pkg_list" >$tmp.tmp
 	then
-	    echo "Error: $pkg in rpm spec but not in package list"
-	    touch $tmp.err
+	    if [ -n "$provider" ]
+	    then
+		if ! grep -Eq "(^| )$provider( |\$)" "$pkg_list" >$tmp.tmp
+		then
+		    echo "Error: $pkg in rpm spec, provider is $provider but neither in package list"
+		fi
+	    else
+		echo "Error: $pkg in rpm spec but not in package list"
+		touch $tmp.err
+	    fi
 	fi
     fi
 done

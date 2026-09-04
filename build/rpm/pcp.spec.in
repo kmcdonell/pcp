@@ -34,7 +34,7 @@ ExcludeArch: %{ix86}
 %global _lib_prefix %{_lib}
 %else
 %global _py_prefix python3
-%global _lib_prefix
+%global _lib_prefix %{nil}
 %endif
 
 # prevent conflicting binary and man page install for pcp(1)
@@ -144,7 +144,11 @@ BuildRequires: ragel
 BuildRequires: chan-devel HdrHistogram_c-devel
 %endif
 %if "@pmda_perfevent@" == "true"
+%if "%{_vendor}" == "mandriva" || "%{_vendor}" == "openmandriva"
 BuildRequires: %{_lib_prefix}pfm-devel >= 4.4
+%else
+BuildRequires: libpfm-devel >= 4.4
+%endif
 %endif
 
 BuildRequires: %{_lib_prefix}ncurses-devel
@@ -1107,11 +1111,11 @@ Summary: Performance Co-Pilot (PCP) metrics for hardware counters
 URL: https://pcp.io
 Requires: pcp = @package_version@ pcp-libs = @package_version@
 %if "%{_vendor}" == "suse"
-Requires: %{_lib_prefix}pfm4 >= 4.4
+Requires: libpfm4 >= 4.4
 %else
-Requires: %{_lib_prefix}pfm >= 4.4
+Requires: libpfm >= 4.4
 %endif
-BuildRequires: %{_lib_prefix}pfm-devel >= 4.4
+BuildRequires: libpfm-devel >= 4.4
 Obsoletes: pcp-pmda-papi < 5.0.0
 Obsoletes: pcp-pmda-papi-debuginfo < 5.0.0
 
@@ -2248,7 +2252,11 @@ Requires: libdrm2
 %else
 Requires: libdrm
 %endif
+%if "%{_vendor}" == "mandriva" || "%{_vendor}" == "openmandriva"
 BuildRequires: %{_lib_prefix}drm-devel
+%else
+BuildRequires: libdrm-devel
+%endif
 %description pmda-amdgpu
 This package contains the PCP Performance Metrics Domain Agent (PMDA) for
 extracting performance metrics from AMDGPU devices.
