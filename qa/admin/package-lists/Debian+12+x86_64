@@ -45,6 +45,7 @@ libbpf-dev
 libclass-dbi-perl
 libcmocka-dev
 libcoin-dev
+libdbi-perl
 libdrm-dev
 libdbd-mysql-perl
 libdbd-pg-perl
@@ -86,6 +87,7 @@ libtimedate-perl
 libuv1-dev
 libvirt-daemon
 libvirt-daemon-system
+libwww-perl
 libxml-libxml-perl
 libxml-tokeparser-perl
 libyaml-libyaml-perl
@@ -95,6 +97,7 @@ lm-sensors
 make
 man-db
 mandoc
+manpages
 mariadb-client-core
 memcached
 net-tools
@@ -105,8 +108,10 @@ perl-modules-5.36
 pkg-config
 postfix
 postgresql-client-common
+procps
 psmisc
 pylint
+python3
 python3-all
 python3-all-dev
 python3-dev
@@ -122,7 +127,9 @@ python3-psycopg2
 python3-pymongo
 python3-pyodbc
 python3-requests
+python3-rtslib-fb
 python3-setuptools
+python3-urllib3
 qtbase5-dev
 qtbase5-dev-tools
 qtchooser
@@ -142,5 +149,6 @@ valgrind
 xfsprogs
 xkb-data
 zabbix-agent
+zfs-fuse
 zlib1g-dev
 zstd

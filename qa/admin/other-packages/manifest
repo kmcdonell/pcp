@@ -887,7 +887,7 @@ brew?		netstat		[base Darwin install]
 # strictly speaking you can install kubernetes on Debian-based systems but
 # it involves adding the https://k8s.io repo and then a complicated host
 # configuration setup
-dpkg?		kubectl		[N/A (build optional)]
+dpkg?		kubectl		[kubernetes-client (build optional)]
 rpm?		kubectl		[kubernetes-client or kubernetes[0-9.]*-client or kubectl (build optional)]
 emerge?		kubectl		[sys-cluster/kubectl (build optional)]
 pkgin?		kubectl		[N/A (build optional)]

@@ -31,6 +31,7 @@ fi
 
 _setversions
 # $distro, $version $full_version, $arch and $full_arch now set
+_setup_pkg_list || exit
 
 pkg_list="package-lists/${distro}+${version}+${arch}"
 if [ ! -f "$pkg_list" ]

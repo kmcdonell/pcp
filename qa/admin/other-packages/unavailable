@@ -33,6 +33,7 @@ CentOS       6\.10    -       389-ds apache2 bpftrace ccache chan-devel Coin[0-9
 #    10   buster
 #    11   bullseye
 #     ?   sid (unstable)
+Debian       12\..*   -       python3-pyarrow valkey-server valkey-cli valkey-tools bpftrace-dbgsym
 Debian       11\..*   -       apache2-mpm-worker libicu libreadline6-dev libsoqt-dev libsoqt-dev-common libuv-dev mariadb-client-core mysql-client-core mysql-client-core-[0-9][0-9.]* perl-modules qt4-qmake redis-cli zfsutils-linux
 Debian       10\..*   -       apache2-mpm-worker kubernetes-client libreadline6-dev libsoqt5-dev libsoqt-dev libsoqt-dev-common libuv-dev mariadb-client-core mysql-client-core mysql-client-core-[0-9][0-9.]* perl-modules realpath redis-cli zfsutils-linux
 Debian       10\..*   i.86    bpftrace
