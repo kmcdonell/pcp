@@ -789,6 +789,7 @@ else ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = macos \
                 -o '$(PACKAGE_DISTRIBUTION)' = gentoo \
                 -o '$(PACKAGE_DISTRIBUTION)' = solaris \
                 -o '$(PACKAGE_DISTRIBUTION)' = freebsd \
+                -o '$(PACKAGE_DISTRIBUTION)' = netbsd \
 	      ] && echo 1)" "1"
 # Gather installed Python files before packaging
 # Matching build artifacts are below src/python/build

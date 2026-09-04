@@ -152,12 +152,16 @@ sed <$tmp/tmp.manifest \
 | while read lineno target line
 do
     $debug && echo lineno=$lineno target=$target line=$line
+    # some of these are not even real packages ...
+    #
     case "$line"
     in
 	N/A\ on\ *|N/A)	continue
 			;;
 	SKIP\ on\ *)	continue
 			;;
+	'base NetBSD install')	continue
+				;;
 	'')		# comes from cpan(...) alone, so no real pkgs
 			continue
 			;;
