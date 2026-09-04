@@ -92,3 +92,9 @@ Ubuntu       14\.04   -       bpftrace kubernetes-client libsoqt5-dev libsoqt-de
 OpenMandriva .*       -       initscripts aaa_base targetcli HdrHistogram_c-devel HdrHistogram_c chan-devel chan mssql-server mssql-tools zabbix-agent zabbix[0-9][.0-9]*-agent valkey
 #-- AmazonLinux
 AmazonLinux   2023    -        ragel python3-pylint libvirt-python3 python3-libvirt python3-libvirt-python python3-prometheus_client python3-elasticsearch python3-pyodbc perl-Spreadsheet-Read perl-Spreadsheet-XLSX perl-Spreadsheet-ReadSXC kubernetes-client kubernetes-kubelet python3-pandas python3-pyarrow 389-ds 389-ds-base zabbix0-agent mssql-server mssql-tools gfs2-utils qtchooser qt5-qtbase-devel qt5-qtsvg-devel SoQt-devel Coin-devel libvirt-daemon libvirt-daemon-driver-qemu chan-devel HdrHistogram_c-devel chan HdrHistogram_c kubernetes-node kubectl kubernetes kubernetes0 mysql qt6-qtsvg-devel libqt5-qtsvg-devel libqt5-qtbase-devel qt6-qtbase-devel qt-devel libqt5Core-devel libQt5Core-devel Coin0-devel zfs-fuse
+#-- Oracle Linux
+# should be the same as the corresponding RHEL line
+Oracle.* 10    -      -        Coin-devel Coin[0-9]-devel mandoc python3-elasticsearch python3-prometheus_client ragel python3-elasticsearch perl-Spreadsheet-Read perl-Spreadsheet-ReadSXC mandoc-bin kubernetes-client kubernetes[0-9.]*-client kubectl kubernetes-node kubernetes-kubelet kubernetes kubernetes[0-9.]* mssql-server mssql-tools gfs2-utils qtchooser SoQt-devel redis redis[0-9] zfs-fuse
+
+
+

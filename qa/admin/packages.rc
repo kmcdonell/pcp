@@ -23,6 +23,10 @@ _setversions()
 	-e 's/ ([^)]*)//' \
 	-e 's/RHEL Server/RHEL/' \
 	-e 's/Arch Linux/ArchLinux /' \
+	-e '/Oracle Linux/{
+s/Oracle Linux/OracleLinux/
+s/\.[0-9]*$//
+}' \
 	-e '/CentOS/{
 s/CentOS Linux/CentOS/
 s/CentOS\([0-9]\)/CentOS \1/
@@ -88,6 +92,7 @@ _parse_file()
 		then
 		    :
 		else
+		    $very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat, no match for version=$version_pat"
 		    _match=false
 		fi
 	    fi
@@ -102,6 +107,7 @@ _parse_file()
 		    then
 			:
 		    else
+			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and version=$version_pat, no match for arch=$arch_pat"
 			_match=false
 		    fi
 		fi
@@ -253,7 +259,7 @@ _find_packages()
 	    apt-cache dumpavail | sed -n -e '/^Package: /s///p' >$tmp.allpkgs
 	    ;;
 
-	RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux)
+	RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux|Oracle\ Linux)
 	    rpm -qa --qf '%{NAME}\n' >$tmp.installed
 	    if which zypper >/dev/null 2>&1
 	    then
@@ -401,6 +407,9 @@ _get_distro_tag()
     elif [ -f /etc/mandriva-release ]
     then
 	distro_tag=mandriva
+    elif [ -f /etc/oracle-release ]
+    then
+	distro_tag=oracle-linux
     elif [ -f /etc/fedora-release ]
     then
 	distro_tag=fedora

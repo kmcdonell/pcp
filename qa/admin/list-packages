@@ -83,7 +83,7 @@ _do_check()
     #
     cat <<End-of-File >$tmp.tags
 dpkg	Ubuntu Debian LinuxMint MX
-rpm	RHEL Fedora CentOS openSUSE SUSE SLES OpenMandriva-Lx AmazonLinux
+rpm	RHEL Fedora CentOS openSUSE SUSE SLES OpenMandriva-Lx AmazonLinux OracleLinux
 emerge	Gentoo
 pkgin	NetBSD
 pkg_add	OpenBSD
@@ -527,7 +527,7 @@ then
 	    apt-cache dumpavail | sed -n -e '/^Package: /s///p' >$tmp.allpkgs
 	    ;;
 
-	RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux)
+	RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux|OracleLinux)
 	    rpm -qa --qf '%{NAME}\n' >$tmp.installed
 	    if which zypper >/dev/null 2>&1
 	    then

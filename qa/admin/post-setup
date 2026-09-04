@@ -1353,7 +1353,7 @@ then
 		rhel=`sed -e 's/\.[0-9].*//' -e 's/.* //' </etc/system-release`
 		if [ -z "$rhel" ]
 		then
-		    echo "Botch: failed to RHEL release from ..."
+		    echo "Botch: failed to get RHEL release from ..."
 		    cat $tmp.tmp
 		    exit
 		fi
@@ -1366,6 +1366,7 @@ then
 		    if sudo subscription-manager repos --enable "$repo"
 		    then
 			$debug && echo "Debug: repo $repo enabled"
+			sudo dnf update
 		    else
 			echo "Error: subscription-manager repos --enable $repo failed"
 			exit
@@ -1376,6 +1377,44 @@ then
 		    $debug && echo "Debug: epel already installed"
 		else
 		    if sudo $pkg_env $pkg_cmd $pkg_install_options https://dl.fedoraproject.org/pub/epel/epel-release-latest-$rhel.noarch.rpm
+		    then
+			$debug && echo "Debug: epel installed"
+		    else
+			echo "Error: $pkg_env $pkg_cmd $pkg_install_options failed"
+			exit
+		    fi
+		fi
+	    elif [ -f /etc/system-release ] && grep -q 'Oracle Linux' /etc/system-release
+	    then
+		# Oracle Linux
+		#
+		rhel=`sed -e 's/\.[0-9].*//' -e 's/.* //' </etc/system-release`
+		if [ -z "$rhel" ]
+		then
+		    echo "Botch: failed to get RHEL release from ..."
+		    cat $tmp.tmp
+		    exit
+		fi
+		$debug && echo "Debug: rhel=$rhel"
+		repo=ol${rhel}_codeready_builder
+		if grep -q "^$repo" <$tmp.repos
+		then
+		    $debug && echo "Debug: repo $repo already enabled"
+		else
+		    if sudo dnf config-manager --enable "$repo"
+		    then
+			$debug && echo "Debug: repo $repo enabled"
+			sudo dnf update
+		    else
+			echo "Error: dnf config-manager --enable $repo failed"
+			exit
+		    fi
+		fi
+		if grep -q "^epel" <$tmp.repos
+		then
+		    $debug && echo "Debug: epel already installed"
+		else
+		    if sudo $pkg_env $pkg_cmd $pkg_install_options oracle-epel-release-el$rhel
 		    then
 			$debug && echo "Debug: epel installed"
 		    else

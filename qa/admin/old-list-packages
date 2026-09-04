@@ -89,7 +89,7 @@ _build_allpkgs()
 	apt-cache dumpavail | sed -n -e '/^Package: /s///p' >$tmp.allpkgs
 	;;
 
-    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux)
+    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux|OracleLinux)
 	if which zypper >/dev/null 2>&1
 	then
 	    zypper --no-refresh packages 2>&1 \
@@ -610,7 +610,7 @@ in
 	| sed -n -e '/ installed$/s/ .*//p' >$tmp.installed
 	;;
 
-    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux)
+    RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux|OracleLinux)
 	mytype=rpm
 	if which zypper >/dev/null 2>&1
 	then
@@ -749,61 +749,19 @@ fi
 # Strip the distro-dependent lines that do not apply ...
 # this is an optimization remove checks from the main loop below
 #
-# tests here are copied from whatami
-#
-iam=''
-if [ -f /etc/SuSE-release ]
-then
-    iam=suse
-elif [ -f /etc/centos-release ]
-then
-    iam=centos
-elif [ -f /etc/mandriva-release ]
-then
-    iam=mandriva
-elif [ -f /etc/redhat-release ]
-then
-    iam=redhat
-elif [ -f /etc/debian_version ]
-then
-    iam=debian
-elif [ -f /etc/gentoo-release ]
-then
-    iam=gentoo
-elif [ -f /etc/amazon-linux-release ]
-then
-    iam=amazon-linux
-elif [ -f /etc/fedora-release ]
-then
-    iam=fedora
-elif [ -f /etc/os-release ]
-then
-    iam=opensuse
-elif [ -f /etc/release ]
-then
-    iam=openindiana
-elif [ -f /etc/slackware-version ]
-then
-    iam=slackware
-elif [ -f /etc/arch-release ]
-then
-    iam=arch
-elif [ -f /etc/lsb-release ]
-then
-    iam=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
-fi
-$very_verbose && echo >&2 "distro iam=$iam"
+_get_distro_tag
+$very_verbose && echo >&2 "distro distro_tag=$distro_tag"
 
 for tag in $tags
 do
     pick=false
-    case "$iam"
+    case "$distro_tag"
     in
 	redhat|fedora)
 	    [ "$tag" = redhat ] && pick=true
 	    ;;
 	*)
-	    [ "$tag" = "$iam" ] && pick=true
+	    [ "$tag" = "$distro_tag" ] && pick=true
 	    ;;
     esac
     if $pick

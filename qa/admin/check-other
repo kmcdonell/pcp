@@ -120,7 +120,7 @@ _find()
 		;;
 	*)
 		echo >&2
-		echo >&2 "Botch: _find: need recipe to find package for installed file for pkg_type=$pkg_type"
+		echo >&2 "Botch: _find: need recipe to find package for installed file for pkg_type: $pkg_type"
 		return 1
 		;;
     esac
@@ -151,7 +151,7 @@ sed <$tmp/tmp.manifest \
     -e 's/\(.*\) :\([0-9]*[0-9]\)$/\2 \1/' \
 | while read lineno target line
 do
-    $debug && echo lineno=$lineno target=$target line=$line
+    $debug && echo lineno: $lineno target: $target line: $line
     # some of these are not even real packages ...
     #
     case "$line"
@@ -211,7 +211,7 @@ do
 	#
 	if ! grep -q -E "[ 	]$pkg([ 	]|$)" <$tmp/tmp.unavailable
 	then
-	    echo "manifest:$lineno no packages match target=$target pkgs=$line"
+	    echo "manifest:$lineno no packages match target: $target pkgs: $line"
 	fi
     fi
 done
