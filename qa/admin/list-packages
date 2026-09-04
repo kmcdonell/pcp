@@ -480,48 +480,7 @@ then
     arch="$Arch"
 fi
 
-# This gets a bit tricky as the match may be for a prefix of the ${version}
-# and/or "any" in lieu of ${arch}
-#
-rm -f $tmp.found
-_version="$version"
-while true
-do
-    for _arch in "${arch}" "any"
-    do
-	if [ -f "$home/package-lists/${distro}+${_version}+${_arch}" ]
-	then
-	    echo "version=\"$_version\" arch=\"$_arch\"" >$tmp.found
-	    break
-	fi
-    done
-    [ -s $tmp.found ] && break
-    _check="`echo $_version | sed -e 's/\.[0-9][0-9]*$//'`"
-    [ "$_check" = "$_version" ] && break
-    _version="$_check"
-done
-
-if [ -s $tmp.found ]
-then
-    if $verbose
-    then
-	v_version="$version"
-	v_arch="$arch"
-    fi
-    eval `cat $tmp.found`
-    if $verbose
-    then
-	if [ "$v_version+$v_arch" = "$version+$arch" ]
-	then
-	    echo >&2 "Info: exact match => packaging $distro+$version+$arch"
-	else
-	    echo >&2 "Info: fuzzy match platform $distro+$v_version+$v_arch => packaging $distro+$version+$arch"
-	fi
-    fi
-else
-    echo >&2 "Botch: $home/package-lists/${distro}+${version}+${arch}: no match found"
-    exit
-fi
+_setup_pkg_list || exit
 
 if $nflag
 then
