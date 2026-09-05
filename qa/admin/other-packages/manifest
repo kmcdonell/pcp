@@ -267,7 +267,7 @@ pacman?		pkg-config	[core/pkgconf]
 brew?		pkg-config	[pkg-config]
 # -- python
 dpkg?		python3		[python3-minimal or python3-all]
-rpm?		python3		[python3 or python3[0-9]*-base]
+rpm?		python3		[python3[0-9]* or python3[0-9]*-base]
 emerge?		python3		[?]
 pkgin?		python3		[python3[0-9]*]
 pkg_add?	python3		[python]
