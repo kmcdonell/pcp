@@ -425,6 +425,10 @@ Slackware
     $ slackpkg search <info-pattern>
     # which package installs a file/directory
     $ slackpkg file-search <filename-pattern>
+    # <filename-pattern> has some rules:
+    # 1. cannot be an absolute path
+    # 2. cannot contain a symlink
+    # so realpath <file-name> | sed -e 's;^/;;' may be needed
     # which files are in an installed package
     $ sed -e '1,/^FILE LIST:/d' </var/log/packages/<package>
     # sort packages on installed size, largest to smallest
@@ -433,7 +437,7 @@ Slackware
     $ sudo slackpkg install <package>
     # update all packages recipe
     $ sudo slackpkg -batch=on update
-    $ sudo slackpkg -batch=on -default_answer=y upgrade-all
+    $ sudo slackpkg -batch=on upgrade-all
     $ sudo slackpkg clean-system
     # then reconcile any .new files in /etc
     # release upgrade recipe - rarely needed for Slackware

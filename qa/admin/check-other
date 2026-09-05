@@ -95,6 +95,9 @@ then
 elif which pkg_add >/dev/null 2>&1
 then
     pkg_type="pkg_add"
+elif which slackpkg >/dev/null 2>&1
+then
+    pkg_type="slackpkg"
 else
     echo >&2 "Botch: need recipe for system package type"
     exit
@@ -118,9 +121,26 @@ _find()
 		#
 		dpkg-query -S "$1" | sed -e 's/:.*//'
 		;;
+	slackpkg)	# output like
+	    		# <fluff>
+			# [ installed ] - sed-4.8-x86_64-3
+			# <fluff>
+			#
+			_target=`realpath "$1" | sed -e 's;^/;;'`
+			if ! slackpkg file-search "$_target" >$tmp.tmp
+			then
+			    echo "Error: slackpkg file-search $_target failed"
+			    return 1
+			fi
+			sed -n <$tmp.tmp '/\[ installed ]/{
+s/-[0-9].*//
+s/.* //
+p
+}'
+			;;
 	*)
 		echo >&2
-		echo >&2 "Botch: _find: need recipe to find package for installed file for pkg_type: $pkg_type"
+		echo >&2 "Botch: _find: need recipe to find $pkg_type package for installed file: $1"
 		return 1
 		;;
     esac

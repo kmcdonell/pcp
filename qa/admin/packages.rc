@@ -425,9 +425,6 @@ _get_distro_tag()
     elif [ -f /etc/amazon-linux-release ]
     then
 	distro_tag=amazon-linux
-    elif [ -f /etc/os-release ]
-    then
-	distro_tag=opensuse
     elif [ -f /etc/release ]
     then
 	distro_tag=openindiana
@@ -437,6 +434,9 @@ _get_distro_tag()
     elif [ -f /etc/arch-release ]
     then
 	distro_tag=arch
+    elif [ -f /etc/os-release ]
+    then
+	distro_tag=opensuse
     elif [ -f /etc/lsb-release ]
     then
 	distro_tag=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`

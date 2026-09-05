@@ -160,6 +160,21 @@ in
 	;;
 esac
 
+# Usage: _sudo cmd args ...
+#
+_sudo()
+{
+    if ! sudo "$@"
+    then
+	echo "Error: sudo $* failed"
+	return 1
+    else
+	return 0
+    fi
+    echo "Checking sudo ... expect only ONE ALL:ALL line ..."
+    sudo -l
+}
+
 # Usage: _nmcli connection query expected
 #
 _nmcli()
@@ -252,6 +267,54 @@ _ip()
     return 0
 }
 
+# For Slackware ...
+# Usage: _rc_inet1_conf var value
+# e.g _rc_inet1_conf 'IPADDRS[0]' "$vm_ipaddr"
+#
+_rc_inet1_conf()
+{
+    var="$1"
+    expect="$2"
+    conf="/etc/rc.d/rc.inet1.conf"
+    if [ ! -f "$conf" ]
+    then
+	echo "Error: $conf not found"
+	return 1
+    fi
+    _sudo awk -F= '$1 == "'"$var"'" { print $2 }' "$conf" >$tmp.tmp || return 1
+    value="`cat $tmp.tmp`"
+    $debug && echo "Debug: _rc_inet1_conf: var=$var value=$value"
+    case "$value"
+    in
+	"\"$expect\"")
+	    if $check
+	    then
+		echo "Info: $conf: $var is OK"
+	    fi
+	    ;;
+	*)
+	    if $check
+	    then
+		echo "Warning: _rc_inet1_conf: $var is \"$value\", expecting \"$expect\""
+	    else
+		_sudo cp "$conf" $tmp.conf || return 1
+		_sudo chown `id -un` $tmp.conf || return 1
+		awk -F= 'BEGIN { OFS="=" } $1 == "'"$var"'" { $2 = "\"'"$expect"'\"" } { print }' <$tmp.conf >$tmp.tmp
+		if ! diff $tmp.conf $tmp.tmp
+		then
+		    echo "Botch: _rc_inet1_conf: $var -> \"$expect\" (was $value)" and no diffs?
+		    return 1
+		fi
+		[ -f "$conf.bak" ] || _sudo cp "$conf" "$conf.bak"
+		_sudo cp $tmp.tmp "$conf" || return 1
+		echo "Update: _rc_inet1_conf: $var=\"$expect\" (was $value)"
+		touch $tmp.changed
+	    fi
+	    ;;
+    esac
+    return 0
+}
+
 # Usage: _ttys tty type setting
 #
 _ttys()
@@ -311,21 +374,6 @@ _ufw()
 	return 1
     fi
     return 0
-}
-
-# Usage: _sudo cmd args ...
-#
-_sudo()
-{
-    if ! sudo "$@"
-    then
-	echo "Error: sudo $* failed"
-	return 1
-    else
-	return 0
-    fi
-    echo "Checking sudo ... expect only ONE ALL:ALL line ..."
-    sudo -l
 }
 
 # sudo ...
@@ -403,6 +451,10 @@ elif which pkg_add >/dev/null 2>&1
 then
     pkg_cmd="pkg_add"
     pkg_install_options="-I"
+elif which slackpkg >/dev/null 2>&1
+then
+    pkg_cmd="slackpkg"
+    pkg_install_options="-default_answer=y -batch=on install"
 else
     echo "Botch: need recipe for system package installer"
     exit
@@ -460,6 +512,12 @@ then
     is_mandriva=true
     $debug && echo "Debug: is_mandriva=$is_mandriva"
 fi
+is_slackware=false
+if [ -f /etc/slackware-version ]
+then
+    is_slackware=true
+    $debug && echo "Debug: is_slackware=$is_slackware"
+fi
 
 use_systemctl=false
 # check if systemd is PID 0, so it is running, not just the
@@ -474,7 +532,19 @@ fi
 # network ... IPv4 static, gateway and DNS for some platforms
 #
 echo "Checking network config ..."
-if which nmcli >/dev/null 2>&1
+if $is_slackware
+then
+    target=/etc/rc.d/rc.inet1.conf
+    rm -f $tmp.changed
+    _rc_inet1_conf 'IPADDRS[0]' "$vm_ipaddr/24"
+    _rc_inet1_conf 'USE_DHCP[0]' ""
+    _rc_inet1_conf 'GATEWAY' "$gateway"
+    if [ -f $tmp.changed ]
+    then
+	echo "TODO: methinks: /etc/rc.d/rc.inet1 restart"
+	exit
+    fi
+elif which nmcli >/dev/null 2>&1
 then
     nmcli connection show >$tmp.tmp
     awk <$tmp.tmp >$tmp.conn '
@@ -1072,7 +1142,7 @@ then
     else
 	$check && echo "Info: timezone: ok"
     fi
-elif $is_openbsd || $is_netbsd || $is_linux_mx
+elif $is_openbsd || $is_netbsd || $is_linux_mx || $is_slackware
 then
     if readlink /etc/localtime >$tmp.tmp
     then
@@ -1198,7 +1268,7 @@ elif [ -f /etc/inittab ]
 then
     if grep -q ' ttyS0 ' /etc/inittab >$tmp.tmp
     then
-	if grep -q '^T0:2345:' /etc/inittab
+	if grep -q '^[^#].* ttyS0' /etc/inittab
 	then
 	    # already enabled
 	    #
@@ -1550,6 +1620,14 @@ in
 			echo "Error: $pkg_env $pkg_cmd update failed"
 			exit
 		    fi
+		fi
+		;;
+    slackpkg)	if $check
+    		then
+		    echo "Info: $pkg_cmd update: skipped for -c"
+		else
+		    _sudo $pkg_env $pkg_cmd -default_answer=y -batch=on update || exit
+		    _sudo $pkg_env $pkg_cmd -default_answer=y -batch=on upgrade-all || exit
 		fi
 		;;
 	*)
