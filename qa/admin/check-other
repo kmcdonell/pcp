@@ -29,14 +29,17 @@ _usage()
 
 debug=false
 verbose=false
+opts_v=''
 while getopts 'dv?' p
 do
     case "$p"
     in
 	d)	debug=true
+		opts_v='-v'
 		;;
 
 	v)	verbose=true
+		opts_v='-v'
 		;;
 
 	?)	_usage
@@ -61,7 +64,7 @@ mkdir -p $tmp || exit
 here=pwd
 
 rm -f $tmp/*
-./old-list-packages -R || exit
+./old-list-packages -R $opts_v || exit
 mv tmp.* $tmp
 
 # copied from post-setup ...

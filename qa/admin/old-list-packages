@@ -524,6 +524,8 @@ else
 fi
 rm -f $tmp.*
 
+$verbose && echo "Info: distro=$distro version=$version arch=$arch"
+
 if [ -f /etc/pcp.conf ]
 then
     . /etc/pcp.conf
