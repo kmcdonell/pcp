@@ -818,7 +818,7 @@ do
 	    iflag=false
 	    if [ -n "$efile" ]
 	    then
-		echo "Info: no -e $efile for vm16"
+		echo "Info: no -e $efile for $host"
 		efile=''
 	    fi
 	    #
@@ -839,6 +839,24 @@ do
 	    #
 	    qa_dir=/var/lib/pcp/testsuite
 	    qa_user=pcpqa
+	    ;;
+
+	vm25)
+	    # this is Debian unstable
+	    # no -p or -m or -i flags and no -e processing
+	    # run from testsuite, not git tree
+	    #
+	    qa_user=pcpqa
+	    qa_dir=/var/lib/pcp/testsuite
+	    echo "Info: this is PCP from Debian unstable ... no new PCP builds or installs"
+	    pflag=false
+	    mflag=false
+	    iflag=false
+	    if [ -n "$efile" ]
+	    then
+		echo "Info: no -e $efile for $host"
+		efile=''
+	    fi
 	    ;;
 
 	vm26)
