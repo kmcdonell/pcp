@@ -419,6 +419,7 @@ basic=false
 force=false
 pkglist=false
 pkgcmd=false
+debug=false
 verbose=false
 very_verbose=false
 check_manifest=false

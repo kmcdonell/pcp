@@ -11,14 +11,14 @@ _usage()
     echo >&2 
     echo >&2 "  -A arch      override platform arch"
     echo >&2 "  -D distro    override platform distro"
+    echo >&2 "  -d           debug amd keep tmp.* files"
     echo >&2 "  -c           check package list"
     echo >&2 "  -i tag       include only lines with a tag"
     echo >&2 "  -m           list only missing packages"
     echo >&2 "  -n           report my package list file and quit"
     echo >&2 "  -u           update => -c + fixups"
     echo >&2 "  -U           -u but show me (no changes to package list)"
-    echo >&2 "  -v           verbose (debugging)"
-    echo >&2 "               second -v => also keep tmp.* files"
+    echo >&2 "  -v           verbose (extra debugging)"
     echo >&2 "  -V version   override platform version"
     echo >&2 "  -x tag       exclude lines with a tag"
     exit 1
@@ -353,12 +353,54 @@ END		{ exit sts }'
 	echo "Duplicated in package list ..."
 	_fmt 72 <$tmp.dup | sed -e 's/^/    /'
     fi
+
+    # and for rpm and dpkg packaging we have additional package requirements
+    # for building and installing from the "spec" and "control" files
+    #
+    if [ "$pkg_type" = rpm ]
+    then
+	if ! ./check-rpm >$tmp.check-rpm 2>&1
+	then
+	    if $update
+	    then
+		cat $tmp.check-rpm \
+		| while read line
+		do
+		    case "$line"
+		    in
+			# Error: libpfm4 in rpm spec but not in package list
+			*\ in\ rpm\ spec\ but\ not\ *)
+			    echo "$line" | awk '{ print $2 }' >>$tmp.add
+			    ;;
+			# Error: perl-LWP-UserAgent is not available but LWP::UserAgent cpan is not in the package list
+			*\ not\ available\ *\ cpan\ is\ not\ *)
+			    echo "$line" | awk '{ print $7,$8 }' >>$tmp.add
+			    ;;
+			*)
+			    echo "$line"
+			    ;;
+		    esac
+		done
+	    else
+		sed -n <$tmp.check-rpm -e '/Error:/s//rpm-spec:/p'
+	    fi
+	fi
+    fi
+    if [ "$pkg_type" = dpkg ]
+    then
+	if ! ./check-dpkg >$tmp.check-dpkg 2>&1
+	then
+	    echo TODO
+	    cat $tmp.check-dpkg
+	fi
+    fi
 }
 
 LC_COLLATE=POSIX; export LC_COLLATE
 
 verbose=false
 very_verbose=false
+debug=false
 include=''
 exclude=''
 missing=false
@@ -366,17 +408,20 @@ check=false
 nflag=false
 update=false
 show_me=false
-while getopts 'A:cD:i:mnuUvV:x:?' p
+while getopts 'A:cdD:i:mnuUvV:x:?' p
 do
     case "$p"
     in
 	A)	Arch="$OPTARG"
 		;;
 
-	D)	Distro="$OPTARG"
+	c)	check=true
 		;;
 
-	c)	check=true
+	d)	debug=true
+		;;
+
+	D)	Distro="$OPTARG"
 		;;
 
 	i)	if [ -n "$exclude" ]
@@ -429,7 +474,7 @@ shift `expr $OPTIND - 1`
 [ $# -eq 0 ] || _usage
 
 status=1		# failure is the default
-if $very_verbose
+if $debug
 then
     tmp=`pwd`/tmp
     trap "echo exit sts=\$status; exit \$status" 0 1 2 3 15
@@ -459,24 +504,26 @@ fi
 
 _setversions
 # $distro, $version $full_version, $arch and $full_arch now set
+$debug && echo "Debug: distro=$distro version=$version arch=$arch"
 
 _get_distro_tag || exit
+_get_pkg_type || exit
 
 # optionally over-ridden from the comand line ...
 #
 if [ -n "$Distro" ]
 then
-    $verbose && echo >&2 "Info: forcing distro=$Distro (not $distro)"
+    $debug && echo >&2 "Debug: forcing distro=$Distro (not $distro)"
     distro="$Distro"
 fi
 if [ -n "$Version" ]
 then
-    $verbose && echo >&2 "Info: forcing version=$Version (not $version)"
+    $debug && echo >&2 "Debug: forcing version=$Version (not $version)"
     version="$Version"
 fi
 if [ -n "$Arch" ]
 then
-    $verbose && echo >&2 "Info: forcing arch=$Arch (not $arch)"
+    $debug && echo >&2 "Debug: forcing arch=$Arch (not $arch)"
     arch="$Arch"
 fi
 
@@ -593,7 +640,7 @@ then
 	    # <tr>...<a href="libsysstat-0.4.1p1.tgz">libsysstat-0.4.1p1.tgz</a>...
 	    #
 	    url="`cat /etc/installurl`/`uname -r`/packages/`uname -m`/"
-	    $verbose && echo >&2 "Fetching list of available packages from $url ..."
+	    $debug && echo "Debug: fetching list of available packages from $url ..."
 	    curl -s $url \
 	    | sed -n >$tmp.allpkgs \
 		-e '/a href=".*tgz">/{

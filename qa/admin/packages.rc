@@ -446,6 +446,7 @@ _get_distro_tag()
 	echo "Botch: _get_distro_tag: no clue what \$distro_tag should be"
 	return 1
     else
+	$debug && echo "Debug: manifest distro tag: $distro_tag"
 	return 0
     fi
 }
@@ -496,5 +497,51 @@ _setup_pkg_list()
 	echo >&2 "Botch: $home/package-lists/${distro}+${version}+${arch}: no match found"
 	return 1
     fi
+    return 0
+}
+
+# set $_pkg_type to you package manager type: rpm, dpkg, ...
+#
+# copied from post-setup ...
+#
+_get_pkg_type()
+{
+    pkg_type=""
+    if which apt-get >/dev/null 2>&1
+    then
+	pkg_type=dpkg
+    elif which zypper >/dev/null 2>&1
+    then
+	pkg_type=rpm
+    elif which dnf >/dev/null 2>&1
+    then
+	pkg_type=rpm
+    elif which yum >/dev/null 2>&1
+    then
+	pkg_type=rpm
+    elif which pacman >/dev/null 2>&1
+    then
+	pkg_type=pacman
+    elif which pkg >/dev/null 2>&1
+    then
+	pkg_type="pkg"
+    # pkgin has to be before pkg_add in this compound
+    # if-elif-elif-else-fi because NetBSD has both and we need
+    # to use pkgin for NetBSD
+    #
+    elif which pkgin >/dev/null 2>&1
+    then
+	pkg_type="pkgin"
+    elif which pkg_add >/dev/null 2>&1
+    then
+	pkg_type="pkg_add"
+    elif which slackpkg >/dev/null 2>&1
+    then
+	pkg_type="slackpkg"
+    else
+	echo >&2 "Botch: need recipe for system package type"
+	return 1
+    fi
+    $debug && echo "Debug: package type: $pkg_type"
     return 0
 }
