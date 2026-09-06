@@ -86,8 +86,11 @@ smart_enumerate_devices(void)
 		/* skip partitions */
 		pmsprintf(path, sizeof(path),
 			"/sys/class/block/%s/partition", de->d_name);
-		if (access(path, F_OK) == 0)
+		FILE *pf = fopen(path, "r");
+		if (pf != NULL) {
+			fclose(pf);
 			continue;
+		}
 
 		/* skip virtual devices (zram, dm, loop, md, nbd, ...) */
 		pmsprintf(path, sizeof(path),
@@ -145,7 +148,8 @@ smart_enumerate_devices(void)
 	}
 	closedir(dp);
 
-	qsort(smart_disks, ndevs, sizeof(smart_disks[0]), smart_disk_cmp);
+	if (ndevs > 0)
+		qsort(smart_disks, ndevs, sizeof(smart_disks[0]), smart_disk_cmp);
 
 	smart_ndisks = ndevs;
 	return ndevs;
