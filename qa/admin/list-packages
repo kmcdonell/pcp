@@ -359,7 +359,7 @@ END		{ exit sts }'
     #
     if [ "$pkg_type" = rpm ]
     then
-	if ! ./check-rpm >$tmp.check-rpm 2>&1
+	if ! $home/check-rpm >$tmp.check-rpm 2>&1
 	then
 	    if $update
 	    then
@@ -388,7 +388,7 @@ END		{ exit sts }'
     fi
     if [ "$pkg_type" = dpkg ]
     then
-	if ! ./check-dpkg >$tmp.check-dpkg 2>&1
+	if ! $home/check-dpkg >$tmp.check-dpkg 2>&1
 	then
 	    echo TODO
 	    cat $tmp.check-dpkg

@@ -39,6 +39,7 @@ git
 git-core
 grep
 gzip
+hostname
 httpd
 infiniband-diags
 inih-devel
