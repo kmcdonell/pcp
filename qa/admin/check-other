@@ -147,6 +147,33 @@ $1 == "Name"		{ print repo "/" $2; exit }'
 			fi
 			;;
 
+	pkg)	# for files from pkg(1) output is like
+		# /usr/local/bin/bison was installed by package bison-3.8.2_2,1
+		# but for base os install we need to get the manifest from
+		# /usr/freebsd-dist/base.txz
+		#
+		if pkg which "$1" >$tmp.tmp
+		then
+		    sed <$tmp.tmp -e 's/.* by package //' -e 's/-[0-9].*//'
+		else
+		    if [ ! -f $tmp.base-manifest ]
+		    then
+			if [ /usr/freebsd-dist/base.txz ]
+			then
+			    tar tf /usr/freebsd-dist/base.txz \
+			    | sed -e 's/^\.//' >$tmp.base-manifest
+			else
+			    echo "Warning: /usr/freebsd-dist/base.txz not found so no clue what's in your base FreeBSD install"
+			    touch $tmp.base-manifest
+			fi
+		    fi
+		    if grep -q "^$1\$" $tmp.base-manifest
+		    then
+			echo "base FreeBSD install"
+		    fi
+		fi
+		;;
+
 	*)
 		echo >&2
 		echo >&2 "Botch: _find: need recipe to find $pkg_type package for installed file: $1"
@@ -165,7 +192,7 @@ else
     $verbose && echo "Warning: no required packages?"
 fi
 
-echo "Checking manifest ..."
+$debug && echo "Checking manifest ..."
 # lines are like ...
 #	git		[git or git-core] :172
 #
@@ -231,7 +258,7 @@ do
 		    in
 			# base BSD install components, not real packages
 			#
-			base[0-9][0-9]|xbase[0-9][0-9]|comp[0-9][0-9])
+			base[0-9][0-9]|xbase[0-9][0-9]|comp[0-9][0-9]|base\ FreeBSD\ install)
 			    ;;
 			*)
 			    echo "mainfest:$lineno `cat $tmp/find` provides $try"
@@ -253,7 +280,7 @@ do
 			in
 			    # base BSD install components, not real packages
 			    #
-			    base[0-9][0-9]|xbase[0-9][0-9]|comp[0-9][0-9])
+			    base[0-9][0-9]|xbase[0-9][0-9]|comp[0-9][0-9]|base\ FreeBSD\ install)
 				;;
 			    *)
 				echo "mainfest:$lineno `cat $tmp/find` provides $retry"

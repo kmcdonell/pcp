@@ -1242,7 +1242,7 @@ rpm?		/usr/lib*/python3.*/curses/has_key.py	[python3-libs or python3[0-9]*-curse
 emerge?		/usr/lib/python3.*/curses/has_key.py	[dev-lang/python]
 pkgin?		/usr/pkg/lib/python3.*/curses/has_key.py	[python3[0-9]*]
 pkg_add?	/usr/local/lib/python3.*/curses/has_key.py	[python]
-F_pkg?		/usr/local/lib*/python3.*/curses/has_key.py	[python36]
+F_pkg?		/usr/local/lib*/python3.*/curses/has_key.py	[python3[0-9]*]
 S_pkg?		/usr/lib*/python*/curses/has_key.py	[runtime/python-[0-9][0-9]*]
 slackpkg?	/usr/lib*/python*/curses/has_key.py	[python3]
 pacman?		/usr/lib/python3.*/curses/has_key.py	[core/python or python]
