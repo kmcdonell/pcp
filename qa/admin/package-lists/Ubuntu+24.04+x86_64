@@ -15,6 +15,7 @@ bpftrace
 # but this is broken between the main and ddebs repos circa Aug 2026 ...
 # bpftrace-dbgsym : Depends: bpftrace (= 0.20.2-1ubuntu4) but 0.20.2-1ubuntu4.3 is to be installed
 #bpftrace-dbgsym not4ci
+bpftrace-dbgsym
 bsd-mailx
 build-essential
 chrpath
@@ -47,6 +48,7 @@ libcmocka-dev
 libcoin-dev
 libdbd-mysql-perl
 libdbd-pg-perl
+libdbi-perl
 libdevmapper-dev
 libdrm-dev
 libextutils-autoinstall-perl
@@ -85,6 +87,7 @@ libtimedate-perl
 libuv1-dev
 libvirt-daemon
 libvirt-daemon-system
+libwww-perl
 libxml-libxml-perl
 libxml-tokeparser-perl
 libyaml-libyaml-perl
@@ -94,6 +97,7 @@ lm-sensors
 make
 man-db
 mandoc
+manpages
 mariadb-client-core
 memcached
 net-tools
@@ -107,9 +111,11 @@ libperl-dev
 pkg-config
 postfix
 postgresql-client-common
+procps
 psmisc
 pyarrow pip3
 pylint
+python3
 python3-all
 python3-all-dev
 python3-dev
@@ -125,7 +131,9 @@ python3-psycopg2
 python3-pymongo
 python3-pyodbc
 python3-requests
+python3-rtslib-fb
 python3-setuptools
+python3-urllib3
 qtbase5-dev
 qtbase5-dev-tools
 qtchooser

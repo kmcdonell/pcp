@@ -261,6 +261,8 @@ _ip()
 	echo "For addr, need something like ..."
 	echo '$ sudo ip addr del <existing ipaddr> dev <iface>'
 	echo '$ sudo ip addr add '"$vm_ipaddr"' dev <iface>'
+	echo 'For route, need something like ..."
+	echo '$ sudo ip route add default via 192.168.20.1'
 	return 1
     fi
     $debug && echo "Debug: ip $cmds $tag $value: ok"
