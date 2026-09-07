@@ -176,7 +176,7 @@ TARGETS	+= pv64
 endif
 
 LCFLAGS = -DHAVE_TRACE
-LLDLIBS	= $(LDFLAGS) $(PCPLIB)
+LLDLIBS	= $(LDFLAGS) $(PCPLIB) -lc
 
 # NVIDIA mock library for testing
 ifneq ($(NVIDIAQALIB),)

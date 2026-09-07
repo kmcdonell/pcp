@@ -714,6 +714,12 @@ tags="debian redhat centos suse arch mandriva freebsd netbsd openbsd"
 # And strip {...} (usually comments in [...]
 #
 $PCP_AWK_PROG 'NF > 0 { gsub("\\[\\?", "[?:" NR); print $0 " :" NR }' <$manifest \
+| sed \
+    -e 's/ *#.*//' \
+    -e 's/cpan(\([^)]*\))/cpan+\1+/' \
+    -e 's/ *([^)]*)//g' \
+    -e 's/cpan+\([^+]*\)+/cpan(\1)/' \
+    -e 's/ *{[^}]*}//g' \
 | sed -E >$tmp.manifest.lineno -e '/\{/s/(\[.*)\{[^}]*}(.*])/\1\2/'
 
 if which $PCP_PYTHON_PROG >/dev/null 2>&1
@@ -776,7 +782,7 @@ done
 
 # Strip comments ...
 #
-sed -e '/^#/d' <$tmp.manifest >$tmp.tmp
+sed -e 's/#.*//' -e '/^[ 	]*$/d' <$tmp.manifest >$tmp.tmp
 mv $tmp.tmp $tmp.manifest
 
 # the "unavailable" file records packages that are not available for a

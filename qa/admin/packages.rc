@@ -440,6 +440,8 @@ _get_distro_tag()
     elif [ -f /etc/lsb-release ]
     then
 	distro_tag=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
+    else
+	distro_tag="`uname -sr | tr '[A-Z]' '[a-z]'`"
     fi
     if [ -z "$distro_tag" ]
     then

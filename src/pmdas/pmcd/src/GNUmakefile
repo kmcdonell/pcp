@@ -51,7 +51,7 @@ remove = -Wl,--no-undefined
 LDFLAGS := $(subst $(remove),,$(LDFLAGS))
 LLDFLAGS = -Wl,--allow-shlib-undefined
 
-LLDLIBS = $(PCP_PMDALIB)
+LLDLIBS = $(PCP_PMDALIB) -lc
 ifeq "$(TARGET_OS)" "mingw"
 LLDLIBS += -lpcp_pmcd
 PCPLIB_LDFLAGS += -L$(TOPDIR)/src/libpcp_pmcd/src
