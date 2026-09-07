@@ -113,6 +113,7 @@ End-of-File
 	-e 's/ cpan([^)]*) / /' \
 	-e 's/ pip3([^)]*) / /' \
 	-e 's/([^)]*)//' \
+	-e 's/{[^}]*}//' \
 	-e 's/ or / /g' \
 	-e 's/base .* install//' \
     | while read lineno pkgs
@@ -142,6 +143,14 @@ End-of-File
 	for pkg in $pkgs
 	do
 	    [ "$pkg" = "N/A" ] && continue
+	    if [ "$pkg" = '?' ]
+	    then
+		echo "manifest:$lineno $pkgs: unknown package name"
+		# not OK, but rest of checking makes no sense so move right along
+		#
+		touch $tmp.ok
+		continue
+	    fi
 	    pkg_re=`echo "$pkg" | sed -e 's;/;\\\\/;g'`
 	    if awk -F '|' <$tmp.list '
 BEGIN		{ sts=1 }

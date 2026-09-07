@@ -457,6 +457,8 @@ Arch Linux
     $ pacman -S -s <regexp>
     # which package installs a file/directory
     $ pacman -Q -o <path> | <filename>
+    # for full repo/package name (needs some post-processing)
+    $ pacman -Si $(pacman -Qoq /path/to/file)
     # which files are in an installed package
     $ sudo pacman -F -y (refresh files database) then
     $         pacman -F -l <package> (files in a package)

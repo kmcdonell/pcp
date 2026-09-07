@@ -77,6 +77,8 @@ mv tmp.* $tmp
 
 _get_pkg_type
 
+# report package that installs "$1" or nothing
+#
 _find()
 {
     # $1 needs to be an installed file, directory, symlink, ...
@@ -111,6 +113,17 @@ s/.* //
 p
 }'
 			;;
+	pacman)	# output like
+		# Repository      : core
+		# Name            : sed
+		# <fluff>
+		pacman -Si $(pacman -Qoq "$1") \
+		| sed -e 's/  */ /' -e 's/ : /:/' \
+		| awk -F':' '
+$1 == "Repository"	{ repo = $2 }
+$1 == "Name"		{ print repo "/" $2; exit }'
+		;;
+
 	*)
 		echo >&2
 		echo >&2 "Botch: _find: need recipe to find $pkg_type package for installed file: $1"
