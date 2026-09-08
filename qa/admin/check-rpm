@@ -196,13 +196,33 @@ s/-/::/g
 	fi
     else
 	provider=''
+	# could be another package that provides this ...
+	#
+	rm -f $tmp.tmp
+	case "$pkg"
+	in
+	    /*)		# pathname, not package
+	    		rpm -qf "$pkg" >$tmp.tmp
+			;;
+	    *)		# real package name
+	    		rpm -q --whatprovides "$pkg" >$tmp.tmp
+			;;
+	esac
+	if [ -s $tmp.tmp ]
+	then
+	    provider=`sed -e 's/-[0-9].*//' <$tmp.tmp`
+	    if [ "$provider" = "$pkg" ]
+	    then
+		provider=''
+	    else
+		$debug && echo "$provider is provider for $pkg"
+	    fi
+	fi
 	if ! grep -q "^$pkg\$" $tmp.allpkgs >$tmp.tmp
 	then
-	    # could be another package that provides this ...
-	    #
-	    if rpm -q --whatprovides "$pkg" >$tmp.tmp
+	    if [ -n "$provider" ] && grep -q "^$provider\$" $tmp.allpkgs
 	    then
-		provider=`sed -e 's/-[0-9].*//' <$tmp.tmp`
+		$debug && echo "provider $provider for $pkg is available"
 	    else
 		echo "Error: $pkg in rpm spec but not available"
 		touch $tmp.err
@@ -212,8 +232,11 @@ s/-/::/g
 	then
 	    if [ -n "$provider" ]
 	    then
-		if ! grep -Eq "(^| )$provider( |\$)" "$pkg_list" >$tmp.tmp
+		if grep -Eq "(^| )$provider( |\$)" "$pkg_list" >$tmp.tmp
 		then
+		    $debug && echo "provider $provider for $pkg is in package list"
+		    :
+		else
 		    echo "Error: $pkg in rpm spec, provider is $provider but neither in package list"
 		fi
 	    else

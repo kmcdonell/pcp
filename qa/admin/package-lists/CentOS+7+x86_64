@@ -3,6 +3,7 @@
 #
 DBD::mysql cpan
 LWP::UserAgent cpan
+SoQt-devel
 YAML::XS cpan
 389-ds-base
 Coin3-devel
@@ -52,6 +53,7 @@ libcmocka-devel
 libdrm
 infiniband-diags
 infiniband-diags-devel
+libibumad
 libicu-devel
 libpfm
 libpfm-devel
