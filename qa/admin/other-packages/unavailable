@@ -37,11 +37,12 @@ CentOS       6\.10    -       389-ds apache2 bpftrace ccache chan-devel Coin[0-9
 #    14   forky (testing)
 #     ?   sid (unstable)
 Debian       14       -       bpftrace-dbgsym
-Debian       12\..*   -       python3-pyarrow valkey-server valkey-cli valkey-tools bpftrace-dbgsym
-Debian       11\..*   -       apache2-mpm-worker libicu libreadline6-dev libsoqt-dev libsoqt-dev-common libuv-dev mariadb-client-core mysql-client-core mysql-client-core-[0-9][0-9.]* perl-modules qt4-qmake redis-cli zfsutils-linux
-Debian       10\..*   -       apache2-mpm-worker kubernetes-client libreadline6-dev libsoqt5-dev libsoqt-dev libsoqt-dev-common libuv-dev mariadb-client-core mysql-client-core mysql-client-core-[0-9][0-9.]* perl-modules realpath redis-cli zfsutils-linux
-Debian       10\..*   i.86    bpftrace
-Debian       9\..*    -       bpftrace docker.io kubernetes-client libsoqt5-dev libuv-dev redis-cli
+Debian       13\.     -       python3-pyarrow bpftrace-dbgsym
+Debian       12\.     -       python3-pyarrow valkey-server valkey-cli valkey-tools bpftrace-dbgsym
+Debian       11\.     -       apache2-mpm-worker libicu libreadline6-dev libsoqt-dev libsoqt-dev-common libuv-dev mariadb-client-core mysql-client-core mysql-client-core-[0-9][0-9.]* perl-modules qt4-qmake redis-cli zfsutils-linux
+Debian       10\.     -       apache2-mpm-worker kubernetes-client libreadline6-dev libsoqt5-dev libsoqt-dev libsoqt-dev-common libuv-dev mariadb-client-core mysql-client-core mysql-client-core-[0-9][0-9.]* perl-modules realpath redis-cli zfsutils-linux
+Debian       10\.     i.86    bpftrace
+Debian       9\.      -       bpftrace docker.io kubernetes-client libsoqt5-dev libuv-dev redis-cli
 Debian       8\.[11]  -       cpan(Text::CSV_XS) docker.io kubernetes-client libcoin-dev libsoqt5-dev libspreadsheet-readsxc-perl libuv1-dev mariadb-client-core mysql-client-core python3-openpyxl python3-prometheus-client python-prometheus-client zfsutils-linux
 #-- Fedora
 Fedora       46       -       SoQt-devel mssql-server mssql-tools perl-Spreadsheet-Read perl-Spreadsheet-ReadSXC redis0 zfs-fuse
@@ -101,7 +102,7 @@ Ubuntu       18\.04   -       apache2-mpm-worker bpftrace kubernetes-client libi
 Ubuntu       16\.04   -       apache2-mpm-worker bpftrace kubernetes-client libncurses-dev libsoqt520-dev libsoqt5-dev libspreadsheet-readsxc-perl libuv-dev libvirt-daemon libvirt-daemon-system mandoc mariadb-client-core mysql-client-core perl-modules redis-cli
 Ubuntu       14\.04   -       bpftrace kubernetes-client libsoqt5-dev libsoqt-dev libsoqt-dev-common libspreadsheet-readsxc-perl libuv1-dev python3-elasticsearch python3-libvirt python3-openpyxl python3-prometheus-client redis-cli zfsutils-linux
 #-- OpenMandriva
-OpenMandriva .*       -       HdrHistogram_c HdrHistogram_c-devel aaa_base chan chan-devel initscripts mssql-server mssql-tools targetcli valkey zabbix-agent zabbix[0-9][.0-9]*-agent
+OpenMandriva -        -       HdrHistogram_c HdrHistogram_c-devel aaa_base chan chan-devel initscripts mssql-server mssql-tools targetcli valkey zabbix-agent zabbix[0-9][.0-9]*-agent
 #-- AmazonLinux
 AmazonLinux  2023     -       389-ds 389-ds-base Coin-devel Coin0-devel HdrHistogram_c HdrHistogram_c-devel SoQt-devel chan chan-devel gfs2-utils kubectl kubernetes kubernetes-client kubernetes-kubelet kubernetes-node kubernetes0 libQt5Core-devel libqt5-qtbase-devel libqt5-qtsvg-devel libqt5Core-devel libvirt-daemon libvirt-daemon-driver-qemu libvirt-python3 mssql-server mssql-tools mysql perl-Spreadsheet-Read perl-Spreadsheet-ReadSXC perl-Spreadsheet-XLSX python3-elasticsearch python3-libvirt python3-libvirt-python python3-pandas python3-prometheus_client python3-pyarrow python3-pylint python3-pyodbc qt-devel qt5-qtbase-devel qt5-qtsvg-devel qt6-qtbase-devel qt6-qtsvg-devel qtchooser ragel zabbix0-agent zfs-fuse
 #-- Oracle Linux
