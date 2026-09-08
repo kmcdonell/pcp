@@ -58,6 +58,7 @@ FreeBSD      13\.     -       libibmad libibumad p5-Class-DBI-mysql p5-DBD-mysql
 #-- Gentoo
 Gentoo       -        -
 #-- LinuxMint
+LinuxMint    22\.3    -       bpftrace-dbgsym kubernetes-client python3-pyarrow zabbix-agent
 LinuxMint    17\.3    -       kubernetes-client libsoqt5-dev libspreadsheet-readsxc-perl libuv1-dev libvirt-daemon libvirt-daemon-system python3-elasticsearch python3-libvirt python3-openpyxl python3-prometheus-client zfsutils-linux
 LinuxMint    18\.3    -       kubernetes-client libsoqt5-dev
 #-- NetBSD

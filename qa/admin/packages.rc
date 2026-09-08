@@ -435,6 +435,9 @@ _get_distro_tag()
     elif [ -f /etc/redhat-release ]
     then
 	distro_tag=redhat
+    elif [ -f /etc/lsb-release ]
+    then
+	distro_tag=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
     elif [ -f /etc/debian_version ]
     then
 	distro_tag=debian
@@ -444,15 +447,9 @@ _get_distro_tag()
     elif [ -f /etc/amazon-linux-release ]
     then
 	distro_tag=amazon-linux
-    elif [ -f /etc/release ]
+    elif [ -f /etc/system-release ]
     then
-	distro_tag=openindiana
-    elif [ -f /etc/slackware-version ]
-    then
-	distro_tag=slackware
-    elif [ -f /etc/arch-release ]
-    then
-	distro_tag=arch
+	distro_tag="`sed </etc/system-release -e 's/ release .*//' | tr '[A-Z]' '[a-z]'`"
     elif [ -f /etc/os-release ]
     then
 	distro_tag="`sed </etc/os-release -n -e '/^ID *= */{
@@ -465,9 +462,15 @@ p
 	    opensuse-*)	distro_tag=opensuse
 	    		;;
 	esac
-    elif [ -f /etc/lsb-release ]
+    elif [ -f /etc/release ]
     then
-	distro_tag=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
+	distro_tag=openindiana
+    elif [ -f /etc/slackware-version ]
+    then
+	distro_tag=slackware
+    elif [ -f /etc/arch-release ]
+    then
+	distro_tag=arch
     else
 	distro_tag="`uname -sr | tr '[A-Z]' '[a-z]'`"
     fi
