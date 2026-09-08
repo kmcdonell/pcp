@@ -241,6 +241,8 @@ arch:	$(SRCARCHPART)
 
 # --- do NOT need libpcp
 #
+whack-suse-libnuma.so:	whack-suse-libnuma.c
+	$(CC) -shared -fPIC -o $@ $<
 
 statvfs:	statvfs.c
 	rm -f $@

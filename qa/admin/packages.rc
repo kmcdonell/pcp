@@ -455,7 +455,16 @@ _get_distro_tag()
 	distro_tag=arch
     elif [ -f /etc/os-release ]
     then
-	distro_tag=`sed </etc/os-release -n -e '/^ID *= */s///p'`
+	distro_tag="`sed </etc/os-release -n -e '/^ID *= */{
+s///
+s/"//g
+p
+}'`"
+	case "$distro_tag"
+	in
+	    opensuse-*)	distro_tag=opensuse
+	    		;;
+	esac
     elif [ -f /etc/lsb-release ]
     then
 	distro_tag=`sed </etc/lsb-release -n -e '/^DISTRIB_ID *= */s///p' | tr '[A-Z]' '[a-z]'`
