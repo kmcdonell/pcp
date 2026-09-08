@@ -3,9 +3,13 @@
 #
 389-ds-base
 Coin4-devel
+DBD::mysql cpan
+HdrHistogram_c
 HdrHistogram_c-devel
 #valkey-search
+LWP::UserAgent cpan
 Spreadsheet::Read cpan
+YAML::XS cpan
 audit
 autoconf
 bash
@@ -13,6 +17,8 @@ bc
 bind-utils
 bison
 bpftrace
+bzip2
+chan
 chan-devel
 clang
 coreutils
@@ -24,9 +30,11 @@ cyrus-sasl-lib
 cyrus-sasl-md5
 cyrus-sasl-plain
 device-mapper-devel
+diffutils
 ed
 ethtool
 expect
+findutils
 flex
 gawk
 gcc
@@ -36,6 +44,9 @@ gfs2-utils
 git
 git-core
 grep
+gzip
+hostname
+infiniband-diags
 inih-devel
 iproute
 httpd
@@ -46,10 +57,14 @@ kubernetes1.36-client
 libbpf
 libbpf-devel
 libcmocka-devel
+libdrm
 libdrm-devel
+libibumad
 libicu-devel
+libpfm
 libpfm-devel
 libselinux-devel
+libsemanage
 libuv-devel
 libvirt-daemon
 libvirt-daemon-driver-qemu
@@ -71,6 +86,7 @@ perl
 perl-Archive-Zip
 perl-CPAN
 perl-DBD-MySQL
+perl-DBI
 perl-Date-Manip
 perl-ExtUtils-MakeMaker
 perl-File-Slurp
@@ -91,8 +107,11 @@ perl-interpreter
 perl-libwww-perl
 pkgconf-pkg-config
 podman-docker
+policycoreutils
+postfix
 postfix-perl-scripts
 postgresql
+procps-ng
 psmisc
 pylint
 python3
@@ -102,6 +121,7 @@ python3-libs
 python3-libvirt
 python3-lxml
 python3-openpyxl
+python3-packaging
 python3-pandas
 python3-pillow
 python3-prometheus_client
@@ -142,8 +162,10 @@ targetcli
 time
 valgrind
 valkey
+which
 xfsprogs
 xkeyboard-config
+xz
 xz-devel
 zabbix-agent
 zstd
