@@ -73,7 +73,7 @@ s/ Lx/-Lx/
 _parse_file()
 {
     [ -z "$tmp" ] && tmp=${TMPDIR:-/tmp}/$$
-    rm -f $tmp.matches
+    rm -f $tmp.matches $tmp.prefix-matches
     sed <$1 \
 	-e 's/#.*//' \
 	-e '/^[ 	]*$/d' \
@@ -81,33 +81,51 @@ _parse_file()
     do
 	if echo "$distro" | grep "^$distro_pat" >/dev/null
 	then
-	    # Distro matches, check versions
+	    # Distro matches, check architecture
 	    #
 	    _match=true
-	    if [ "X$version_pat" = "X-" -o -z "$full_version" ]
+	    if [ "X$arch_pat" = "X-" -o -z "$full_arch" ]
 	    then
+		# match all architectures
 		:
 	    else
-		if echo "$full_version" | grep "^$version_pat" >/dev/null
+		if echo "$full_arch" | grep "^$arch_pat" >/dev/null
 		then
+		    # unrestricted pattern match for architecture
 		    :
 		else
-		    $very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat, no match for version=$version_pat"
+		    $very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat, no match for arch=$arch_pat"
 		    _match=false
 		fi
 	    fi
 	    if $_match
 	    then
-		# Distro and version matches, check architecture
-		if [ "X$arch_pat" = "X-" -o -z "$full_arch" ]
+		# Distro and architecture matches, check version
+		# ... prefer full match to prefix match here, e.g.
+		# when looking for 9.10, 9.1[0-9] should be
+		# preferred to 9.[0-9]
+		#
+		if [ "X$version_pat" = "X-" -o -z "$full_version" ]
 		then
+		    # match all versions
 		    :
 		else
-		    if echo "$full_arch" | grep "^$arch_pat" >/dev/null
+		    if echo "$full_version" | grep "^$version_pat\$" >/dev/null
 		    then
-			:
+			# full match on version
+			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and arch=$arch_pat, full match for version=$version_pat"
+		    elif echo "$full_version" | grep "^$version_pat" >/dev/null
+		    then
+			# prefix match on version
+			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and arch=$arch_pat, prefix match for version=$version_pat"
+			if [ -s $tmp.prefix-matches ]
+			then
+			    $very_verbose && echo >&2 "_parse_file: $1: Warning: more than one prefix match for version=$version_pat"
+			fi
+			echo "$packages" >>$tmp.prefix-matches
+			_match=false
 		    else
-			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and version=$version_pat, no match for arch=$arch_pat"
+			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and arch=$arch_pat, no match for version=$version_pat"
 			_match=false
 		    fi
 		fi
@@ -118,13 +136,14 @@ _parse_file()
 	    fi
 	fi
     done
+    [ ! -f $tmp.matches ] && [ -f $tmp.prefix-matches ] && cp $tmp.prefix-matches $tmp.matches
     if [ -s $tmp.matches ]
     then
 	tr '\012' ' ' <$tmp.matches; echo
     else
 	$very_verbose && echo >&2 "_parse_file: $1: no matches"
     fi
-    rm -f $tmp.matches
+    rm -f $tmp.matches $tmp.prefix-matches
 }
 
 # Larry Wall-style sniffing to discover primary IP addr and netmask

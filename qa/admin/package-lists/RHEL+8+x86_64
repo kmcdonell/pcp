@@ -1,12 +1,11 @@
 # PCP required package list for RHEL 8 x86_64
 # created by kenj on vm39.localdomain Wed Oct 14 08:11:02 AEDT 2020
 #
+DBD::mysql cpan
 HdrHistogram_c
-List::MoreUtils cpan
-Net::SNMP cpan
+LWP::UserAgent cpan
 Spreadsheet::Read cpan
 Spreadsheet::ReadSXC cpan
-Spreadsheet::XLSX cpan
 audit
 autoconf
 bash
@@ -25,6 +24,7 @@ cyrus-sasl-devel
 cyrus-sasl-lib
 cyrus-sasl-md5
 cyrus-sasl-plain
+device-mapper-devel
 diffutils
 ed
 ethtool
@@ -52,6 +52,7 @@ libcmocka-devel
 libbpf
 libdrm
 libdrm-devel
+libibumad
 libicu-devel
 libpfm
 libpfm-devel
@@ -83,11 +84,16 @@ perl-ExtUtils-MakeMaker
 perl-File-Slurp
 perl-JSON
 perl-LDAP
+perl-List-MoreUtils
+perl-Net-SNMP
+perl-Spreadsheet-WriteExcel
+perl-Spreadsheet-XLSX
 perl-Text-CSV_XS
 perl-Time-HiRes
 perl-TimeDate
 perl-XML-LibXML
 perl-XML-TokeParser
+perl-YAML-LibYAML
 perl-autodie
 perl-interpreter
 perl-libwww-perl
@@ -102,6 +108,9 @@ postgresql
 procps-ng
 psmisc
 pylint
+python3-openpyxl
+python3-pyodbc
+python3-setuptools
 python36
 python3-elasticsearch
 python3-libs
