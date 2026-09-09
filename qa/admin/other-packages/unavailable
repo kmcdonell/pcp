@@ -116,5 +116,6 @@ AmazonLinux  2023     -       389-ds 389-ds-base Coin-devel Coin0-devel HdrHisto
 Oracle.*     10       -       Coin-devel Coin[0-9]-devel SoQt-devel gfs2-utils kubectl kubernetes kubernetes-client kubernetes-kubelet kubernetes-node kubernetes[0-9.]* kubernetes[0-9.]*-client mandoc mandoc-bin mssql-server mssql-tools perl-Spreadsheet-Read perl-Spreadsheet-ReadSXC python3-elasticsearch python3-prometheus_client qtchooser ragel redis redis[0-9] zfs-fuse
 #-- MX
 MX           25\.2    -       bpftrace-dbgsym python3-pyarrow
-
+#-- OpenIndiana
+OpenIndiana  2026\.   -       foo
 

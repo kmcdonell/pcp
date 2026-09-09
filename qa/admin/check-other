@@ -83,6 +83,10 @@ rm -f tmp.*
 ./old-list-packages -R $opts_v || exit
 mv tmp.* $tmp
 
+_setversions
+# $distro, $version $full_version, $arch and $full_arch now set
+$debug && echo "Debug: distro=$distro version=$version arch=$arch"
+
 _get_pkg_type || exit
 
 # report package that installs "$1" or nothing
@@ -179,6 +183,25 @@ $1 == "Name"		{ print repo "/" $2; exit }'
 		    then
 			echo "base FreeBSD install"
 		    fi
+		fi
+		;;
+
+	S_pkg)	# output is like
+		# INDEX      ACTION VALUE           PACKAGE
+		# path       file   usr/gnu/bin/sed pkg:/text/gnu-sed@4.10-2026.0.0.0
+		# but there may be multiple packages for the same file (!) so pick the one
+		# with the highest version number
+		#
+		if pkg search -l "$1" >$tmp/tmp
+		then
+		    sed -e 1d <$tmp/tmp \
+		    | LC_COLLATE=POSIX sort -r \
+		    | sed -n -e '1{
+s;.* pkg:/;;
+s/@.*//
+p
+q
+}'
 		fi
 		;;
 

@@ -452,11 +452,11 @@ _get_distro_tag()
 	distro_tag="`sed </etc/system-release -e 's/ release .*//' | tr '[A-Z]' '[a-z]'`"
     elif [ -f /etc/os-release ]
     then
-	distro_tag="`sed </etc/os-release -n -e '/^ID *= */{
+	distro_tag=`sed </etc/os-release -n -e '/^ID *= */{
 s///
 s/"//g
 p
-}'`"
+}'`
 	case "$distro_tag"
 	in
 	    opensuse-*)	distro_tag=opensuse
@@ -483,6 +483,7 @@ p
 	return 0
     fi
 }
+
 
 # Fuzzy match to refine $distro, $version and $arch
 #
@@ -549,6 +550,11 @@ _setup_pkg_list()
 #
 _get_pkg_type()
 {
+    if [ -z "$distro" ]
+    then
+	echo >&2 "_get_pkg_type: Botch: \$distro not set"
+	return 1
+    fi
     pkg_type=""
     if which apt-get >/dev/null 2>&1
     then
@@ -567,7 +573,15 @@ _get_pkg_type()
 	pkg_type=pacman
     elif which pkg >/dev/null 2>&1
     then
-	pkg_type="pkg"
+	case "$distro"
+	in
+	    FreeBSD)		pkg_type="F_pkg"
+	    			;;
+	    OpenIndiana)	pkg_type="S_pkg"
+	    			;;
+	    *)			pkg_type="pkg"
+	    			;;
+	esac
     # pkgin has to be before pkg_add in this compound
     # if-elif-elif-else-fi because NetBSD has both and we need
     # to use pkgin for NetBSD
