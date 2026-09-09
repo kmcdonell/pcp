@@ -116,7 +116,6 @@ qt4-qmake
 qtbase5-dev
 qtbase5-dev-tools
 qtchooser
-redis-redisearch
 redis-server
 redis-tools
 sasl2-bin

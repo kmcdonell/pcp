@@ -523,9 +523,9 @@ __pmGetSecureConfig(__pmSecureConfig *config)
     while ((p = fgets(line, sizeof(line), file)) != NULL) {
 	end = NULL;
 	for (s = p; *p; p++) {
-	    if (isalpha(*p))
+	    if (isalpha((int)*p))
 		continue;
-	    if (s == p && isspace(*p)) {
+	    if (s == p && isspace((int)*p)) {
 		s++;		/* skip any preceding whitespace */
 		continue;
 	    }
@@ -540,7 +540,7 @@ __pmGetSecureConfig(__pmSecureConfig *config)
 		p++;
 		break;
 	    }
-	    if (isspace(*p)) {
+	    if (isspace((int)*p)) {
 		if (end == NULL)
 		    end = p;	/* end of keyword */
 		*p = '\0';	/* trim trailing token whitespace */
@@ -554,7 +554,7 @@ __pmGetSecureConfig(__pmSecureConfig *config)
 		    continue;
 		/* cleanup value: remove leading & trailing space */
 		while (*p) {
-		    if (!isspace(*p))
+		    if (!isspace((int)*p))
 			break;
 		    p++;
 		}
@@ -566,7 +566,7 @@ __pmGetSecureConfig(__pmSecureConfig *config)
 		n = strlen(p);
 		end = s + n;
 		for (; p <= end; p++) {
-		    if (*p == '#' || isspace(*p)) {
+		    if (*p == '#' || isspace((int)*p)) {
 			*p = '\0';
 			break;
 		    }

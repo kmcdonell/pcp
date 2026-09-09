@@ -19,7 +19,7 @@ _usage()
 
 quiet=false
 debug=false
-while getopts 'q?' p
+while getopts 'dq?' p
 do
     case "$p"
     in

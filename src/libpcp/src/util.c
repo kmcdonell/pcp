@@ -995,7 +995,7 @@ squash_string(char *s, unsigned int len)
 
     /* replace end-of-line characters */
     for (i = 0; i < len; i++) {
-	if (isspace(s[i]))
+	if (isspace((int)s[i]))
 	    s[i] = ' ';
     }
 }

@@ -1,13 +1,19 @@
-# PCP required package list for CentOS 8.2.2004 x86_64
-# created by kenj on vm04.localdomain Mon Oct 12 23:16:58 EDT 2020
+# PCP required package list for OracleLinux 10 x86_64
+# created by kenj on vm41 Sat 05 Sep 2026 07:03:22 AEST
 #
-DBD::mysql cpan
-LWP::UserAgent cpan
+389-ds-base
+Archive::Zip cpan
+HdrHistogram_c
 List::MoreUtils cpan
 Net::SNMP cpan
 Spreadsheet::Read cpan
+Spreadsheet::ReadSXC cpan
+Spreadsheet::WriteExcel cpan
 Spreadsheet::XLSX cpan
-YAML::XS cpan
+Text::CSV_XS cpan
+XML::LibXML cpan
+XML::TokeParser cpan
+YAML::LibYAML cpan
 audit
 autoconf
 bash
@@ -15,12 +21,11 @@ bc
 bind-utils
 bison
 bpftrace
-# in CI centos8-container already has coreutils-single installed and this
-# conflicts with coreutils
 bzip2
+ccache
 chan
 clang
-coreutils not4ci
+coreutils
 cronie
 curl
 cyrus-sasl
@@ -39,11 +44,9 @@ gawk
 gcc
 gcc-c++
 gdb
-gfs2-utils
 git
 git-core
 grep
-HdrHistogram_c
 gzip
 hostname
 httpd
@@ -51,6 +54,7 @@ infiniband-diags
 inih-devel
 initscripts
 iproute
+iproute-tc
 jq
 libbpf
 libbpf-devel
@@ -69,7 +73,6 @@ libvirt-daemon-driver-qemu
 llvm
 llvm-devel
 lm_sensors
-mailx
 make
 man-db
 mandoc
@@ -83,70 +86,73 @@ openssl
 openssl-devel
 perl
 perl-Archive-Zip
-perl-DBI
-perl-autodie
 perl-CPAN
-perl-Date-Manip
 perl-DBD-MySQL
+perl-DBI
+perl-Date-Manip
 perl-ExtUtils-MakeMaker
 perl-File-Slurp
-perl-interpreter
+perl-Getopt-Std
 perl-JSON
 perl-LDAP
-perl-libwww-perl
 perl-List-MoreUtils
 perl-Net-SNMP
 perl-Spreadsheet-WriteExcel
 perl-Spreadsheet-XLSX
 perl-Text-CSV_XS
-perl-TimeDate
 perl-Time-HiRes
+perl-TimeDate
 perl-XML-LibXML
 perl-XML-TokeParser
 perl-YAML-LibYAML
+perl-autodie
+perl-base
+perl-interpreter
+perl-libwww-perl
 pkgconf-pkg-config
-platform-python-devel
-platform-python-setuptools
 podman-docker
 policycoreutils
 postfix
 postfix-perl-scripts
-postgresql
+postgresql18
 procps-ng
 psmisc
 pylint
-python3-packaging
-python3-elasticsearch
+python3
+python3-devel
 python3-libs
 python3-libvirt
 python3-lxml
 python3-openpyxl
+python3-packaging
 python3-pandas
 python3-pillow
 python3-prometheus_client
 python3-psycopg2
+python3-pyarrow
 python3-pylint
 python3-pymongo
 python3-pyodbc
 python3-requests
 python3-rtslib
 python3-setuptools
-python36
-python36-devel
 qt5-qtbase-devel
 qt5-qtsvg-devel
+qt6-qtbase-devel
+qt6-qtsvg-devel
 ragel
 rdma-core
 rdma-core-devel
 readline-devel
-redis
 rpm-build
 rrdtool
 rrdtool-perl
+s-nail
 sed
 selinux-policy
 selinux-policy-devel
 selinux-policy-targeted
+setools
 setools-console
 smartmontools
 socat

@@ -148,7 +148,8 @@ shift `expr $OPTIND - 1`
 
 if $very_verbose
 then
-    tmp=tmp
+    tmp=`pwd`/tmp
+    trap "echo exit sts=\$sts; exit \$sts" 0 1 2 3 15
 else
     tmp=${TMPDIR:-/tmp}/check-vm-$$
     trap "rm -f $tmp.*; exit 0" 0 1 2 3 15

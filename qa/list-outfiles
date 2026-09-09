@@ -28,13 +28,16 @@ do
 	touch $tmp.err
     else
 	rm -f $tmp.found
-	ls "$seq"[._-]* 2>/dev/null \
+	ls -d "$seq"[._-]* 2>/dev/null \
 	| while read out
 	do
 	    case "$out"
 	    in
+		# picked up by other parts of the GNUmakefile
+		008.helper)
+		    ;;
 		# special exceptions
-		605.out)
+		051.work|605.out)
 		    ;;
 		# fluff from running tests
 		"$seq".out.bad|"$seq".wait*|"$seq".full|"$seq".notrun)
