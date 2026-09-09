@@ -31,6 +31,7 @@ _usage()
     echo >&2 "Usage: $0 [options]"
     echo >&2 "Options:"
     echo >&2 "  -d           debug and keep tmp files"
+    echo >&2 "  -u           output unavailable list"
     echo >&2 "  -v           verbose"
     exit 1
 }
@@ -39,11 +40,15 @@ debug=false
 verbose=false
 very_verbose=false
 opts_v=''
-while getopts 'dv?' p
+unavail=false
+while getopts 'duv?' p
 do
     case "$p"
     in
 	d)	debug=true
+		;;
+
+	u)	unavail=true
 		;;
 
 	v)	if $verbose
@@ -332,6 +337,17 @@ do
 	if ! grep -q -E "[ 	]$pkg([ 	]|$)" <$tmp/tmp.unavailable
 	then
 	    echo "manifest:$lineno no packages match target: $target pkgs: $line"
+	    $unavail && echo "$line" >>$tmp/unavail
 	fi
     fi
 done
+
+if $unavail
+then
+    tr ' ' '\012' <$tmp/unavail \
+    | LC_COLLATE=POSIX sort \
+    | uniq \
+    | tr '\012' ' '
+    echo
+fi
+

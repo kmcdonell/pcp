@@ -101,6 +101,7 @@ RHEL         6\.10    -       apache2 bpftrace chan-devel Coin[0-9]-devel Coin-d
 #-- Ubuntu
 Ubuntu       26\.04   -       kubernetes-client
 Ubuntu       24\.04   -       kubernetes-client python3-pyarrow zabbix-agent kubernetes-client
+Ubuntu       22\.04   -       kubernetes-client python3-pyarrow valkey-cli valkey-server valkey-tools
 Ubuntu       20\.04   -       apache2-mpm-worker bpftrace-dbgsym kubernetes-client libicu libpython-dev libqt4-dev libreadline6-dev libsoqt-dev libsoqt-dev-common libsoqt4-dev libuv-dev mariadb-client-core mysql-client-core perl-modules python3-pyarrow qt4-qmake realpath redis-cli valkey-cli valkey-server valkey-tools
 Ubuntu       19\.10   -       kubernetes-client libreadline6-dev libsoqt5-dev libsoqt-dev-common redis-tools
 Ubuntu       19\.04   -       kubernetes-client libreadline6-dev libsoqt5-dev libsoqt-dev libsoqt-dev-common libuv-dev
