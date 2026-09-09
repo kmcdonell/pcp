@@ -1651,6 +1651,7 @@ dpkg?		/usr/share/doc/libwww-perl	[libwww-perl]
 dpkg?		/usr/share/doc/manpages		[manpages]
 dpkg?		/usr/share/doc/python3		[python3]
 dpkg?		/usr/share/doc/python3-urllib3	[python3-urllib3]
+dpkg?		/usr/include/unistd.h		[libc-dev or libc6-dev]
 
 # -- additional build and install dependencies from build/rpm/pcp.spec
 #

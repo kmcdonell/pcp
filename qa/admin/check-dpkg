@@ -40,6 +40,29 @@ then
     exit
 fi
 
+_usage()
+{
+    echo >&2 "Usage: $iam [options]"
+    echo >&2 
+    echo >&2 "  -d           debug and save tmp files"
+    exit 1
+}
+
+debug=false
+while getopts 'd?' p
+do
+    case "$p"
+    in
+	d)	debug=true
+		;;
+
+	?)	_usage
+		# NOTREACHED
+    esac
+done
+shift `expr $OPTIND - 1`
+[ $# -eq 0 ] || _usage
+
 sts=1		# failure is the default
 tmp=${TMPDIR:-/tmp}/$iam-$$
 trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
@@ -88,7 +111,7 @@ rm -f $tmp.err
 cat $tmp.need \
 | while read line
 do
-    rm -f $tmp.alts $tmp.match
+    rm -f $tmp.alts $tmp.match $tmp.found
     case "$line"
     in
 	*'['*)	tags=`echo "$line" | sed -e 's/.*\[//' -e 's/].*//'`
@@ -116,8 +139,9 @@ do
 		    continue
 		fi
 		;;
-	*'|'*)	pkgs=`echo "$line" | sed -e 's/|/ /g'`
+	*'|'*)	pkgs=`echo "$line" | sed -e 's/|/ /g' -e 's/  */ /g'`
 		touch $tmp.alts
+		$debug && echo "alternate packages from control: $pkgs"
 		;;
 	*)	pkgs="$line"
 		;;
@@ -201,15 +225,16 @@ s/-/::/g
 		    then
 			echo "Error: $pkg available and in dpkg control but not in package list"
 			touch $tmp.err
-		    else
-			touch $tmp.found
-			break
 		    fi
+		else
+		    $debug && echo "found $pkg in package list"
+		    touch $tmp.found
+		    break
 		fi
 	    fi
 	fi
     done
-    if [ $tmp.alts ] && [ ! $tmp.found ]
+    if [ -f $tmp.alts ] && [ ! -f $tmp.found ]
     then
 	echo "Error: none of (alternate) $pkgs from dpkg control are in the package list"
 	touch $tmp.err

@@ -879,11 +879,11 @@ fi
 # particular distribution and version and architecture ... 
 #
 _parse_file $skip >$tmp.skip
-if [ -s $tmp.pkgs ]
+if [ -s $tmp.skip ]
 then
     $very_verbose && echo >&2 "skip: `cat $tmp.skip`"
     skip_pkg="$skip_pkg `cat $tmp.skip`"
-    for _pkg in `cat $tmp.pkgs`
+    for _pkg in `cat $tmp.skip`
     do
 	_cull_from_manifest "$_pkg" SKIP
 	mv $tmp.culled $tmp.manifest

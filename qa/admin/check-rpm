@@ -238,6 +238,7 @@ s/-/::/g
 		    :
 		else
 		    echo "Error: $pkg in rpm spec, provider is $provider but neither in package list"
+		    touch $tmp.err
 		fi
 	    else
 		echo "Error: $pkg in rpm spec but not in package list"

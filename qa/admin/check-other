@@ -70,13 +70,16 @@ then
     rm -rf tmp
 else
     tmp=${TMPDIR:-/tmp}/list-packages-$$
-    trap "rm -rf $tmp.*; exit \$sts" 0 1 2 3 15
+    trap "rm -rf $tmp.* $tmp; exit \$sts" 0 1 2 3 15
 fi
 mkdir -p $tmp || exit
 
 here=pwd
 
 rm -f $tmp/*
+# old-list-packages with -R creates tmp.* files to be saved
+#
+rm -f tmp.*
 ./old-list-packages -R $opts_v || exit
 mv tmp.* $tmp
 
@@ -107,12 +110,12 @@ _find()
 			# <fluff>
 			#
 			_target=`realpath "$1" | sed -e 's;^/;;'`
-			if ! slackpkg file-search "$_target" >$tmp.tmp
+			if ! slackpkg file-search "$_target" >$tmp/tmp
 			then
 			    echo "Error: slackpkg file-search $_target failed"
 			    return 1
 			fi
-			sed -n <$tmp.tmp '/\[ installed ]/{
+			sed -n <$tmp/tmp '/\[ installed ]/{
 s/-[0-9].*//
 s/.* //
 p
@@ -136,12 +139,12 @@ $1 == "Name"		{ print repo "/" $2; exit }'
 			# add-ons:
 			# /usr/local/sbin/postfix: postfix-3.5.27
 			# postfix-3.5.27      fast, secure sendmail replacement
-			pkg_info -E "$1" >$tmp.tmp
-			if [ -s $tmp.tmp ]
+			pkg_info -E "$1" >$tmp/tmp
+			if [ -s $tmp/tmp ]
 			then
 			    # add-on ...
 			    #
-			    sed <$tmp.tmp \
+			    sed <$tmp/tmp \
 				-e '/:/d' \
 				-e 's/-[0-9].*//'
 			else
@@ -157,22 +160,22 @@ $1 == "Name"		{ print repo "/" $2; exit }'
 		# but for base os install we need to get the manifest from
 		# /usr/freebsd-dist/base.txz
 		#
-		if pkg which "$1" >$tmp.tmp
+		if pkg which "$1" >$tmp/tmp
 		then
-		    sed <$tmp.tmp -e 's/.* by package //' -e 's/-[0-9].*//'
+		    sed <$tmp/tmp -e 's/.* by package //' -e 's/-[0-9].*//'
 		else
-		    if [ ! -f $tmp.base-manifest ]
+		    if [ ! -f $tmp/base-manifest ]
 		    then
-			if [ /usr/freebsd-dist/base.txz ]
+			if [ -f /usr/freebsd-dist/base.txz ]
 			then
 			    tar tf /usr/freebsd-dist/base.txz \
-			    | sed -e 's/^\.//' >$tmp.base-manifest
+			    | sed -e 's/^\.//' >$tmp/base-manifest
 			else
 			    echo "Warning: /usr/freebsd-dist/base.txz not found so no clue what's in your base FreeBSD install"
-			    touch $tmp.base-manifest
+			    touch $tmp/base-manifest
 			fi
 		    fi
-		    if grep -q "^$1\$" $tmp.base-manifest
+		    if grep -q "^$1\$" $tmp/base-manifest
 		    then
 			echo "base FreeBSD install"
 		    fi
@@ -256,7 +259,7 @@ do
 	do
 	    if _find "$try" >$tmp/find
 	    then
-		touch $tmp.match
+		touch $tmp/tmp.match
 		if [ "`wc -l <$tmp/find | sed -e 's/  *//g'`" -eq 1 ]
 		then
 		    case "`cat $tmp/find`"
@@ -278,7 +281,7 @@ do
 		retry="`which $try`"
 		if _find "$retry" >$tmp/find
 		then
-		    touch $tmp/match
+		    touch $tmp/tmp.match
 		    if [ "`wc -l <$tmp/find | sed -e 's/  *//g'`" -eq 1 ]
 		    then
 			case "`cat $tmp/find`"
