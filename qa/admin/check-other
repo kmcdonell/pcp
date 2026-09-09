@@ -222,7 +222,7 @@ do
     in
 	N/A\ on\ *|N/A)	continue
 			;;
-	SKIP\ on\ *)	continue
+	*SKIP*)		continue
 			;;
 	*'base FreeBSD install'*)	continue
 					;;
