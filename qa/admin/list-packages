@@ -67,6 +67,15 @@ _do_check()
 	-e 's/{//g' \
 	-e 's/}//g' \
     # end
+
+    # the optional "skip.<hostname>" file records packages that may be available
+    # but for various reasons should be be installed on a particular host ...
+    #
+    _hostname=`hostname -s`
+    if [ -f $home/other-packages/skip.$_hostname ]
+    then
+	sed <$home/other-packages/skip.$_hostname >>$tmp.skip -e 's/#.*//' -e '/^[ 	]*$/d'
+    fi
     [ -s $tmp.skip ] && $very_verbose && echo >&2 "skip: `cat $tmp.skip`"
 
     # And any unavailable packages

@@ -342,7 +342,7 @@ do
     fi
 done
 
-if $unavail
+if $unavail && [ -f $tmp/unavail ]
 then
     tr ' ' '\012' <$tmp/unavail \
     | LC_COLLATE=POSIX sort \
