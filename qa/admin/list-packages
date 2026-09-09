@@ -16,6 +16,7 @@ _usage()
     echo >&2 "  -i tag       include only lines with a tag"
     echo >&2 "  -m           list only missing packages"
     echo >&2 "  -n           report my package list file and quit"
+    echo >&2 "  -s           strip cpan() and pip3() wrappers"
     echo >&2 "  -u           update => -c + fixups"
     echo >&2 "  -U           -u but show me (no changes to package list)"
     echo >&2 "  -v           verbose (extra debugging)"
@@ -424,9 +425,10 @@ exclude=''
 missing=false
 check=false
 nflag=false
+strip=false
 update=false
 show_me=false
-while getopts 'A:cdD:i:mnuUvV:x:?' p
+while getopts 'A:cdD:i:mnsuUvV:x:?' p
 do
     case "$p"
     in
@@ -454,6 +456,9 @@ do
 		;;
 
 	n)	nflag=true
+		;;
+
+	s)	strip=true
 		;;
 
 	u)	check=true
@@ -987,7 +992,13 @@ fi
 #
 if [ -s $tmp.list ]
 then
-    ( tr '\012' ' ' <$tmp.list ; echo )
+    if $strip
+    then
+	sed -e 's/cpan(//g' -e 's/pip3(//g' -e 's/)//g' <$tmp.list
+    else
+	cat $tmp.list
+    fi \
+    | ( tr '\012' ' ' ; echo )
 fi
 
 status=0
