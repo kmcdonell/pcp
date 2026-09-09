@@ -171,7 +171,7 @@ TAR=`cat $tmp.tmp`; export TAR
 # have any of the GNU-related text from --help but seems to be
 # a drop-in replacement
 #
-if which pigz >$tmp.tmp
+if which pigz >$tmp.tmp 2>/dev/null
 then
     ZIP=`cat $tmp.tmp`; export ZIP
 else
