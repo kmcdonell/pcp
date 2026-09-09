@@ -235,7 +235,7 @@ do
 			;;
     esac
 
-    rm -f $tmp/match
+    rm -f $tmp/tmp.match
     for pkg in $line
     do
 	if grep "^$pkg\$" $tmp/tmp.allpkgs >$tmp/grep
@@ -246,13 +246,13 @@ do
 	    else
 		$debug && echo "Debug: $pkg: pattern match `cat $tmp/grep`"
 	    fi
-	    touch $tmp/match
+	    touch $tmp/tmp.match
 	    break
 	else
 	    $debug && echo "Debug: manifest:$lineno $pkg ? `cat $tmp/grep`"
 	fi
     done
-    if [ ! -f $tmp/match ]
+    if [ ! -f $tmp/tmp.match ]
     then
 	$debug && echo "$line: no package matches"
 	for try in `echo "$target" | sed -e 's/|/ /g'`
@@ -302,7 +302,7 @@ do
 	    fi
 	done
     fi
-    if [ ! -f $tmp/match ]
+    if [ ! -f $tmp/tmp.match ]
     then
 	# not matched, but may be a pattern than matches an entry for unavailable
 	#
