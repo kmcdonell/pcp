@@ -6,39 +6,6 @@
 #
 
 iam=check-dpkg
-debug=false
-
-# Need directory where this script is located so we can find the other
-# scripts and control files
-#
-home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
-if [ ! -f "$home/whatami" ]
-then
-    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
-    exit 1
-fi
-
-cd "$home" || exit
-home=`pwd`
-
-if [ ! -f "$home/packages.rc" ]
-then
-    echo >&2 "Botch: cannot find $home/packages.rc"
-    exit
-fi
-
-. $home/packages.rc
-
-_setversions
-# $distro, $version $full_version, $arch and $full_arch now set
-_setup_pkg_list || exit
-
-pkg_list="package-lists/${distro}+${version}+${arch}"
-if [ ! -f "$pkg_list" ]
-then
-    echo >&2 "Botch: $pkg_list does not exist"
-    exit
-fi
 
 _usage()
 {
@@ -64,9 +31,49 @@ shift `expr $OPTIND - 1`
 [ $# -eq 0 ] || _usage
 
 sts=1		# failure is the default
-tmp=${TMPDIR:-/tmp}/$iam-$$
-trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
+if $debug
+then
+    # tmp needs to be an absolute path because we cd later
+    #
+    tmp=`pwd`/tmp
+    trap "echo exit sts=\$sts; exit \$sts" 0 1 2 3 15
+else
+    tmp=${TMPDIR:-/tmp}/$iam-$$
+    trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
+fi
 rm -f $tmp.*
+
+# Need directory where this script is located so we can find the other
+# scripts and control files
+#
+home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
+if [ ! -f "$home/whatami" ]
+then
+    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
+    exit
+fi
+
+cd "$home" || exit
+home=`pwd`
+
+if [ ! -f "$home/packages.rc" ]
+then
+    echo >&2 "Botch: cannot find $home/packages.rc"
+    exit
+fi
+
+. $home/packages.rc
+
+_setversions
+# $distro, $version $full_version, $arch and $full_arch now set
+_setup_pkg_list || exit
+
+pkg_list="package-lists/${distro}+${version}+${arch}"
+if [ ! -f "$pkg_list" ]
+then
+    echo >&2 "Botch: $pkg_list does not exist"
+    exit
+fi
 
 control="$home/../../debian/control"
 if [ ! -f "$control" ]
@@ -120,12 +127,12 @@ do
 		#
 		for tag in $tags
 		do
-		    arch=`uname -m`
-		    if [ "$tag" = "$arch" ]
+		    machine=`uname -m`
+		    if [ "$tag" = "$machine" ]
 		    then
 			touch $tmp.tag-ok
 			break
-		    elif [ "$tag" = amd64 -a "$arch" = x86_64 ]
+		    elif [ "$tag" = amd64 -a "$machine" = x86_64 ]
 		    then
 			touch $tmp.tag-ok
 			break

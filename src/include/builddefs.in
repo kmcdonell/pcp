@@ -824,7 +824,7 @@ PYTHON3_INSTALL = \
 	    done; \
 	fi
 else
-Botch - need recipe for PYTHON3_INSTALL
+PYTHON3_INSTALL = $(error Botch - need recipe for PYTHON3_INSTALL)
 endif
 
 # Linux and Unix platforms:

@@ -7,38 +7,6 @@
 
 iam=check-rpm
 
-# Need directory where this script is located so we can find the other
-# scripts and control files
-#
-home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
-if [ ! -f "$home/whatami" ]
-then
-    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
-    exit 1
-fi
-
-cd "$home" || exit
-home=`pwd`
-
-if [ ! -f "$home/packages.rc" ]
-then
-    echo >&2 "Botch: cannot find $home/packages.rc"
-    exit
-fi
-
-. $home/packages.rc
-
-_setversions
-# $distro, $version $full_version, $arch and $full_arch now set
-_setup_pkg_list || exit
-
-pkg_list="package-lists/${distro}+${version}+${arch}"
-if [ ! -f "$pkg_list" ]
-then
-    echo >&2 "Botch: $pkg_list does not exist"
-    exit
-fi
-
 _usage()
 {
     echo >&2 "Usage: $iam [options]"
@@ -74,6 +42,38 @@ else
     trap "rm -f $tmp.*; exit \$sts" 0 1 2 3 15
 fi
 rm -f $tmp.*
+
+# Need directory where this script is located so we can find the other
+# scripts and control files
+#
+home="`echo $0 | sed -e 's/\/*'"$iam"'$//'`"
+if [ ! -f "$home/whatami" ]
+then
+    echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
+    exit 1
+fi
+
+cd "$home" || exit
+home=`pwd`
+
+if [ ! -f "$home/packages.rc" ]
+then
+    echo >&2 "Botch: cannot find $home/packages.rc"
+    exit
+fi
+
+. $home/packages.rc
+
+_setversions
+# $distro, $version $full_version, $arch and $full_arch now set
+_setup_pkg_list || exit
+
+pkg_list="package-lists/${distro}+${version}+${arch}"
+if [ ! -f "$pkg_list" ]
+then
+    echo >&2 "Botch: $pkg_list does not exist"
+    exit
+fi
 
 if ! which rpmspec >/dev/null 2>&1
 then
@@ -137,7 +137,7 @@ cat $tmp.need \
 | while read pkg
 do
     egrep_pkg=`echo "$pkg" | sed -e 's/[+]/[&]/g'`
-    $debug && echo "pkg=$pkg egrep_pkg=$grep_pkg"
+    $debug && echo "pkg=$pkg egrep_pkg=$egrep_pkg"
 
     # some are "special" and not real packages, or ones we cannot
     # check here ...
@@ -166,16 +166,16 @@ s/-/::/g
 	perl_pkg="`sed -e 's/::/-/g' -e 's/^/perl-/' <$tmp.perl`"
 	cpan_pkg="`cat $tmp.perl | sed -e '/::/!s/$/::/'`"
 	$debug && echo perl_pkg=$perl_pkg cpan_pkg=$cpan_pkg
-	if grep -q "^$perl_pkg\$" $tmp.allpkgs >$tmp.tmp
+	if grep -q "^$perl_pkg\$" $tmp.allpkgs
 	then
 	    # perl package is available
 	    #
-	    if ! grep -Eq "(^| )$perl_pkg( |\$)" "$pkg_list" >$tmp.tmp
+	    if ! grep -Eq "(^| )$perl_pkg( |\$)" "$pkg_list"
 	    then
 		echo "Error: $perl_pkg is available but it is not in the package list"
 		touch $tmp.err
 	    fi
-	    if grep -q "^$pkg cpan" "$pkg_list" >$tmp.tmp
+	    if grep -q "^$pkg cpan" "$pkg_list"
 	    then
 		echo "Error: $perl_pkg is available but $pkg cpan is in the package list"
 		touch $tmp.err
@@ -183,12 +183,12 @@ s/-/::/g
 	else
 	    # expect cpan entry in package list
 	    #
-	    if grep -Eq "(^| )$perl_pkg( |\$)" "$pkg_list" >$tmp.tmp
+	    if grep -Eq "(^| )$perl_pkg( |\$)" "$pkg_list"
 	    then
 		echo "Error: $perl_pkg is not available but it is in the package list"
 		touch $tmp.err
 	    fi
-	    if ! grep -q "^$cpan_pkg cpan" "$pkg_list" >$tmp.tmp
+	    if ! grep -q "^$cpan_pkg cpan" "$pkg_list"
 	    then
 		echo "Error: $perl_pkg is not available but $cpan_pkg cpan is not in the package list"
 		touch $tmp.err
@@ -218,7 +218,7 @@ s/-/::/g
 		$debug && echo "$provider is provider for $pkg"
 	    fi
 	fi
-	if ! grep -q "^$pkg\$" $tmp.allpkgs >$tmp.tmp
+	if ! grep -q "^$pkg\$" $tmp.allpkgs
 	then
 	    if [ -n "$provider" ] && grep -q "^$provider\$" $tmp.allpkgs
 	    then
@@ -228,11 +228,11 @@ s/-/::/g
 		touch $tmp.err
 	    fi
 	fi
-	if ! grep -Eq "(^| )$egrep_pkg( |\$)" "$pkg_list" >$tmp.tmp
+	if ! grep -Eq "(^| )$egrep_pkg( |\$)" "$pkg_list"
 	then
 	    if [ -n "$provider" ]
 	    then
-		if grep -Eq "(^| )$provider( |\$)" "$pkg_list" >$tmp.tmp
+		if grep -Eq "(^| )$provider( |\$)" "$pkg_list"
 		then
 		    $debug && echo "provider $provider for $pkg is in package list"
 		    :

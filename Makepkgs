@@ -163,20 +163,20 @@ want == 1			{ print; exit }'
     return 0
 }
 
-gnu_tool Error "$MAKE" make gmake >$tmp.tmp
-MAKE=`cat $tmp.tmp`; export MAKE
-gnu_tool Warning "$TAR" tar gtar gnutar >$tmp.tmp
-TAR=`cat $tmp.tmp`; export TAR
+gnu_tool Error "$MAKE" make gmake >$tmp/tmp
+MAKE=`cat $tmp/tmp`; export MAKE
+gnu_tool Warning "$TAR" tar gtar gnutar >$tmp/tmp
+TAR=`cat $tmp/tmp`; export TAR
 # on OpenMandriva, gzip has been replaced by pigz which does not
 # have any of the GNU-related text from --help but seems to be
 # a drop-in replacement
 #
-if which pigz >$tmp.tmp 2>/dev/null
+if which pigz >$tmp/tmp 2>/dev/null
 then
-    ZIP=`cat $tmp.tmp`; export ZIP
+    ZIP=`cat $tmp/tmp`; export ZIP
 else
-    gnu_tool Error "$ZIP" gzip gnuzip >$tmp.tmp
-    ZIP=`cat $tmp.tmp`; export ZIP
+    gnu_tool Error "$ZIP" gzip gnuzip >$tmp/tmp
+    ZIP=`cat $tmp/tmp`; export ZIP
 fi
 
 # check if tar supports --transform else we must use git-archive later on (e.g. RHEL5)
@@ -549,13 +549,13 @@ src_tar_build()
     else
 	# build git file list and make tarball by hand to pick up any changes
 	#
-	git ls-files >$tmp.gitcensus
+	git ls-files >$tmp/gitcensus
 	if [ -f .gitattributes ]
 	then
 	    # pick entries with the export-ignore attribute
-	    # and cull $tmp.gitcensus
+	    # and cull $tmp/gitcensus
 	    #
-	    sed -n <.gitattributes >$tmp.sed \
+	    sed -n <.gitattributes >$tmp/sed \
 		-e '/^#/d' \
 		-e '/ export-ignore/{
 s/ export-ignore//
@@ -566,22 +566,22 @@ s;$;/d;
 p
 }' \
 	    # end
-	    if [ -s $tmp.sed ]
+	    if [ -s $tmp/sed ]
 	    then
-		sed -f $tmp.sed <$tmp.gitcensus >$tmp.tmp
-		mv $tmp.tmp $tmp.gitcensus
+		sed -f $tmp/sed <$tmp/gitcensus >$tmp/tmp
+		mv $tmp/tmp $tmp/gitcensus
 	    fi
-	    rm -f $tmp.sed
+	    rm -f $tmp/sed
 	fi
 
 	# add debian/control ... will be replaced later
 	#
 	[ -f debian/control ] || touch debian/control
-	echo "debian/control" >>$tmp.gitcensus
+	echo "debian/control" >>$tmp/gitcensus
 
-	$TAR -cz --transform="s,^,$source/,S" --files-from=$tmp.gitcensus \
+	$TAR -cz --transform="s,^,$source/,S" --files-from=$tmp/gitcensus \
 		--file="$SRCTAR"
-	rm -f $tmp.gitcensus
+	rm -f $tmp/gitcensus
     fi
     echo "Wrote: $SRCTAR"
 }

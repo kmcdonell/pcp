@@ -87,8 +87,7 @@ BuildRequires: procps autoconf bison flex
 BuildRequires: rpm-build
 
 %if "@enable_lzma@" == "true"
-%if "%{_vendor}" == "mandriva" || "%{_vendor}" == "openmandriva"
-%else
+%if "%{_vendor}" != "mandriva" && "%{_vendor}" != "openmandriva"
 BuildRequires: xz-devel
 %endif
 %endif

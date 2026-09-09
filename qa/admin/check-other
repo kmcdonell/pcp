@@ -74,7 +74,7 @@ else
 fi
 mkdir -p $tmp || exit
 
-here=pwd
+here=`pwd`
 
 rm -f $tmp/*
 # old-list-packages with -R creates tmp.* files to be saved
@@ -83,7 +83,7 @@ rm -f tmp.*
 ./old-list-packages -R $opts_v || exit
 mv tmp.* $tmp
 
-_get_pkg_type
+_get_pkg_type || exit
 
 # report package that installs "$1" or nothing
 #
@@ -269,11 +269,11 @@ do
 			base[0-9][0-9]|xbase[0-9][0-9]|comp[0-9][0-9]|base\ FreeBSD\ install)
 			    ;;
 			*)
-			    echo "mainfest:$lineno `cat $tmp/find` provides $try"
+			    echo "manifest:$lineno `cat $tmp/find` provides $try"
 			    ;;
 		    esac
 		else
-		    echo "mainfest:$lineno more than one provider for $try"
+		    echo "manifest:$lineno more than one provider for $try"
 		fi
 		break
 	    elif which "$target" >/dev/null 2>&1
@@ -291,11 +291,11 @@ do
 			    base[0-9][0-9]|xbase[0-9][0-9]|comp[0-9][0-9]|base\ FreeBSD\ install)
 				;;
 			    *)
-				echo "mainfest:$lineno `cat $tmp/find` provides $retry"
+				echo "manifest:$lineno `cat $tmp/find` provides $retry"
 				;;
 			esac
 		    else
-			echo "mainfest:$lineno more than one provider for $retry"
+			echo "manifest:$lineno more than one provider for $retry"
 		    fi
 		    break
 		fi

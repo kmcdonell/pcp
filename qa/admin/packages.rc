@@ -476,7 +476,7 @@ p
     fi
     if [ -z "$distro_tag" ]
     then
-	echo "Botch: _get_distro_tag: no clue what \$distro_tag should be"
+	echo >&2 "Botch: _get_distro_tag: no clue what \$distro_tag should be"
 	return 1
     else
 	$debug && echo "Debug: manifest distro tag: $distro_tag"
@@ -488,6 +488,16 @@ p
 #
 _setup_pkg_list()
 {
+    if [ -z "$version" ]
+    then
+	echo >&2 "_setup_pkg_list: Botch: \$version is empty"
+	return 1
+    fi
+    if [ -z "$distro" ]
+    then
+	echo >&2 "_setup_pkg_list: Botch: \$distro is empty"
+	return 1
+    fi
     # This gets a bit tricky as the match may be for a prefix of the ${version}
     # and/or "any" in lieu of ${arch}
     #

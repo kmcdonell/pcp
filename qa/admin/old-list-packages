@@ -176,7 +176,7 @@ p
 
     *)
 	echo >&2 "Botch: _build_allpkgs(): no recipe for $distro"
-	exit
+	exit 1
 	;;
 
     esac
@@ -400,13 +400,13 @@ home=`echo $0 | sed -e 's/\/*old-list-packages$//'`
 if [ ! -f $home/whatami ]
 then
     echo >&2 "Botch: \$0=$0 -> bad \$home=$home ?"
-    exit
+    exit 1
 fi
 
 if [ ! -f $home/packages.rc ]
 then
     echo >&2 "Botch: cannot find $home/packages.rc"
-    exit
+    exit 1
 fi
 
 . $home/packages.rc
@@ -738,7 +738,7 @@ then
 	    touch $tmp.need
 	fi
 	[ -f $tmp.need ] && \
-	    echo "rpm?	/usr/share/doc/python-ctypes*	[python-ctypes] : 99999" >>$tmp.manifest.lineno
+	    echo "rpm?	/usr/share/doc/python-ctypes*	[python-ctypes] :99999" >>$tmp.manifest.lineno
     fi
 fi
 

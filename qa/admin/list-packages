@@ -11,7 +11,7 @@ _usage()
     echo >&2 
     echo >&2 "  -A arch      override platform arch"
     echo >&2 "  -D distro    override platform distro"
-    echo >&2 "  -d           debug amd keep tmp.* files"
+    echo >&2 "  -d           debug and keep tmp.* files"
     echo >&2 "  -c           check package list"
     echo >&2 "  -i tag       include only lines with a tag"
     echo >&2 "  -m           list only missing packages"
@@ -256,7 +256,7 @@ END		{ exit sts }'
 				    in
 					perl-*)
 					    xxx=`echo "$pkg" | sed -e 's/perl-//' -e 's/-/::/g'`
-					    if grep -q "^$xxx cpan" $tmp.orig >//dev/null
+					    if grep -q "^$xxx cpan" $tmp.orig >/dev/null
 					    then
 						$verbose && echo >&2 "Info: skip missing $pkg because $xxx cpan already in package list"
 						pkg=''
