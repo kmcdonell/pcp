@@ -153,7 +153,7 @@ BuildRequires: libpfm-devel >= 4.4
 BuildRequires: %{_lib_prefix}ncurses-devel
 BuildRequires: %{_lib_prefix}readline-devel
 
-%if 0%{?rhel} < 8
+%if 0%{?rhel} > 0 && 0%{?rhel} < 8
 # sqlite-devel is too old on CentOS 7, handled by configure-driven
 # conditional build
 %else

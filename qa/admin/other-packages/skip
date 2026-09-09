@@ -196,5 +196,5 @@ FreeBSD      14\.     -       mandoc
 # we need mariadb*-client, but this is incompatible with these Perl
 # and Python packages
 FreeBSD      15\.     -       p5-Class-DBI-mysql p5-DBD-mysql
-FreeBSD      14\.     -       p5-Class-DBI-mysql p5-DBD-mysql py3[0-9]*-psycopg2
+FreeBSD      14\.     -       p5-Class-DBI-mysql p5-DBD-mysql
 FreeBSD      12\.     -       p5-Class-DBI-mysql p5-DBD-mysql

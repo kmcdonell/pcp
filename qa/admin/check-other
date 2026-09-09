@@ -224,12 +224,12 @@ do
 			;;
 	SKIP\ on\ *)	continue
 			;;
-	'base FreeBSD install')	continue
-				;;
-	'base NetBSD install')	continue
-				;;
-	'base OpenBSD install')	continue
-				;;
+	*'base FreeBSD install'*)	continue
+					;;
+	*'base NetBSD install'*)	continue
+					;;
+	*'base OpenBSD install'*)	continue
+					;;
 	'')		# comes from cpan(...) alone, so no real pkgs
 			continue
 			;;
