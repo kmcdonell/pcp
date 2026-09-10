@@ -23,9 +23,6 @@ fi
 
 . $home/packages.rc
 
-cd "$home" || exit
-home=`pwd`
-
 _usage()
 {
     echo >&2 "Usage: $0 [options]"
@@ -79,7 +76,8 @@ else
 fi
 mkdir -p $tmp || exit
 
-here=`pwd`
+cd "$home" || exit
+home=`pwd`
 
 rm -f $tmp/*
 # old-list-packages with -R creates tmp.* files to be saved

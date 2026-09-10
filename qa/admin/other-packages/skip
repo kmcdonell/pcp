@@ -60,13 +60,6 @@ Debian       1.\.     -       python-{.*}
 Debian       9\.      -       python-{.*}
 Debian       buster   -       python-{.*}
 Debian       bullseye -       python-{.*} python libpython-dev libpython2-dev libpython-stdlib libpython2-stdlib
-# observed on bozo
-# libqt4-dev and libsoqt4 are all for Qt4, but we're
-# using Qt5 for the other bits we need for pmview, but even the Qt5
-# libcoin80-dev and libsoqt520-dev packages are not all there for Qt5
-# so skip the lot (especially on Debian 10)
-Debian       bullseye -       libqt4-dev libsoqt4-dev
-Debian       1.\..    -       libcoin80-dev libcoin-dev libqt4-dev libsoqt4-dev libsoqt520-dev libsoqt-dev-common
 # observed on vm11
 # python3-bpfcc : Depends: libbpfcc (>= 0.8.0-4) but it is not installable
 Debian       10\.     -       python3-bpfcc
