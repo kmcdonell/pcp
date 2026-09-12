@@ -120,4 +120,6 @@ Oracle.*     10       -       Coin-devel Coin[0-9]-devel SoQt-devel gfs2-utils k
 MX           25\.2    -       bpftrace-dbgsym python3-pyarrow
 #-- OpenIndiana
 OpenIndiana  2026\.   -       foo
+#-- MacOS
+Darwin       25\.     -       iproute2 libdrm net-tools redis
 

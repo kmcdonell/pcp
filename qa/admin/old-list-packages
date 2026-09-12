@@ -179,6 +179,11 @@ p
 	| sed >$tmp.allpkgs -e 's/ .*//'
 	;;
 
+    Darwin)
+	brew formulae >$tmp.allpkgs
+	brew casks >>$tmp.allpkgs
+	;;
+
     *)
 	echo >&2 "Botch: _build_allpkgs(): no recipe for $distro"
 	exit 1
@@ -714,16 +719,20 @@ fi
 tags="debian redhat centos suse arch mandriva freebsd netbsd openbsd"
 
 # Append original line numbers for non-blank lines in the manifest.
+#
 # Also rewrite [? ...] (package unknown) to [?:<original line number> ...]
 # for easier mapping back to the manifest file.
+#
+# And strip (...) e.g. (QA optional) but need to not strip cpan(foo), pip3(foo), etc.
+#
 # And strip {...} (usually comments in [...]
 #
 $PCP_AWK_PROG 'NF > 0 { gsub("\\[\\?", "[?:" NR); print $0 " :" NR }' <$manifest \
 | sed \
-    -e 's/ *#.*//' \
-    -e 's/cpan(\([^)]*\))/cpan+\1+/' \
+-e 's/ *#.*//' \
+    -e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1+\2+/g' \
     -e 's/ *([^)]*)//g' \
-    -e 's/cpan+\([^+]*\)+/cpan(\1)/' \
+    -e 's/\([a-z][a-z0-9]*\)+\([^+]*\)+/\1(\2)/g' \
     -e 's/ *{[^}]*}//g' \
 | sed -E >$tmp.manifest.lineno -e '/\{/s/(\[.*)\{[^}]*}(.*])/\1\2/'
 

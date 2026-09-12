@@ -24,7 +24,7 @@
 #   but also marked N/A if a package is not available on a particular
 #   platform, if the package is installed with an alternate installer,
 #   then the form <package_manager>(<package_name>) may be used, e.g.
-#   pip3(openpyxl) or cpan(Date::Format)
+#   pip3(openpyxl) or cpan(Date::Format) or gdb
 #   if there is more than one alternate package source, these can be
 #   separated by white space or the word "or", e.g. for RedHat and SuSE
 #   rpm naming differences
@@ -60,7 +60,7 @@ F_pkg?		bash		[bash]
 S_pkg?		bash		[shell/bash]
 slackpkg?	bash		[bash]
 pacman?		bash		[core/bash]
-brew?		bash		[bash]
+brew?		bash		[base MacOS install]
 # -- sed(1)
 dpkg?		sed		[sed]
 rpm?		sed		[sed]
@@ -71,7 +71,7 @@ F_pkg?		sed		[sed or base FreeBSD install]
 S_pkg?		sed		[text/gnu-sed]
 slackpkg?	sed		[sed]
 pacman?		sed		[core/sed]
-brew?		sed		[sed]
+brew?		sed		[base MacOS install]
 # -- grep(1)
 dpkg?		grep		[grep]
 rpm?		grep		[grep]
@@ -82,7 +82,7 @@ F_pkg?		grep		[grep or base FreeBSD install]
 S_pkg?		grep		[text/gnu-grep]
 slackpkg?	grep		[grep]
 pacman?		grep		[core/grep]
-brew?		grep		[grep]
+brew?		grep		[base MacOS install]
 # -- ed(1)
 dpkg?		ed		[ed]
 rpm?		ed		[ed]
@@ -93,7 +93,7 @@ F_pkg?		ed		[ed or base FreeBSD install]
 S_pkg?		ed		[SUNWcs]
 slackpkg?	ed		[ed]
 pacman?		ed		[extra/ed]
-brew?		ed		[ed]
+brew?		ed		[base MacOS install]
 # -- make(1) [GNU variant]
 dpkg?		make		[make]
 rpm?		make		[make]
@@ -104,7 +104,7 @@ F_pkg?		make		[make]
 S_pkg?		gmake		[developer/build/gnu-make]
 slackpkg?	make		[make]
 pacman?		make		[core/make]
-brew?		make		[make]
+brew?		make		[base MacOS install]
 # -- flex(1)
 dpkg?		flex		[flex]
 rpm?		flex		[flex]
@@ -115,7 +115,7 @@ F_pkg?		flex		[flex or base FreeBSD install]
 S_pkg?		flex		[developer/lexer/flex]
 slackpkg?	flex		[flex]
 pacman?		flex		[core/flex]
-brew?		flex		[flex]
+brew?		flex		[base MacOS install]
 # -- bison(1)
 dpkg?		bison		[bison]
 rpm?		bison		[bison]
@@ -126,7 +126,7 @@ F_pkg?		bison		[bison]
 S_pkg?		bison		[developer/parser/bison-[0-9][0-9]*]
 slackpkg?	bison		[bison]
 pacman?		bison		[core/bison]
-brew?		bison		[bison]
+brew?		bison		[base MacOS install]
 # -- gdb(1)
 dpkg?		gdb		[gdb]
 rpm?		gdb		[gdb]
@@ -170,7 +170,7 @@ F_pkg?		gcc		[gcc]
 S_pkg?		gcc		[developer/gcc-[0-9][0-9]*]
 slackpkg?	gcc		[gcc]
 pacman?		gcc		[core/gcc]
-brew?		gcc		[base Darwin install]
+brew?		gcc		[base MacOS install]
 # -- git
 dpkg?		git		[git]
 rpm?		git		[git or git-core]
@@ -181,7 +181,7 @@ F_pkg?		git		[git]
 S_pkg?		git		[developer/versioning/git]
 slackpkg?	git		[git]
 pacman?		git		[extra/git]
-brew?		git		[base Darwin install]
+brew?		git		[base MacOS install]
 # -- mktemp
 dpkg?		mktemp		[coreutils]
 rpm?		mktemp		[coreutils or coreutils-single]
@@ -192,7 +192,7 @@ F_pkg?		mktemp		[base FreeBSD install]
 S_pkg?		mktemp		[file/gnu-coreutils]
 slackpkg?	mktemp		[bin]
 pacman?		mktemp		[core/coreutils]
-brew?		mktemp		[base Darwin install]
+brew?		mktemp		[base MacOS install]
 # -- man (QA optional)
 #
 dpkg?		man		[man-db (QA optional)]
@@ -204,7 +204,7 @@ F_pkg?		man		[base FreeBSD install (QA optional)]
 S_pkg?		man		[system/man (QA optional)]
 slackpkg?	man		[man-db (QA optional)]
 pacman?		man		[man-db or extra/mandoc (QA optional)]
-brew?		man		[? (QA optional)]
+brew?		man		[base MacOS install (QA optional)]
 
 # NetBSD/OpenBSD/FreeBSD specials
 #
@@ -253,7 +253,7 @@ F_pkg?		cpan		[perl or perl5]
 S_pkg?		cpan		[library/perl-5/cpan-5[0-9][0-9]*]
 slackpkg?	cpan		[perl]
 pacman?		cpan		[extra/perl-cpanplus]
-brew?		cpan		[base Darwin install]
+brew?		cpan		[base MacOS install]
 # -- pkg-config
 dpkg?		pkg-config	[pkg-config]
 rpm?		pkg-config	[pkgconf-pkg-config or pkg-config or pkgconfig or pkgconf-pkg-config]
@@ -264,7 +264,7 @@ F_pkg?		pkg-config	[pkgconf]
 S_pkg?		pkg-config	[developer/build/pkg-config]
 slackpkg?	pkg-config	[pkg-config]
 pacman?		pkg-config	[core/pkgconf]
-brew?		pkg-config	[pkg-config]
+brew?		pkg-config	[pkgconf]
 # -- python
 dpkg?		python3		[python3-minimal or python3-all]
 rpm?		python3		[python3[0-9]* or python3[0-9]*-base]
@@ -275,7 +275,7 @@ F_pkg?		python3.9|python3	[python39 or python3]
 S_pkg?		python3		[runtime/python-39]
 slackpkg?	python3		[python3]
 pacman?		python3		[python or core/python3]
-brew?		python3		[python]
+brew?		python3		[python@3\.[0-9]*]
 # -- pylint
 dpkg?		pylint		[pylint (build optional)]
 rpm?		pylint		[pylint or python3[0-9]*-pylint (build optional)]
@@ -297,7 +297,7 @@ F_pkg?		mandoc		[mandoc or base FreeBSD install (build optional)]
 S_pkg?		mandoc		[N/A (build optional)]
 slackpkg?	mandoc		[mandoc (build optional)]
 pacman?		mandoc		[extra/mandoc (build optional)]
-brew?		mandoc		[mandoc (build optional)]
+brew?		mandoc		[base MacOS install (build optional)]
 # -- libuv
 dpkg?		/usr/include/uv.h	[libuv-dev or libuv1-dev (build optional)]
 rpm?		/usr/include/uv.h	[libuv-devel (build optional)]
@@ -308,7 +308,7 @@ F_pkg?		/usr/local/include/uv.h	[libuv (build optional)]
 S_pkg?		/usr/include/uv.h	[library/libuv (build optional)]
 slackpkg?	uv.h			[N/A (build optional)]
 pacman?		/usr/include/uv.h	[extra/libuv (build optional)]
-brew?		/usr/local/include/uv.h	[libuv (build optional)]
+brew?		?			[libuv (build optional)]
 # -- liblzma
 dpkg?		/usr/include/lzma.h		[liblzma-dev (build optional)]
 rpm?		/usr/include/lzma.h		[xz-devel (build optional)]
@@ -390,7 +390,7 @@ F_pkg?		g++			[gcc]
 S_pkg?		g++			[developer/gcc-[0-9][0-9]*]
 slackpkg?	g++			[gcc-g++]
 pacman?		g++			[core/gcc]
-brew?		g++			[base Darwin install]
+brew?		g++			[base MacOS install]
 # files and libraries
 # -- libreadline
 dpkg?		/usr/include/readline/readline.h	[libreadline-dev or libreadline6-dev]
@@ -402,7 +402,7 @@ F_pkg?		/usr/local/include/readline/readline.h	[readline]
 S_pkg?		/usr/include/readline/readline.h	[library/readline]
 slackpkg?	/usr/include/readline/readline.h	[readline]
 pacman?		/usr/include/readline/readline.h	[core/readline]
-brew?		/usr/local/opt/readline/include/readline/readline.h	[readline]
+brew?		?					[readline]
 # -- libncurses
 dpkg?		/usr/include/ncurses.h		[libncurses-dev or libncurses5-dev]
 rpm?		/usr/include/ncurses.h		[ncurses-devel]
@@ -413,7 +413,7 @@ F_pkg?		/usr/local/include/ncurses/ncurses.h	[ncurses]
 S_pkg?		/usr/include/ncurses/ncurses.h	[library/ncurses]
 slackpkg?	/usr/include/ncurses/ncurses.h	[ncurses]
 pacman?		/usr/include/ncurses.h		[core/ncurses]
-brew?		/usr/local/opt/ncurses/include/ncurses.h	[ncurses]
+brew?		?				[ncurses]
 # python modules
 # -- python rtslib for lio PMDA
 rpm?		/usr/lib*/python3.*/*-packages/rtslib		[python3-rtslib or python3[0-9]*-rtslib-fb]
@@ -425,7 +425,7 @@ F_pkg?		/usr/local/lib/python3.*/*-packages/rtslib	[py3[0-9]*-rtslib-fb]
 S_pkg?		rtslib-fb		[N/A]
 slackpkg?	rtslib-fb		[N/A]
 pacman?		rtslib-fb		[N/A]
-brew?		rtslib-fb		[? {MacOS?}]
+brew?		rtslib-fb		[N/A]
 # -- python setuptools
 dpkg?		/usr/lib/python3/*-packages/setuptools/dist.py	[python3-setuptools]
 rpm?		/usr/lib*/python3.*/*-packages/setuptools/dist.py	[python3[0-9]*-setuptools or platform-python-setuptools]
@@ -531,7 +531,7 @@ F_pkg?		/usr/local/lib/python3.*/*-packages/pymongo	[py3[0-9]*-pymongo]
 S_pkg?		/usr/lib/python3.*/*-packages/pymongo		[library/python/pymongo]
 slackpkg?	pymongo		[N/A]
 pacman?		/usr/lib*/python3.*/*-packages/pymongo	[extra/python-pymongo]
-brew?		pymongo		[? {MacOS?}]
+brew?		pymongo		[pip3(pymongo)]
 # perl modules
 # -- Time::HiRes
 dpkg?		Time::HiRes	[libperl[0-9][0-9.]* or libperl[0-9][0-9.]*t64]
@@ -543,7 +543,7 @@ F_pkg?		Time::HiRes	[perl or perl5]
 S_pkg?		Time::HiRes	[runtime/perl-5[0-9]*]
 slackpkg?	Time::HiRes	[perl]
 pacman?		Time::HiRes	[core/perl]
-brew?		Time::HiRes	[base Darwin install]
+brew?		Time::HiRes	[base MacOS install]
 # -- Date::Format
 dpkg?		Date::Format	[libtimedate-perl]
 rpm?		Date::Format	[perl-TimeDate]
@@ -554,7 +554,7 @@ F_pkg?		Date::Format	[p5-TimeDate or cpan(Date::Format)]
 S_pkg?		Date::Format	[library/perl-5/timedate]
 slackpkg?	Date::Format	[cpan(Date::Format)]
 pacman?		Date::Format	[extra/perl-timedate]
-brew?		Date::Format	[base Darwin install]
+brew?		Date::Format	[base MacOS install]
 # -- Date::Manip
 rpm?		Date::Manip	[perl-Date-Manip]
 # -- Date::Parse
@@ -567,7 +567,7 @@ F_pkg?		Date::Parse	[p5-TimeDate or cpan(Date::Parse)]
 S_pkg?		Date::Parse	[library/perl-5/timedate]
 slackpkg?	Date::Parse	[cpan(Date::Parse)]
 pacman?		Date::Parse	[extra/perl-timedate]
-brew?		Date::Parse	[base Darwin install]
+brew?		Date::Parse	[base MacOS install]
 # -- Getopt::Std
 dpkg?		Getopt::Std	[perl-modules or perl-modules-[0-9][0-9.]*]
 rpm?		Getopt::Std	[perl or perl-base or perl-interpreter or perl-Getopt-Std]
@@ -578,7 +578,7 @@ F_pkg?		Getopt::Std	[perl5]
 S_pkg?		Getopt::Std	[runtime/perl-5[0-9]*]
 slackpkg?	Getopt::Std	[perl]
 pacman?		Getopt::Std	[core/perl]
-brew?		Getopt::Std	[base Darwin install]
+brew?		Getopt::Std	[base MacOS install]
 # -- ExtUtils::AutoInstall
 dpkg?		ExtUtils::AutoInstall	[libextutils-autoinstall-perl]
 # -- ExtUtils::MakeMaker
@@ -591,7 +591,7 @@ F_pkg?		ExtUtils::MakeMaker	[perl or perl5]
 S_pkg?		ExtUtils::MakeMaker	[runtime/perl-5[0-9]*]
 slackpkg?	ExtUtils::MakeMaker	[perl]
 pacman?		ExtUtils::MakeMaker	[core/perl]
-brew?		ExtUtils::MakeMaker	[base Darwin install]
+brew?		ExtUtils::MakeMaker	[base MacOS install]
 # -- YAML::XS
 dpkg?		YAML::XS	[libyaml-libyaml-perl]
 rpm?		YAML::XS	[perl-YAML-LibYAML or cpan(YAML::LibYAML)]
@@ -613,7 +613,7 @@ F_pkg?		XML::LibXML	[p5-XML-LibXML (QA optional)]
 S_pkg?		XML::LibXML	[library/perl-5/xml-libxml (QA optional)]
 slackpkg?	XML::LibXML	[cpan(XML::LibXML) (QA optional)]
 pacman?		XML::LibXML	[extra/perl-xml-libxml or cpan(XML::LibXML) (QA optional)]
-brew?		XML::LibXML	[base Darwin install (QA optional)]
+brew?		XML::LibXML	[base MacOS install (QA optional)]
 # -- XML::TokeParser
 dpkg?		XML::TokeParser	[libxml-tokeparser-perl]
 rpm?		XML::TokeParser	[perl-XML-TokeParser or cpan(XML::TokeParser)]
@@ -635,7 +635,7 @@ F_pkg?		File::Slurp	[p5-File-Slurp (QA optional)]
 S_pkg?		File::Slurp	[library/perl-5/file-slurp (QA optional)]
 slackpkg?	File::Slurp	[cpan(File::Slurp) (QA optional)]
 pacman?		File::Slurp	[extra/perl-file-slurp or cpan(File::Slurp) (QA optional)]
-brew?		File::Slurp	[base Darwin install (QA optional)]
+brew?		File::Slurp	[base MacOS install (QA optional)]
 # -- List::MoreUtils
 dpkg?		List::MoreUtils	[liblist-moreutils-perl (QA optional)]
 rpm?		List::MoreUtils	[perl-List-MoreUtils or cpan(List::MoreUtils) (QA optional)]
@@ -646,7 +646,7 @@ F_pkg?		List::MoreUtils	[p5-List-MoreUtils (QA optional)]
 S_pkg?		List::MoreUtils	[library/perl-5/list-moreutils (QA optional)]
 slackpkg?	List::MoreUtils	[cpan(List::MoreUtils) (QA optional)]
 pacman?		List::MoreUtils	[extra/perl-list-moreutils or cpan(List::MoreUtils) (QA optional)]
-brew?		List::MoreUtils	[base Darwin install (QA optional)]
+brew?		List::MoreUtils	[base MacOS install (QA optional)]
 # -- autodie
 dpkg?		autodie::	[perl-modules or perl-modules-[0-9][0-9.]* (QA optional)]
 rpm?		autodie::	[perl or perl-autodie (QA optional)]
@@ -657,7 +657,7 @@ F_pkg?		autodie::	[perl or perl5 (QA optional)]
 S_pkg?		autodie::	[runtime/perl-5[0-9]* (QA optional)]
 slackpkg?	autodie::	[perl (QA optional)]
 pacman?		autodie::	[core/perl (QA optional)]
-brew?		autodie::	[base Darwin install (QA optional)]
+brew?		autodie::	[base MacOS install (QA optional)]
 # -- RRDs
 dpkg?		RRDs::		[librrds-perl]
 rpm?		RRDs::		[rrdtool-perl or perl-rrdtool or rrdtool]
@@ -746,7 +746,7 @@ F_pkg?		LWP::UserAgent	[perl5 or cpan(LWP::UserAgent)]
 S_pkg?		LWP::UserAgent	[cpan(LWP::UserAgent)]
 slackpkg?	LWP::UserAgent	[cpan(LWP::UserAgent)]
 pacman?		LWP::UserAgent	[cpan(LWP::UserAgent)]
-brew?		LWP::UserAgent	[base Darwin install]
+brew?		LWP::UserAgent	[base MacOS install]
 # -- Net::SNMP
 dpkg?		Net::SNMP	[libnet-snmp-perl]
 rpm?		Net::SNMP	[perl-Net-SNMP or cpan(Net::SNMP)]
@@ -757,7 +757,7 @@ F_pkg?		Net::SNMP	[p5-Net-SNMP]
 S_pkg?		Net::SNMP	[library/perl-5/net-snmp]
 slackpkg?	Net::SNMP	[cpan(Net::SNMP)]
 pacman?		Net::SNMP	[extra/perl-net-snmp]
-brew?		Net::SNMP	[base Darwin install]
+brew?		Net::SNMP	[base MacOS install]
 # -- Archive::Zip
 dpkg?		Archive::Zip	[libarchive-zip-perl]
 rpm?		Archive::Zip	[perl-Archive-Zip or cpan(Archive::Zip)]
@@ -768,7 +768,7 @@ F_pkg?		Archive::Zip	[p5-Archive-Zip]
 S_pkg?		Archive::Zip	[library/perl-5/archive-zip]
 slackpkg?	Archive::Zip	[cpan(Archive::Zip)]
 pacman?		Archive::Zip	[extra/perl-archive-zip]
-brew?		Archive::Zip	[? {MacOS?}]
+brew?		Archive::Zip	[cpan(Archive::Zip)]
 #
 # other run-time
 #
@@ -782,7 +782,7 @@ F_pkg?		time		[base FreeBSD install]
 S_pkg?		time		[SUNWcs]
 slackpkg?	time		[time]
 pacman?		time		[extra/time]
-brew?		time		[base Darwin install]
+brew?		time		[base MacOS install]
 # -- sadf(1) (for sar2pcp)
 dpkg?		sadf		[sysstat]
 rpm?		sadf		[sysstat]
@@ -804,7 +804,7 @@ F_pkg?		host		[base FreeBSD install]
 S_pkg?		host		[network/dns/bind]
 slackpkg?	host		[bind]
 pacman?		host		[extra/bind]
-brew?		host		[base Darwin install]
+brew?		host		[base MacOS install]
 # QA
 # -- bc(1)
 dpkg?		bc		[bc (QA optional)]
@@ -816,7 +816,7 @@ F_pkg?		bc		[bc or base FreeBSD install (QA optional)]
 S_pkg?		bc		[system/extended-system-utilities (QA optional)]
 slackpkg?	bc		[bc (QA optional)]
 pacman?		bc		[extra/bc (QA optional)]
-brew?		bc		[bc (QA optional)]
+brew?		bc		[base MacOS install (QA optional)]
 # -- socat(1)
 dpkg?		socat		[socat (QA optional)]
 rpm?		socat		[socat (QA optional)]
@@ -849,7 +849,7 @@ F_pkg?		curl		[curl (QA optional)]
 S_pkg?		curl		[web/curl (QA optional)]
 slackpkg?	curl		[curl (QA optional)]
 pacman?		curl		[core/curl (QA optional)]
-brew?		curl		[base Darwin install (QA optional)]
+brew?		curl		[base MacOS install (QA optional)]
 # -- valgrind(1)
 dpkg?		valgrind	[valgrind (QA optional)]
 rpm?		valgrind	[valgrind (QA optional)]
@@ -871,7 +871,7 @@ F_pkg?		ifconfig	[base FreeBSD install]
 S_pkg?		ifconfig	[SUNWcs]
 slackpkg?	ifconfig	[net-tools]
 pacman?		ifconfig	[core/net-tools]
-brew?		ifconfig	[base Darwin install]
+brew?		ifconfig	[base MacOS install]
 # -- netstat(1)
 dpkg?		netstat		[net-tools]
 rpm?		netstat		[net-tools or net-tools-deprecated]
@@ -882,7 +882,7 @@ F_pkg?		netstat		[base FreeBSD install]
 S_pkg?		netstat		[SUNWcs]
 slackpkg?	netstat		[net-tools]
 pacman?		netstat		[core/net-tools]
-brew?		netstat		[base Darwin install]
+brew?		netstat		[base MacOS install]
 # -- kubectl
 # strictly speaking you can install kubernetes on Debian-based systems but
 # it involves adding the https://k8s.io repo and then a complicated host
@@ -918,7 +918,7 @@ F_pkg?		crontab		[base FreeBSD install]
 S_pkg?		crontab		[SUNWcs]
 slackpkg?	crontab		[dcron]
 pacman?		crontab		[extra/cronie]
-brew?		crontab		[base Darwin install]
+brew?		crontab		[base MacOS install]
 # -- mail(1)
 dpkg?		mail			[bsd-mailx (QA optional)]
 rpm?		mail			[mailx or s-nail (QA optional)]
@@ -929,7 +929,7 @@ F_pkg?		mail			[base FreeBSD install (QA optional)]
 S_pkg?		mail			[SUNWcs (QA optional)]
 slackpkg?	mail			[s-nail (QA optional)]
 pacman?		mail			[core/s-nail (QA optional)]
-brew?		mail			[base Darwin install (QA optional)]
+brew?		mail			[base MacOS install (QA optional)]
 # -- httpd / apache
 dpkg?		apache2				[apache2-bin or apache2 or apache2-mpm-worker (QA optional)]
 rpm?		httpd|/etc/apache2/httpd.conf	[httpd or apache2 (QA optional)]
@@ -940,7 +940,7 @@ F_pkg?		/usr/local/etc/apache24/httpd.conf.sample	[apache24 (QA optional)]
 S_pkg?		/etc/apache2/*/httpd.conf	[web/server/apache-24 (QA optional)]
 slackpkg?	/etc/httpd/httpd.conf		[httpd (QA optional)]
 pacman?		/etc/httpd/conf/httpd.conf	[extra/apache (QA optional)]
-brew?		/usr/local/bin/httpd		[httpd (QA optional)]
+brew?		/usr/sbin/httpd			[base MacOS install (QA optional)]
 # -- realpath(1)
 dpkg?		realpath		[coreutils or realpath]
 rpm?		realpath		[coreutils or coreutils-single or realpath]
@@ -961,7 +961,7 @@ F_pkg?		unbound-control		[unbound or base FreeBSD install (QA optional)]
 S_pkg?		unbound-control		[N/A (QA optional)]
 slackpkg?	unbound-control		[N/A (QA optional)]
 pacman?		unbound-control		[extra/unbound (QA optional)]
-brew?		/usr/local/sbin/unbound-control		[unbound (QA optional)]
+brew?		/opt/homebrew/etc/unbound/unbound.conf	[unbound (QA optional)]
 # -- python-requests
 dpkg?		/usr/share/doc/python3-requests|/usr/share/doc/packages/python3-requests	[python3-requests (QA optional)]
 dpkg?		/usr/lib/python3/dist-packages/requests	[python3-requests (QA optional)]
@@ -984,7 +984,7 @@ F_pkg?		/usr/local/lib/python3.*/*-packages/pandas	[py3[0-9]*-pandas (QA optiona
 S_pkg?		pandas		[N/A]
 slackpkg?	pandas		[N/A]
 pacman?		/usr/lib/python3.*/*-packages/pandas		[extra/python-pandas]
-brew?		pandas		[?]
+brew?		pandas		[pip3(pandas)]
 # -- python-pyarrow
 dpkg?		/usr/lib/python3/dist-packages/pyarrow	[python3-pyarrow]
 rpm?		/usr/lib*/python3.*/*-packages/pyarrow	[python3[0-9]*-pyarrow (QA optional)]
@@ -995,7 +995,7 @@ F_pkg?		/usr/local/lib/python3.*/*-packages/pyarrow	[py3[0-9]*-pyarrow (QA optio
 S_pkg?		pyarrow		[N/A]
 slackpkg?	pyarrow		[N/A]
 pacman?		/usr/lib/python3.*/*-packages/pyarrow	[extra/python-pyarrow]
-brew?		pyarrow		[?]
+brew?		pyarrow		[pip3(pyarrow)]
 # -- logconf for ds389 PMDA
 rpm?		/usr/bin/logconv.pl|/usr/lib/389-ds/bin/logconv.pl	[389-ds-base or 389-ds (QA optional)]
 # -- plain authentication plugin for SASL
@@ -1008,7 +1008,7 @@ F_pkg?		/usr/local/lib/sasl2/libplain.so	[cyrus-sasl (QA optional)]
 S_pkg?		/usr/lib/sasl/plain.so.1	[system/library/security/libsasl (QA optional)]
 slackpkg?	/usr/lib*/sasl2/libplain.so	[cyrus-sasl (QA optional)]
 pacman?		/usr/lib/sasl2/libplain.so	[core/libsasl (QA optional)]
-brew?		/usr/lib/sasl2/libplain.*.so	[base Darwin install (QA optional)]
+brew?		/usr/lib/sasl2/libplain.*.so	[base MacOS install (QA optional)]
 # -- digest-md5 authentication plugin for SASL
 dpkg?		/usr/lib/*/sasl2/libdigestmd5.so	[libsasl2-modules (QA optional)]
 rpm?		/usr/lib*/sasl2/libdigestmd5.so	[cyrus-sasl-md5 or cyrus-sasl-digestmd5 (QA optional)]
@@ -1019,7 +1019,7 @@ F_pkg?		/usr/local/lib/sasl2/libdigestmd5.so	[cyrus-sasl (QA optional)]
 S_pkg?		/usr/lib/sasl/digestmd5.so.1	[system/library/security/libsasl (QA optional)]
 slackpkg?	/usr/lib*/sasl2/libdigestmd5.so	[cyrus-sasl (QA optional)]
 pacman?		/usr/lib/sasl2/libdigestmd5.so	[core/libsasl (QA optional)]
-brew?		/usr/lib/sasl2/libdigestmd5.*.so	[base Darwin install (QA optional)]
+brew?		/usr/lib/sasl2/libdigestmd5.*.so	[base MacOS install (QA optional)]
 # -- libsqlite3 for certutil and pmsearch
 dpkg?		/usr/lib/*/libsqlite3.so.*	[libsqlite3-0 (QA optional)]
 rpm?		/usr/lib*/libsqlite3.so.*	[sqlite-libs or libsqlite3 or libsqlite3-[0-9] or sqlite (QA optional)]
@@ -1030,7 +1030,7 @@ F_pkg?		/usr/local/lib/libsqlite3.so	[sqlite3 (QA optional)]
 S_pkg?		/usr/lib/*/libsqlite3.so	[database/sqlite-3 (QA optional)]
 slackpkg?	/usr/lib*/libsqlite3.so		[sqlite (QA optional)]
 pacman?		/usr/lib/libsqlite3.so		[core/sqlite (QA optional)]
-brew?		/usr/lib/libsqlite3.dylib	[sqlite (QA optional)]
+brew?		/opt/homebrew/Cellar/sqlite/*/lib	[sqlite (QA optional)]
 # -- libsqlite3 headers for pmsearch FTS5 index
 dpkg?		/usr/include/sqlite3.h		[libsqlite3-dev]
 rpm?		/usr/include/sqlite3.h		[sqlite-devel or sqlite3-devel]
@@ -1041,7 +1041,7 @@ F_pkg?		/usr/local/include/sqlite3.h	[sqlite3]
 S_pkg?		/usr/include/sqlite3.h		[database/sqlite-3]
 slackpkg?	/usr/include/sqlite3.h		[sqlite]
 pacman?		/usr/include/sqlite3.h		[core/sqlite]
-brew?		/usr/local/include/sqlite3.h	[sqlite]
+brew?		/opt/homebrew/Cellar/sqlite/*/include/sqlite3.h	[sqlite]
 # -- libicui18n for certutil
 dpkg?		/usr/lib/*/libicui18n.so.*	[libicu[0-9][0-9]* (QA optional)]
 rpm?		/usr/lib*/libicui18n.so		[libicu-devel (QA optional)]
@@ -1052,7 +1052,7 @@ F_pkg?		/usr/local/lib/libicui18n.so	[icu (QA optional)]
 S_pkg?		/usr/lib/libicui18n.so		[library/icu (QA optional)]
 slackpkg?	/usr/lib*/libicui18n.so		[icu4c (QA optional)]
 pacman?		/usr/lib/libicui18n.so		[core/icu (QA optional)]
-brew?		/usr/local/Cellar/icu4c/63.1/lib/libicui18n.dylib	[icu4c (QA optional)]
+brew?		?				[icu4c (QA optional)]
 # -- DBD::mysql
 dpkg?		DBD::mysql		[libdbd-mysql-perl (QA optional)]
 rpm?		DBD::mysql		[perl-DBD-mysql or perl-DBD-MySQL (QA optional)]
@@ -1096,7 +1096,7 @@ F_pkg?		mysql			[mariadb[0-9][0-9]*-client (QA optional)]
 S_pkg?		mysql			[database/mariadb-[0-9][0-9]*/client (QA optional)]
 slackpkg?	mysql			[mariadb (QA optional)]
 pacman?		mysql			[extra/mariadb-clients (QA optional)]
-brew?		mysql			[mariadb (QA optional)]
+brew?		mysql			[mariadb@[0-9][0-9.]* (QA optional)]
 # -- microsoft sql server
 rpm?		/opt/mssql/bin/sqlservr		[mssql-server (QA optional)]
 rpm?		/opt/mssql-tools/bin/sqlcmd	[mssql-tools (QA optional)]
@@ -1111,7 +1111,7 @@ S_pkg?		psql			[service/database/postgres-[0-9][0-9]* (QA optional)]
 slackpkg?	psql			[N/A (QA optional)]
 pacman?		psql			[extra/postgresql-libs (QA optional)]
 pacman?		pg_ctl			[extra/postgresql (QA optional)]
-brew?		psql			[postgresql (QA optional)]
+brew?		psql			[postgresql@[0-9]* (QA optional)]
 # -- mkfs.gfs2
 dpkg?		mkfs.gfs2		[gfs2-utils (QA optional)]
 rpm?		mkfs.gfs2		[gfs2-utils (QA optional)]
@@ -1189,7 +1189,7 @@ pacman?		uic				[extra/qt5-base (build optional)]
 pacman?		/usr/include/qt/QtSvg/QtSvg	[extra/qt5-svg (build optional)]
 brew?		libQt5Core.so			[N/A (build optional)]
 brew?		/usr/local/bin/uic		[qt (build optional)]
-brew?		QtSvg/QtSvg			[N/A (build optional)]
+brew?		QtSvg/QtSvg			[qtsvg (build optional)]
 # -- Inventor stuff
 dpkg?		/usr/include/Inventor/Qt/SoQt.h	[libsoqt-dev-common or libsoqt-dev or libsoqt520-dev or libsoqt-common-dev (build optional)]
 rpm?		/usr/include/Inventor/Qt/SoQt.h|/usr/include/Coin*/Inventor/Qt/SoQt.h	[SoQt-devel (build optional)]
@@ -1236,7 +1236,7 @@ F_pkg?		/usr/local/include/python3.*/Python.h	[python3[0-9]*]
 S_pkg?		/usr/include/python*/Python.h		[runtime/python-[0-9][0-9]*]
 slackpkg?	/usr/include/python*/Python.h		[python3]
 pacman?		/usr/include/python3.*/Python.h		[core/python]
-brew?		/usr/local/Cellar/python/3.*		[python]
+brew?		?					[python@3\.[0-9]*]
 dpkg?		/usr/lib*/python3.*/curses/has_key.py	[libpython3-stdlib]
 rpm?		/usr/lib*/python3.*/curses/has_key.py	[python3-libs or python3[0-9]*-curses or system-python-libs]
 emerge?		/usr/lib/python3.*/curses/has_key.py	[dev-lang/python]
@@ -1383,7 +1383,7 @@ F_pkg?		libvirtd		[N/A (QA optional)]
 S_pkg?		libvirtd		[N/A (QA optional)]
 slackpkg?	libvirtd		[N/A (QA optional)]
 pacman?		libvirtd		[extra/libvirt (QA optional)]
-brew?		libvirtd		[? (QA optional)]
+brew?		libvirtd		[N/A (QA optional)]
 # -- device-mapper and devel for pmdadm dmstats
 dpkg?		/usr/include/libdevmapper.h	[libdevmapper-dev (build optional)]
 rpm?		/usr/include/libdevmapper.h	[device-mapper-devel (build optional)]
@@ -1409,7 +1409,7 @@ F_pkg?		pstree		[pstree (QA optional)]
 S_pkg?		pstree		[diagnostic/pstree (QA optional)]
 slackpkg?	pstree		[procps-ng (QA optional)]
 pacman?		pstree		[core/psmisc (QA optional)]
-brew?		pstree		[? (QA optional)]
+brew?		pstree		[pstree (QA optional)]
 
 # -- ss sockets statistics tool (pmdasockets QA)
 #
@@ -1422,7 +1422,7 @@ F_pkg?		ss		[N/A (QA optional)]
 S_pkg?		ss		[N/A (QA optional)]
 slackpkg?	ss		[iproute2 (QA optional)]
 pacman?		ss		[core/iproute2 (QA optional)]
-brew?		ss		[? (QA optional)]
+brew?		ss		[iproute2 (QA optional)]
 
 # -- tc sockets statistics tool (pmdalio QA)
 #
@@ -1435,7 +1435,7 @@ F_pkg?		tc		[N/A (QA optional)]
 S_pkg?		tc		[N/A (QA optional)]
 slackpkg?	tc		[iproute2 (QA optional)]
 pacman?		tc		[core/iproute2 (QA optional)]
-brew?		tc		[? (QA optional)]
+brew?		tc		[iproute2 (QA optional)]
 
 # -- swrast graphics driver (for pmchart QA)
 #
@@ -1448,7 +1448,7 @@ F_pkg?		swrast_dri.so		[N/A (QA optional)]
 S_pkg?		swrast_dri.so		[N/A (QA optional)]
 slackpkg?	swrast_dri.so		[N/A (QA optional)]
 pacman?		/usr/lib/dri/swrast_dri.so	[extra/mesa (QA optional)]
-brew?		swrast_dri.so		[? (QA optional)]
+brew?		swrast_dri.so		[N/A (QA optional)]
 
 # -- libbpf and libbpf-dev for bpf PMDA
 dpkg?		/usr/lib/*/libbpf.so.*	[libbpf[0-9] (build optional)]
@@ -1462,7 +1462,7 @@ F_pkg?		libbpf.so		[N/A (build optional)]
 S_pkg?		libbpf.so		[N/A (build optional)]
 slackpkg?	libbpf.so		[N/A (build optional)]
 pacman?		/usr/lib/libbpf.so	[core/libbpf (build optional)]
-brew?		libbpf.so		[? (QA optional)]
+brew?		libbpf.so		[N/A (QA optional)]
 
 # -- expect (for bpf PMDA QA)
 #
@@ -1475,7 +1475,7 @@ F_pkg?		expect			[expect (QA optional)]
 S_pkg?		expect			[shell/expect (QA optional)]
 slackpkg?	expect			[expect (QA optional)]
 pacman?		expect			[extra/expect (QA optional)]
-brew?		expect			[? (QA optional)]
+brew?		expect			[base MacOS install (QA optional)]
 
 # -- llvm-strip (for bpf PMDA)
 #
@@ -1488,7 +1488,7 @@ F_pkg?		llvm-strip		[N/A (build optional)]
 S_pkg?		llvm-strip		[N/A (build optional)]
 slackpkg?	llvm-strip		[N/A (build optional)]
 pacman?		llvm-strip		[extra/llvm (build optional)]
-brew?		llvm-strip		[? (build optional)]
+brew?		llvm-strip		[N/A (build optional)]
 
 # -- clang (for bpf PMDA)
 #
@@ -1501,7 +1501,7 @@ F_pkg?		clang			[N/A (build optional)] # no bpf PMDA here
 S_pkg?		clang			[N/A (build optional)] # no bpf PMDA here
 slackpkg?	clang			[N/A (build optional)]
 pacman?		clang			[extra/clang (build optional)]
-brew?		clang			[? (build optional)]
+brew?		clang			[base MacOS install (build optional)]
 
 # -- libcmocka (for url encode/decode QA)
 #
@@ -1514,7 +1514,7 @@ F_pkg?		/usr/local/lib/libcmocka.so	[cmocka (QA optional)]
 S_pkg?		libcmocka			[N/A (QA optional)]
 slackpkg?	libcmocka			[N/A (QA optional)]
 pacman?		/usr/lib/libcmocka.so		[extra/cmocka (QA optional)]
-brew?		libcmocka			[? (QA optional)]
+brew?		libcmocka			[cmocka (QA optional)]
 
 # -- libdrm (for amdgpu PMDA)
 dpkg?		/usr/lib/*/libdrm.so		[libdrm-dev (QA optional)]
@@ -1527,7 +1527,7 @@ S_pkg?		/usr/lib/xorg/*/libdrm.so.*	[x11/library/libdrm (QA optional)]
 S_pkg?		/usr/include/drm/drm.h		[system/header/header-drm]
 slackpkg?	libdrm.so			[N/A (QA optional)]
 pacman?		/usr/lib/libdrm.so		[extra/libdrm (QA optional)]
-brew?		libdrm.so			[? (QA optional)]
+brew?		libdrm.so			[libdrm (QA optional)]
 
 # -- libinih (optional for libpcp_web)
 #
@@ -1540,7 +1540,7 @@ F_pkg?		/usr/include/ini.h		[inih (build optional)]
 S_pkg?		/usr/include/ini.h		[library/inih (build optional)]
 slackpkg?	/usr/include/ini.h		[inih (build optional)]
 pacman?		/usr/include/ini.h		[core/libinih (build optional)]
-brew?		/usr/include/ini.h		[? (build optional)]
+brew?		/usr/include/ini.h		[N/A (build optional)]
 
 # -- jq (for pmproxy/pmseries QA)
 #
@@ -1553,7 +1553,7 @@ F_pkg?		jq		[jq (QA optional)]
 S_pkg?		jq		[text/jq (QA optional)]
 slackpkg?	jq		[N/A (QA optional)]
 pacman?		jq		[extra/jq (QA optional)]
-brew?		jq		[? (QA optional)]
+brew?		jq		[base MacOS install (QA optional)]
 
 # -- bpftrace-dbgsym (for bpftrace PMDA QA?)
 #
@@ -1570,7 +1570,7 @@ F_pkg?		zstd		[base FreeBSD install]
 S_pkg?		zstd		[compress/zstd]
 slackpkg?	zstd		[zstd]
 pacman?		zstd 		[core/zstd]
-brew?		zstd		[?]
+brew?		zstd		[zstd]
 
 # sudo
 #
@@ -1583,7 +1583,7 @@ F_pkg?		sudo		[sudo]
 S_pkg?		sudo		[security/sudo]
 slackpkg?	sudo		[sudo]
 pacman?		sudo		[core/sudo]
-brew?		sudo		[? {MacOS?}]
+brew?		sudo		[base MacOS install]
 
 # -- targetcli (for lio PMDA QA)
 #
@@ -1609,7 +1609,7 @@ F_pkg?		ethtool		[N/A]
 S_pkg?		ethtool		[N/A]
 slackpkg?	ethtool		[ethtool]
 pacman?		ethtool		[extra/ethtool]
-brew?		ethtool		[? {MacOS?}]
+brew?		ethtool		[net-tools]
 
 # -- ibdev2netdev (for rocestat PMDA)
 #
@@ -1622,7 +1622,7 @@ F_pkg?		ibdev2netdev	[N/A]
 S_pkg?		ibdev2netdev	[N/A]
 slackpkg?	ibdev2netdev	[N/A]
 pacman?		ibdev2netdev	[N/A]
-brew?		ibdev2netdev	[? {MacOS?}]
+brew?		ibdev2netdev	[N/A]
 
 # -- qshape (for postfix PMDA)
 dpkg?		postfix			[postfix]
@@ -1635,7 +1635,7 @@ F_pkg?		/usr/local/bin/qshape	[postfix]
 S_pkg?		postfix			[N/A]
 slackpkg?	postfix			[postfix]
 pacman?		/usr/bin/qshape		[extra/postfix]
-brew?		postfix			[? {MacOS?}]
+brew?		postfix			[base MacOS install]
 
 # -- /usr/share/pkgconfig/systemd.pc needed for configure testing to
 # set systemd paths
@@ -1682,6 +1682,12 @@ rpm?		xz				[xz]
 opensuse?	/etc/sysconfig/network		[sysconfig]
 opensuse?	/usr/bin/whereis		[util-linux]
 opensuse?	/usr/bin/qtmake-q5		[libqt5-qtbase-common-devel]
+
+# MacOS specials
+#
+darwin?		gchown				[coreutils]
+darwin?		github				[github]
+darwin?		hub				[hub]
 
 # misc
 #

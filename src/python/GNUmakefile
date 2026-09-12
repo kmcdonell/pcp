@@ -30,8 +30,8 @@ endif
 #
 remove = -Wl,--no-undefined
 LDFLAGS := $(subst $(remove),,$(LDFLAGS))
-ifneq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = solaris ] && echo 1)" "1"
-# for everyone except OpenIndiana ...
+ifneq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = solaris -o '$(PACKAGE_DISTRIBUTION)' = macos ] && echo 1)" "1"
+# for everyone except OpenIndiana and MacOS ...
 LDFLAGS += -Wl,--allow-shlib-undefined
 endif
 ENV += LDFLAGS="$(LDFLAGS)"

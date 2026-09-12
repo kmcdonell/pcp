@@ -112,23 +112,55 @@ End-of-File
     $verbose && echo >&2 "Info: pkg_mgr_tag=$pkg_mgr_tag"
     $verbose && echo >&2 "Info: distro_tag=$distro_tag"
 
+    # sed below needs to ...
+    # - remove text to the right of # comment token
+    # - remove text after lineno and up to packages, so between : and [
+    # - remove trailing ]
+    # - strip (...) e.g. (QA optional) and cpan() and pip3()
+    # - strip "base <os> install"
+    #
     rm -f $tmp.matched
     awk <$home/other-packages/manifest '{ print NR ":" $0 }' \
 	| grep -E ":($pkg_mgr_tag|$distro_tag)\?" \
     | sed \
 	-e 's/[ 	]*#.*//' \
 	-e 's/:[^[]*\[/ /' \
-	-e 's/  *$//' \
-	-e 's/ *]$//' \
-	-e 's/ cpan([^)]*) / /' \
-	-e 's/ pip3([^)]*) / /' \
-	-e 's/([^)]*)//' \
+	-e 's/ *] *$//' \
+	-e 's/^  */ /' \
+	-e 's/  *$/ /' \
+	-e 's/ cpan([^)]*) / /g' \
+	-e 's/ pip3([^)]*) / /g' \
+	-e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1+\2+/g' \
+	-e 's/ *([^)]*)//g' \
+	-e 's/\([a-z][a-z0-9]*\)+\([^+]*\)+/\1(\2)/g' \
 	-e 's/{[^}]*}//' \
 	-e 's/ or / /g' \
 	-e 's/base .* install//' \
+	-e 's/^  *//' \
+	-e 's/  *$//' \
     | while read lineno pkgs
     do
 	$very_verbose && echo >&2 "manifest:$lineno $pkgs"
+	# some of these are not even real packages ...
+	#
+	case "$line"
+	in
+	    N/A\ on\ *|N/A)	continue
+			    ;;
+	    *SKIP*)		continue
+			    ;;
+	    *'base FreeBSD install'*)	continue
+					    ;;
+	    *'base NetBSD install'*)	continue
+					    ;;
+	    *'base OpenBSD install'*)	continue
+					    ;;
+	    *'base MacOS install'*)		continue
+					    ;;
+	    '')		# comes from cpan(...) alone, so no real pkgs
+			    continue
+			    ;;
+	esac
 	rm -f $tmp.havereq
 	for pkg in $pkgs
 	do
@@ -183,7 +215,12 @@ END		{ exit sts }'
 		then
 		    if $update
 		    then
-			echo "$pkg" >>$tmp.del
+			if [ "$pkg_type" = brew ]
+			then
+			    echo "$pkg brew" >>$tmp.del
+			else
+			    echo "$pkg" >>$tmp.del
+			fi
 		    else
 			echo "manifest:$lineno $pkg: in package list, but not available?"
 		    fi
@@ -252,7 +289,7 @@ END		{ exit sts }'
 		    if [ ! -f $tmp.havereq ]
 		    then
 			avail="`grep "^$pkg\$" <$tmp.allpkgs`"
-			installed="`grep "^$pkg\$" <$tmp.installed`"
+			installed="`sed -e 's/ .*//' <$tmp.installed | grep "^$pkg\$"`"
 			if [ -n "$avail" ]
 			then
 			    if [ "$pkg" = "$avail" ]
@@ -273,7 +310,15 @@ END		{ exit sts }'
 					    fi
 					    ;;
 				    esac
-				    [ -n "$pkg" ] && echo "$pkg" >>$tmp.add
+				    if [ -n "$pkg" ]
+				    then
+					if [ "$pkg_type" = brew ]
+					then
+					    echo "$pkg brew" >>$tmp.add
+					else
+					    echo "$pkg" >>$tmp.add
+					fi
+				    fi
 				else
 				    if [ "$avail" = "$installed" ]
 				    then
@@ -288,7 +333,12 @@ END		{ exit sts }'
 				then
 				    if $update
 				    then
-					echo "$avail" >>$tmp.add
+					if [ "$pkg_type" = brew ]
+					then
+					    echo "$pkg brew" >>$tmp.add
+					else
+					    echo "$avail" >>$tmp.add
+					fi
 				    else
 					if [ "$avail" = "$installed" ]
 					then
@@ -738,7 +788,7 @@ p
     fi
 fi
 
-# map cpan and pip3 tags => cpan(...) and pip3(...)
+# map cpan and pip3 tags => cpan(...) and pip3(...) and brew(...)
 #
 sed <$tmp.list >$tmp.tmp \
     -e 's/$/ /' \

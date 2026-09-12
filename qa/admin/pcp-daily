@@ -65,7 +65,7 @@ then
     which \${MAKE:-make} >>\$HOME/$1.log 2>&1
 fi
 
-tmp=${TMPDIR:-/tmp}/pcp-daily-\$\$
+tmp=\${TMPDIR:-/tmp}/pcp-daily-\$\$
 sts=1
 trap "rm -f \$tmp.*; exit \\\$sts" 0 1 2 3 15
 End-of-File
@@ -729,6 +729,12 @@ in
 	# Ubuntu 15.10
 	DISPLAY=:0.0 xhost + >/dev/null
 	;;
+
+    mac)
+	echo "mac" >>$tmp.hosts
+	echo "mac-deb" >>$tmp.hosts
+	echo "mac-fed" >>$tmp.hosts
+	;;
 esac
 
 if which virsh >/dev/null 2>&1
@@ -737,7 +743,7 @@ then
     # from a cron-launched shell produces no output, sudo virsh does
     # produce output again ... sigh.
     #
-    sudo virsh list --all \
+    sudo virsh list --all 2>/dev/null \
     | sed >>$tmp.hosts \
         -e 1d \
         -e '/-----/d' \
@@ -1217,7 +1223,7 @@ End-of-File
 	doit=false
 	case $host
 	in
-	    vm00|vm01|vm03|vm16|vm35|vm36)
+	    vm00|vm01|vm03|vm16|vm35|vm36|mac-deb|mac-fed)
 		# try to keep these VMs running, unless -f
 		$fflag && doit=true
 		;;

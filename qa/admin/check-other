@@ -208,6 +208,11 @@ q
 		fi
 		;;
 
+	brew)	# defer to helper ...
+		#
+		$home/mac-path-to-pkg "$1"
+		;;
+
 	*)
 		echo >&2
 		echo >&2 "Botch: _find: need recipe to find $pkg_type package for installed file: $1"
@@ -233,8 +238,8 @@ $debug && echo "Checking manifest ..."
 sed <$tmp/tmp.manifest \
     -e 's/[ 	][ 	]*/ /g' \
     -e 's/^ //' \
-    -e 's/cpan([^)]*)//' \
-    -e 's/([^)]*)//' \
+    -e 's/cpan([^)]*)//g' \
+    -e 's/pip3([^)]*)//g' \
     -e 's/ or / /g' \
     -e 's/[[]//' \
     -e 's/] :/ :/' \
@@ -255,6 +260,8 @@ do
 	*'base NetBSD install'*)	continue
 					;;
 	*'base OpenBSD install'*)	continue
+					;;
+	*'base MacOS install'*)		continue
 					;;
 	'')		# comes from cpan(...) alone, so no real pkgs
 			continue
@@ -280,6 +287,11 @@ do
     done
     if [ ! -f $tmp/tmp.match ]
     then
+	if [ "$target" = '?' ]
+	then
+	    $debug && echo "$line: skip find-package-installing-target test: target=$target"
+	    continue
+	fi
 	$debug && echo "$line: no package matches"
 	for try in `echo "$target" | sed -e 's/|/ /g'`
 	do
