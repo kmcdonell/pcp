@@ -122,9 +122,11 @@ ifeq "$(TARGET_OS)" "openbsd"
 DSOSUFFIX = so
 endif
 
+ifneq "$(TARGET_OS)" "darwin"
 # This is set by rpmbuild for OpenMandriva is is probably a "good" thing to
 # have by default
 LDFLAGS += -Wl,--no-undefined
+endif
 
 CFLAGS_DEV =
 CFLAGS_ABI = @cflags_abi@

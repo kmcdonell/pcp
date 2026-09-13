@@ -23,14 +23,12 @@ fi
 
 . $home/packages.rc
 
-cd "$home" || exit
-home=`pwd`
-
 _usage()
 {
     echo >&2 "Usage: $0 [options]"
     echo >&2 "Options:"
     echo >&2 "  -d           debug and keep tmp files"
+    echo >&2 "  -u           output unavailable list"
     echo >&2 "  -v           verbose"
     exit 1
 }
@@ -39,11 +37,15 @@ debug=false
 verbose=false
 very_verbose=false
 opts_v=''
-while getopts 'dv?' p
+unavail=false
+while getopts 'duv?' p
 do
     case "$p"
     in
 	d)	debug=true
+		;;
+
+	u)	unavail=true
 		;;
 
 	v)	if $verbose
@@ -74,7 +76,8 @@ else
 fi
 mkdir -p $tmp || exit
 
-here=`pwd`
+cd "$home" || exit
+home=`pwd`
 
 rm -f $tmp/*
 # old-list-packages with -R creates tmp.* files to be saved
@@ -82,6 +85,10 @@ rm -f $tmp/*
 rm -f tmp.*
 ./old-list-packages -R $opts_v || exit
 mv tmp.* $tmp
+
+_setversions
+# $distro, $version $full_version, $arch and $full_arch now set
+$debug && echo "Debug: distro=$distro version=$version arch=$arch"
 
 _get_pkg_type || exit
 
@@ -182,6 +189,30 @@ $1 == "Name"		{ print repo "/" $2; exit }'
 		fi
 		;;
 
+	S_pkg)	# output is like
+		# INDEX      ACTION VALUE           PACKAGE
+		# path       file   usr/gnu/bin/sed pkg:/text/gnu-sed@4.10-2026.0.0.0
+		# but there may be multiple packages for the same file (!) so pick the one
+		# with the highest version number
+		#
+		if pkg search -l "$1" >$tmp/tmp
+		then
+		    sed -e 1d <$tmp/tmp \
+		    | LC_COLLATE=POSIX sort -r \
+		    | sed -n -e '1{
+s;.* pkg:/;;
+s/@.*//
+p
+q
+}'
+		fi
+		;;
+
+	brew)	# defer to helper ...
+		#
+		$home/mac-path-to-pkg "$1"
+		;;
+
 	*)
 		echo >&2
 		echo >&2 "Botch: _find: need recipe to find $pkg_type package for installed file: $1"
@@ -207,8 +238,8 @@ $debug && echo "Checking manifest ..."
 sed <$tmp/tmp.manifest \
     -e 's/[ 	][ 	]*/ /g' \
     -e 's/^ //' \
-    -e 's/cpan([^)]*)//' \
-    -e 's/([^)]*)//' \
+    -e 's/cpan([^)]*)//g' \
+    -e 's/pip3([^)]*)//g' \
     -e 's/ or / /g' \
     -e 's/[[]//' \
     -e 's/] :/ :/' \
@@ -222,14 +253,16 @@ do
     in
 	N/A\ on\ *|N/A)	continue
 			;;
-	SKIP\ on\ *)	continue
+	*SKIP*)		continue
 			;;
-	'base FreeBSD install')	continue
-				;;
-	'base NetBSD install')	continue
-				;;
-	'base OpenBSD install')	continue
-				;;
+	*'base FreeBSD install'*)	continue
+					;;
+	*'base NetBSD install'*)	continue
+					;;
+	*'base OpenBSD install'*)	continue
+					;;
+	*'base MacOS install'*)		continue
+					;;
 	'')		# comes from cpan(...) alone, so no real pkgs
 			continue
 			;;
@@ -254,6 +287,11 @@ do
     done
     if [ ! -f $tmp/tmp.match ]
     then
+	if [ "$target" = '?' ]
+	then
+	    $debug && echo "$line: skip find-package-installing-target test: target=$target"
+	    continue
+	fi
 	$debug && echo "$line: no package matches"
 	for try in `echo "$target" | sed -e 's/|/ /g'`
 	do
@@ -309,6 +347,17 @@ do
 	if ! grep -q -E "[ 	]$pkg([ 	]|$)" <$tmp/tmp.unavailable
 	then
 	    echo "manifest:$lineno no packages match target: $target pkgs: $line"
+	    $unavail && echo "$line" >>$tmp/unavail
 	fi
     fi
 done
+
+if $unavail && [ -f $tmp/unavail ]
+then
+    tr ' ' '\012' <$tmp/unavail \
+    | LC_COLLATE=POSIX sort \
+    | uniq \
+    | tr '\012' ' '
+    echo
+fi
+

@@ -1,5 +1,4 @@
-# PCP required package list for Debian 14 x86_64
-# created by kenj on vm25 Mon 08 Sep 2025 06:26:50 AEST
+# PCP required package list for Debian 13 aarch
 #
 Text::CSV_XS cpan
 apache2
@@ -38,8 +37,8 @@ iproute2
 jq
 kubernetes-client
 libarchive-zip-perl
-libbpf-dev
 libbpf1
+libbpf-dev
 libc6-dev
 libclass-dbi-perl
 libcmocka-dev
@@ -62,7 +61,6 @@ liblist-moreutils-perl
 liblzma-dev
 libncurses-dev
 libnet-snmp-perl
-libperl-dev
 libperl5.40
 libpfm4-dev
 libpython3-dev
@@ -90,7 +88,7 @@ libwww-perl
 libxml-libxml-perl
 libxml-tokeparser-perl
 libyaml-libyaml-perl
-linux-headers-rt-amd64 not4ci
+linux-headers-`uname -r` not4ci
 llvm
 lm-sensors
 make
@@ -104,6 +102,9 @@ nmap
 openssl
 perl
 perl-modules-5.40
+# perl-xs-dev is a virtual package and libperl-dev is an alias at least up to
+# Debian 13 (trixie)
+libperl-dev
 pkg-config
 postfix
 postgresql-client-common
@@ -122,7 +123,6 @@ python3-pandas
 python3-pil
 python3-prometheus-client
 python3-psycopg2
-python3-pyarrow
 python3-pymongo
 python3-pyodbc
 python3-requests
@@ -132,8 +132,8 @@ python3-urllib3
 qtbase5-dev
 qtbase5-dev-tools
 qtchooser
-redis-server
-redis-tools
+valkey-server
+valkey-tools
 sasl2-bin
 sed
 smartmontools
@@ -145,11 +145,10 @@ targetcli-fb
 time
 unbound
 valgrind
-valkey-server
-valkey-tools
 xfsprogs
 xkb-data
 zabbix-agent
-zfs-fuse
 zlib1g-dev
 zstd
+redis-server
+redis-tools

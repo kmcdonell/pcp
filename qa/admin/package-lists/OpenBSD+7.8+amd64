@@ -20,6 +20,7 @@ gmake
 gtar
 icu4c
 jq
+libinih
 libmad
 libuv
 mariadb-client

@@ -74,15 +74,23 @@ _parse_file()
 {
     [ -z "$tmp" ] && tmp=${TMPDIR:-/tmp}/$$
     rm -f $tmp.matches $tmp.prefix-matches
+    lineno=1
     sed <$1 \
 	-e 's/#.*//' \
-	-e '/^[ 	]*$/d' \
     | while read distro_pat version_pat arch_pat packages
     do
+	if [ -z "$distro_pat" ]
+	then
+	    # blank or all comment line
+	    #
+	    lineno=`expr $lineno + 1`
+	    continue
+	fi
 	if echo "$distro" | grep "^$distro_pat" >/dev/null
 	then
 	    # Distro matches, check architecture
 	    #
+	    $very_verbose && echo >&2 "_parse_file: $1:$lineno: match distro=$distro_pat"
 	    _match=true
 	    if [ "X$arch_pat" = "X-" -o -z "$full_arch" ]
 	    then
@@ -94,7 +102,7 @@ _parse_file()
 		    # unrestricted pattern match for architecture
 		    :
 		else
-		    $very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat, no match for arch=$arch_pat"
+		    $very_verbose && echo >&2 "_parse_file: $1:$lineno: match distro=$distro_pat, no match for arch=$arch_pat"
 		    _match=false
 		fi
 	    fi
@@ -113,19 +121,19 @@ _parse_file()
 		    if echo "$full_version" | grep "^$version_pat\$" >/dev/null
 		    then
 			# full match on version
-			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and arch=$arch_pat, full match for version=$version_pat"
+			$very_verbose && echo >&2 "_parse_file: $1:$lineno: match distro=$distro_pat and arch=$arch_pat, full match for version=$version_pat"
 		    elif echo "$full_version" | grep "^$version_pat" >/dev/null
 		    then
 			# prefix match on version
-			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and arch=$arch_pat, prefix match for version=$version_pat"
+			$very_verbose && echo >&2 "_parse_file: $1:$lineno: match distro=$distro_pat and arch=$arch_pat, prefix match for version=$version_pat"
 			if [ -s $tmp.prefix-matches ]
 			then
-			    $very_verbose && echo >&2 "_parse_file: $1: Warning: more than one prefix match for version=$version_pat"
+			    $very_verbose && echo >&2 "_parse_file: $1:$lineno: Warning: more than one prefix match for version=$version_pat"
 			fi
 			echo "$packages" >>$tmp.prefix-matches
 			_match=false
 		    else
-			$very_verbose && echo >&2 "_parse_file: $1: match distro=$distro_pat and arch=$arch_pat, no match for version=$version_pat"
+			$very_verbose && echo >&2 "_parse_file: $1:$lineno: match distro=$distro_pat and arch=$arch_pat, no match for version=$version_pat"
 			_match=false
 		    fi
 		fi
@@ -135,6 +143,7 @@ _parse_file()
 		echo "$packages" >>$tmp.matches
 	    fi
 	fi
+	lineno=`expr $lineno + 1`
     done
     [ ! -f $tmp.matches ] && [ -f $tmp.prefix-matches ] && cp $tmp.prefix-matches $tmp.matches
     if [ -s $tmp.matches ]
@@ -278,7 +287,7 @@ _find_packages()
 	    apt-cache dumpavail | sed -n -e '/^Package: /s///p' >$tmp.allpkgs
 	    ;;
 
-	RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux|Oracle\ Linux)
+	RHEL|Fedora|CentOS|openSUSE|SUSE\ SLES|OpenMandriva-Lx|AmazonLinux|OracleLinux)
 	    rpm -qa --qf '%{NAME}\n' >$tmp.installed
 	    if which zypper >/dev/null 2>&1
 	    then
@@ -452,11 +461,11 @@ _get_distro_tag()
 	distro_tag="`sed </etc/system-release -e 's/ release .*//' | tr '[A-Z]' '[a-z]'`"
     elif [ -f /etc/os-release ]
     then
-	distro_tag="`sed </etc/os-release -n -e '/^ID *= */{
+	distro_tag=`sed </etc/os-release -n -e '/^ID *= */{
 s///
 s/"//g
 p
-}'`"
+}'`
 	case "$distro_tag"
 	in
 	    opensuse-*)	distro_tag=opensuse
@@ -472,7 +481,7 @@ p
     then
 	distro_tag=arch
     else
-	distro_tag="`uname -sr | tr '[A-Z]' '[a-z]'`"
+	distro_tag="`uname -sr | tr '[A-Z]' '[a-z]' | sed -e 's/ .*//'`"
     fi
     if [ -z "$distro_tag" ]
     then
@@ -484,25 +493,28 @@ p
     fi
 }
 
+
 # Fuzzy match to refine $distro, $version and $arch
 #
 _setup_pkg_list()
 {
-    if [ -z "$version" ]
-    then
-	echo >&2 "_setup_pkg_list: Botch: \$version is empty"
-	return 1
-    fi
     if [ -z "$distro" ]
     then
 	echo >&2 "_setup_pkg_list: Botch: \$distro is empty"
 	return 1
     fi
+    if [ -z "$version" ]
+    then
+	# No version, like ArchLinux
+	#
+	_version=''
+    else
+	_version="$version"
+    fi
     # This gets a bit tricky as the match may be for a prefix of the ${version}
     # and/or "any" in lieu of ${arch}
     #
     rm -f $tmp.found
-    _version="$version"
     while true
     do
 	for _arch in "${arch}" "any"
@@ -514,6 +526,7 @@ _setup_pkg_list()
 	    fi
 	done
 	[ -s $tmp.found ] && break
+	[ -z "$_version" ] && break
 	_check="`echo $_version | sed -e 's/\.[0-9][0-9]*$//'`"
 	[ "$_check" = "$_version" ] && break
 	_version="$_check"
@@ -549,6 +562,11 @@ _setup_pkg_list()
 #
 _get_pkg_type()
 {
+    if [ -z "$distro" ]
+    then
+	echo >&2 "_get_pkg_type: Botch: \$distro not set"
+	return 1
+    fi
     pkg_type=""
     if which apt-get >/dev/null 2>&1
     then
@@ -567,7 +585,15 @@ _get_pkg_type()
 	pkg_type=pacman
     elif which pkg >/dev/null 2>&1
     then
-	pkg_type="pkg"
+	case "$distro"
+	in
+	    FreeBSD)		pkg_type="F_pkg"
+	    			;;
+	    OpenIndiana)	pkg_type="S_pkg"
+	    			;;
+	    *)			pkg_type="pkg"
+	    			;;
+	esac
     # pkgin has to be before pkg_add in this compound
     # if-elif-elif-else-fi because NetBSD has both and we need
     # to use pkgin for NetBSD
@@ -581,6 +607,9 @@ _get_pkg_type()
     elif which slackpkg >/dev/null 2>&1
     then
 	pkg_type="slackpkg"
+    elif which brew >/dev/null 2>&1
+    then
+	pkg_type="brew"
     else
 	echo >&2 "Botch: need recipe for system package type"
 	return 1

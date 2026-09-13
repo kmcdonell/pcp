@@ -30,7 +30,10 @@ endif
 #
 remove = -Wl,--no-undefined
 LDFLAGS := $(subst $(remove),,$(LDFLAGS))
+ifneq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = solaris -o '$(PACKAGE_DISTRIBUTION)' = macos ] && echo 1)" "1"
+# for everyone except OpenIndiana and MacOS ...
 LDFLAGS += -Wl,--allow-shlib-undefined
+endif
 ENV += LDFLAGS="$(LDFLAGS)"
 
 ifeq "$(shell [ '$(PACKAGE_DISTRIBUTION)' = mandriva ] && echo 1)" "1"
