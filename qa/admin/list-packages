@@ -125,22 +125,28 @@ End-of-File
     | sed \
 	-e 's/[ 	]*#.*//' \
 	-e 's/:[^[]*\[/ /' \
-	-e 's/ *] *$//' \
-	-e 's/^  */ /' \
-	-e 's/  *$/ /' \
-	-e 's/ cpan([^)]*) / /g' \
-	-e 's/ pip3([^)]*) / /g' \
 	-e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1|\2|/g' \
 	-e 's/ *([^)]*)//g' \
 	-e 's/\([a-z][a-z0-9]*\)|\([^|]*\)|/\1(\2)/g' \
 	-e 's/{[^}]*}//' \
+	-e 's/] *$//' \
+	-e 's/ *$/ /' \
+	-e '/ cpan([^)]*) /{
+:morecpan
+s// /
+t morecpan
+}' \
+	-e '/ pip3([^)]*) /{
+:morepip3
+s// /
+t morepip3
+}' \
 	-e 's/ or / /g' \
 	-e 's/base .* install//' \
-	-e 's/^  *//' \
 	-e 's/  *$//' \
     | while read lineno pkgs
     do
-	$very_verbose && echo >&2 "manifest:$lineno $pkgs"
+	$very_verbose && echo >&2 "manifest:$lineno pkgs=\"$pkgs\""
 	# some of these are not even real packages ...
 	#
 	case "$pkgs"
