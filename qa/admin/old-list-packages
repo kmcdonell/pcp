@@ -730,9 +730,9 @@ tags="debian redhat centos suse arch mandriva freebsd netbsd openbsd"
 $PCP_AWK_PROG 'NF > 0 { gsub("\\[\\?", "[?:" NR); print $0 " :" NR }' <$manifest \
 | sed \
 -e 's/ *#.*//' \
-    -e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1+\2+/g' \
+    -e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1|\2|/g' \
     -e 's/ *([^)]*)//g' \
-    -e 's/\([a-z][a-z0-9]*\)+\([^+]*\)+/\1(\2)/g' \
+    -e 's/\([a-z][a-z0-9]*\)|\([^|]*\)|/\1(\2)/g' \
     -e 's/ *{[^}]*}//g' \
 | sed -E >$tmp.manifest.lineno -e '/\{/s/(\[.*)\{[^}]*}(.*])/\1\2/'
 

@@ -4,6 +4,8 @@
 # installed ...
 #
 
+status=0	# success for all arguments is the default
+
 for file
 do
     if [ ! -e "$file" ]
@@ -13,7 +15,8 @@ do
 	probe=`which "$file" 2>&1`
 	if [ -z "$probe" ]
 	then
-	    echo "$file: not found"
+	    echo >&2 "$file: not found"
+	    status=1
 	    continue
 	fi
 	file="$probe"
@@ -57,17 +60,18 @@ p
 		    continue
 		    ;;
 	    *)
-		    echo "Debug: $1 not signed by com.apple: $probe"
+		    echo >&2 "Debug: $file not signed by com.apple: $probe"
+		    status=1
 		    ;;
 	esac
     fi
 
     # hmm scripts like /usr/bin/man don't have a code signature
     #
-    case "$1"
+    case "$file"
     in
-	/usr/bin/*|/bin/*)
-		probe=`file "$1"`
+	/usr/bin/*|/usr/sbin/*|/bin/*|/sbin/*)
+		probe=`file "$file"`
 		case "$probe"
 		in
 		    *' shell script '*)
@@ -75,14 +79,17 @@ p
 			    continue
 			    ;;
 		    *)
-			    echo "Debug: $1 not in a shell script: $probe"
+			    echo >&2 "Debug: $file not in a shell script: $probe"
+			    status=1
 			    ;;
 		esac
 		;;
 	*)
-		echo "Debug: $1 not in a bin dir"
+		echo >&2 "Debug: $file not in a bin dir"
+		status=1
 		;;
     esac
 
-    echo "$file: I have no clue!"
+    echo >&2 "$file: I have no clue!"
+    status=1
 done

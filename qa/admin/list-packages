@@ -130,9 +130,9 @@ End-of-File
 	-e 's/  *$/ /' \
 	-e 's/ cpan([^)]*) / /g' \
 	-e 's/ pip3([^)]*) / /g' \
-	-e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1+\2+/g' \
+	-e 's/\([a-z][a-z0-9]*\)(\([^)]*\))/\1|\2|/g' \
 	-e 's/ *([^)]*)//g' \
-	-e 's/\([a-z][a-z0-9]*\)+\([^+]*\)+/\1(\2)/g' \
+	-e 's/\([a-z][a-z0-9]*\)|\([^|]*\)|/\1(\2)/g' \
 	-e 's/{[^}]*}//' \
 	-e 's/ or / /g' \
 	-e 's/base .* install//' \
@@ -143,23 +143,23 @@ End-of-File
 	$very_verbose && echo >&2 "manifest:$lineno $pkgs"
 	# some of these are not even real packages ...
 	#
-	case "$line"
+	case "$pkgs"
 	in
-	    N/A\ on\ *|N/A)	continue
-			    ;;
-	    *SKIP*)		continue
-			    ;;
+	    N/A\ on\ *|N/A)		continue
+			    		;;
+	    *SKIP*)			continue
+			    		;;
 	    *'base FreeBSD install'*)	continue
-					    ;;
+					;;
 	    *'base NetBSD install'*)	continue
-					    ;;
+					;;
 	    *'base OpenBSD install'*)	continue
-					    ;;
-	    *'base MacOS install'*)		continue
-					    ;;
-	    '')		# comes from cpan(...) alone, so no real pkgs
-			    continue
-			    ;;
+					;;
+	    *'base MacOS install'*)	continue
+					;;
+	    '')				# comes from cpan(...) alone, so no real pkgs
+					continue
+					;;
 	esac
 	rm -f $tmp.havereq
 	for pkg in $pkgs
