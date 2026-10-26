@@ -15,13 +15,6 @@ echo "QA output created by $seq"
 . ./common.filter
 . ./common.check
 
-case `uname -rs`
-in
-    OpenBSD*)
-	_notrun 'sample PMDA fails with "__pmdaOpenSocket(,54321,2): bind: Address already in use" on OpenBSD'
-	;;
-esac
-
 _filter()
 {
     _filter_pmda_install \
