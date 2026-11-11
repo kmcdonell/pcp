@@ -1288,8 +1288,26 @@ echo "Checking timezone ..."
 if $use_systemctl && which timedatectl >/dev/null 2>&1
 then
     Timezone=''
-    eval `timedatectl show | grep '^Timezone'`
-    if [ "$Timezone" != "$timezone" ]
+    if timedatectl show >/dev/null 2>&1
+    then
+	# more modern timedatectl ...
+	#
+	eval `timedatectl show | grep '^Timezone'`
+    elif timedatectl status >/dev/null 2>&1
+    then
+	# more ancient timedatectl ...
+	#
+	eval `timedatectl status | sed -n -e '/Time zone:/{
+s/[ 	]*Time zone:[ 	]*/Timezone=/
+s/ .*//
+p
+}'`
+    fi
+    if [ -z "$Timezone" ]
+    then
+	echo "Error: cannot get current timezone from timedatectl" 
+	exit
+    elif [ "$Timezone" != "$timezone" ]
     then
 	if $check
 	then
