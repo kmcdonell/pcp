@@ -5,3 +5,4 @@ pmda_linux.so
 pmdalinux
 exports
 kernel_ulong.conf
+arm_cpuinfo.?

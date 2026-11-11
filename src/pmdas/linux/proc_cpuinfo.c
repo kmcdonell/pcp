@@ -22,6 +22,7 @@
 #include "linux.h"
 #include "proc_stat.h"
 #include "proc_cpuinfo.h"
+#include "arm_cpuinfo.h"
 
 static const char *sysfs_path = "sys/devices/system";
 
@@ -248,12 +249,29 @@ refresh_proc_cpuinfo(void)
 	    info->model = linux_strings_insert(val);
 	else if (info->model < 0 && strncasecmp(buf, "cpu model", 9) == 0)
 	    info->model = linux_strings_insert(val);
-	else if (info->model < 0 && strncasecmp(buf, "cpu variant", 11) == 0)
-	    info->model = linux_strings_insert(val);
+	//else if (info->model < 0 && strncasecmp(buf, "cpu variant", 11) == 0)
+	    //info->model = linux_strings_insert(val);
 	else if (info->vendor < 0 && strncasecmp(buf, "vendor", 6) == 0)
 	    info->vendor = linux_strings_insert(val);
-	else if (info->vendor < 0 && strncasecmp(buf, "cpu implementer", 15) == 0)
-	    info->vendor = linux_strings_insert(val);
+	else if (info->vendor < 0 && strncasecmp(buf, "cpu implementer", 15) == 0) {
+	    if (machine == MACHINE_ARM64) {
+		const char	*arm;
+		if ((arm = arm_cpuinfo_vendor(val)) != NULL)
+		    info->vendor = linux_strings_insert(arm);
+		else
+		    info->vendor = linux_strings_insert(val);
+	    }
+	    else
+		info->vendor = linux_strings_insert(val);
+	}
+	else if (info->model < 0 && strncasecmp(buf, "cpu part", 8) == 0) {
+	    info->model = linux_strings_insert(val);
+	    if (machine == MACHINE_ARM64) {
+		const char	*arm;
+		if ((arm = arm_cpuinfo_part(val)) != NULL)
+		    info->model_name = linux_strings_insert(arm);
+	    }
+	}
 	else if (info->stepping < 0 && strncasecmp(buf, "step", 4) == 0)
 	    info->stepping = linux_strings_insert(val);
 	else if (info->stepping < 0 && strncasecmp(buf, "revision", 8) == 0)

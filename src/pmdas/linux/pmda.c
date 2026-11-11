@@ -20,6 +20,7 @@
  * pmDebugOption:
  *   appl1	disk-related metrics
  *   appl8	filesys metrics
+ *   appl9      hinv.cpu metrics
  *   libpmda	historic "everything else" diagnostics
  */
 #include "linux.h"
@@ -132,6 +133,7 @@ proc_vmstat_t _pm_proc_vmstat;
 proc_net_snmp_t _pm_proc_net_snmp;
 pmdaInstid _pm_proc_net_snmp_indom_id[NR_ICMPMSG_COUNTERS];
 proc_net_netstat_t _pm_proc_net_netstat;
+int machine;
 
 /*
  * Metric Instance Domains (statically initialized ones only)
@@ -11197,6 +11199,22 @@ linux_init(pmdaInterface *dp)
 
     nindoms = sizeof(indomtab)/sizeof(indomtab[0]);
     nmetrics = sizeof(metrictab)/sizeof(metrictab[0]);
+
+    /*
+     * decode machine[] for later use with hinv.cpu.* metrics
+     */
+    if (strcmp(kernel_uname.machine, "x86_64") == 0)
+	machine = MACHINE_X86_64;
+    else if (strcmp(kernel_uname.machine, "i686") == 0)
+	machine = MACHINE_I686;
+    else if (strcmp(kernel_uname.machine, "aarch64") == 0 ||
+             strcmp(kernel_uname.machine, "arm64") == 0)
+	machine = MACHINE_ARM64;
+    else {
+	if (pmDebugOptions.appl9)
+	    fprintf(stderr, "Warning: linux_init needs mapping for machine \"%s\"\n", kernel_uname.machine);
+	machine = MACHINE_UNKNOWN;
+    }
 
     proc_vmstat_init();
 
